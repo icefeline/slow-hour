@@ -1,6 +1,6 @@
-# Daily Tarot App
+# slow hour
 
-A web application for daily tarot card readings, inspired by the "One Year" app concept.
+A web application for daily tarot card readings.
 
 ## Getting Started
 
