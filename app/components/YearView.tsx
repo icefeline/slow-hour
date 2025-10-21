@@ -105,16 +105,11 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
   // Scroll to current month on load
   useEffect(() => {
-    if (currentMonthRef.current && containerRef.current) {
-      const container = containerRef.current;
-      const currentMonth = currentMonthRef.current;
-
-      const scrollPosition = currentMonth.offsetTop - (container.clientHeight / 2) + (currentMonth.clientHeight / 2);
-
+    if (currentMonthRef.current) {
       setTimeout(() => {
-        container.scrollTo({
-          top: scrollPosition,
-          behavior: 'smooth'
+        currentMonthRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
         });
       }, 100);
     }
@@ -126,20 +121,26 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
   const currentMonth = new Date(currentDate).getMonth();
 
   return (
-    <div className="relative min-h-screen bg-cream-50 py-4 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="relative min-h-screen bg-cream-50">
+      {/* Glass morphism fade at top */}
+      <div className="fixed top-20 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-cream-50 via-cream-50/60 to-transparent backdrop-blur-sm z-30 pointer-events-none" />
+
+      {/* Glass morphism fade at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-t from-cream-50 via-cream-50/60 to-transparent backdrop-blur-sm z-30 pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto py-4 px-4 md:py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-handwritten text-forest-900 mb-2">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
             {year}
           </h1>
-          <p className="text-forest-600 text-lg font-light">
+          <p className="text-forest-600 text-base md:text-lg font-light">
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
         </div>
 
         {/* Compact grid of all days - vertical lines and mini cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1.5 justify-items-start">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1 md:gap-1.5 justify-items-start">
           {allDaysInYear.map((dayData, idx) => {
             const { date, month, monthIndex } = dayData;
             const entry = cardMap.get(date);
@@ -158,12 +159,17 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
             const animationDelay = hasCard && cardIndex >= 0 ? cardIndex * 15 : 0; // 15ms stagger for faster cascade
 
             return (
-              <div key={date} className="relative" style={{
-                animationDelay: hasCard ? `${animationDelay}ms` : '0ms'
-              }}>
+              <div
+                key={date}
+                className="relative"
+                ref={monthIndex === currentMonth && isMonthStart ? currentMonthRef : null}
+                style={{
+                  animationDelay: hasCard ? `${animationDelay}ms` : '0ms'
+                }}
+              >
                 {/* Month label */}
                 {isMonthStart && (
-                  <div className="absolute -top-6 left-0 text-xs font-handwritten text-forest-600 whitespace-nowrap pointer-events-none">
+                  <div className="absolute -top-5 md:-top-6 left-0 text-xs font-handwritten text-forest-600 whitespace-nowrap pointer-events-none">
                     {month.slice(0, 3)}
                   </div>
                 )}
@@ -179,8 +185,8 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
                     ${hasCard && animating ? 'card-flip-enter' : ''}
                   `}
                   style={{
-                    width: hasCard ? '24px' : '4px',
-                    height: '36px',
+                    width: hasCard ? 'clamp(20px, 5vw, 24px)' : '3px',
+                    height: 'clamp(28px, 7vw, 36px)',
                     animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
                     animationFillMode: 'backwards',
                   }}

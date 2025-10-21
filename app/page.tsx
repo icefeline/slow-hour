@@ -238,8 +238,7 @@ export default function Home() {
                 onClick={() => {
                   setViewingPastCard(false);
                   setCurrentView('year');
-                  // Reload today's card
-                  loadTodaysCard();
+                  // Don't reload today's card, keep the current state
                 }}
                 className="mb-6 px-4 py-2 text-forest-600 hover:text-forest-800 font-light flex items-center gap-2 transition-colors"
               >

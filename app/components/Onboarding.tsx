@@ -97,18 +97,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
 
       <div className="mb-12">
-        {/* Progress dots */}
-        <div className="flex gap-2 mb-6">
-          {[...Array(totalSteps + 1)].map((_, i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 rounded-full ${
-                i === currentStep ? 'bg-forest-600' : 'bg-forest-200'
-              }`}
-            />
-          ))}
-        </div>
-
         <button
           onClick={handleNext}
           className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
@@ -144,17 +132,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
 
       <div className="mb-12">
-        <div className="flex gap-2 mb-6">
-          {[...Array(totalSteps + 1)].map((_, i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 rounded-full ${
-                i === currentStep ? 'bg-forest-600' : 'bg-forest-200'
-              }`}
-            />
-          ))}
-        </div>
-
         <button
           onClick={handleNext}
           className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
@@ -194,17 +171,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
 
       <div className="mb-12">
-        <div className="flex gap-2 mb-6">
-          {[...Array(totalSteps + 1)].map((_, i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 rounded-full ${
-                i === currentStep ? 'bg-forest-600' : 'bg-forest-200'
-              }`}
-            />
-          ))}
-        </div>
-
         <button
           onClick={handleNext}
           className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
@@ -249,16 +215,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </button>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {[...Array(totalSteps + 1)].map((_, i) => (
-          <div
-            key={i}
-            className={`w-2 h-2 rounded-full ${
-              i === currentStep ? 'bg-forest-600' : 'bg-forest-200'
-            }`}
-          />
-        ))}
-      </div>
     </div>,
 
     // Screen 5: Ready
@@ -290,16 +246,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </button>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {[...Array(totalSteps + 1)].map((_, i) => (
-          <div
-            key={i}
-            className={`w-2 h-2 rounded-full ${
-              i === currentStep ? 'bg-forest-600' : 'bg-forest-200'
-            }`}
-          />
-        ))}
-      </div>
     </div>,
   ];
 
