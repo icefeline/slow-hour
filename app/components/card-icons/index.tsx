@@ -1,0 +1,53 @@
+import {
+  FoolIcon,
+  MagicianIcon,
+  HighPriestessIcon,
+  EmpressIcon,
+  EmperorIcon,
+  HierophantIcon,
+  LoversIcon,
+  ChariotIcon,
+  StrengthIcon,
+  HermitIcon,
+  WheelOfFortuneIcon,
+  JusticeIcon,
+  HangedManIcon,
+  DeathIcon,
+  TemperanceIcon,
+  DevilIcon,
+  TowerIcon,
+  StarIcon,
+  MoonIcon,
+  SunIcon,
+  JudgementIcon,
+  WorldIcon,
+} from './MajorArcanaIcons';
+
+export const cardIconMap: Record<string, React.ComponentType> = {
+  'major-0': FoolIcon,
+  'major-1': MagicianIcon,
+  'major-2': HighPriestessIcon,
+  'major-3': EmpressIcon,
+  'major-4': EmperorIcon,
+  'major-5': HierophantIcon,
+  'major-6': LoversIcon,
+  'major-7': ChariotIcon,
+  'major-8': StrengthIcon,
+  'major-9': HermitIcon,
+  'major-10': WheelOfFortuneIcon,
+  'major-11': JusticeIcon,
+  'major-12': HangedManIcon,
+  'major-13': DeathIcon,
+  'major-14': TemperanceIcon,
+  'major-15': DevilIcon,
+  'major-16': TowerIcon,
+  'major-17': StarIcon,
+  'major-18': MoonIcon,
+  'major-19': SunIcon,
+  'major-20': JudgementIcon,
+  'major-21': WorldIcon,
+};
+
+export function getCardIcon(cardId: string): React.ComponentType | null {
+  return cardIconMap[cardId] || null;
+}

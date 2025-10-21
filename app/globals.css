@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fdfdf9;
+  --foreground: #28392f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #f4f7f5;
+    --foreground: #141f19;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-reenie-beanie), cursive;
+  font-size: 1.875rem;
+  line-height: 1.5;
+  text-transform: lowercase;
+}
+
+button, input, textarea {
+  font-family: var(--font-reenie-beanie), cursive;
+  text-transform: lowercase;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(-2rem) scale(1.1);
+  }
+  50% {
+    transform: translateY(-2.5rem) scale(1.1);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Cascading flip animation for year view cards */
+@keyframes cardFlip {
+  0% {
+    transform: perspective(400px) rotateX(-90deg);
+    opacity: 0;
+  }
+  40% {
+    transform: perspective(400px) rotateX(-10deg);
+  }
+  70% {
+    transform: perspective(400px) rotateX(10deg);
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.card-flip-enter {
+  animation: cardFlip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: top center;
+}

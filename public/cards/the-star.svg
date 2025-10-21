@@ -1,0 +1,37 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The Star: Large star with smaller stars -->
+
+  <!-- Large central star (8-pointed, hand-drawn) -->
+  <path d="M60 20 L63 45 L70 28 L67 48 L82 35 L72 50 L90 48 L75 55 L90 62 L72 60 L82 75 L67 62 L70 82 L63 65 L60 90 L57 65 L50 82 L53 62 L38 75 L48 60 L30 62 L45 55 L30 48 L48 50 L38 35 L53 48 L50 28 L57 45 Z"
+        fill="#2d4a3e"
+        opacity="0.2"/>
+
+  <path d="M60 20 L63 45 L70 28 L67 48 L82 35 L72 50 L90 48 L75 55 L90 62 L72 60 L82 75 L67 62 L70 82 L63 65 L60 90 L57 65 L50 82 L53 62 L38 75 L48 60 L30 62 L45 55 L30 48 L48 50 L38 35 L53 48 L50 28 L57 45 Z"
+        stroke="#2d4a3e"
+        stroke-width="2"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Small stars around -->
+  <path d="M25 25 L26 28 L29 28 L27 30 L28 33 L25 31 L22 33 L23 30 L21 28 L24 28 Z"
+        fill="#2d4a3e"
+        opacity="0.6"/>
+
+  <path d="M95 30 L96 32 L98 32 L96 34 L97 36 L95 35 L93 36 L94 34 L92 32 L94 32 Z"
+        fill="#2d4a3e"
+        opacity="0.7"/>
+
+  <path d="M20 70 L21 72 L23 72 L21 74 L22 76 L20 75 L18 76 L19 74 L17 72 L19 72 Z"
+        fill="#2d4a3e"
+        opacity="0.5"/>
+
+  <path d="M100 70 L101 72 L103 72 L101 74 L102 76 L100 75 L98 76 L99 74 L97 72 L99 72 Z"
+        fill="#2d4a3e"
+        opacity="0.8"/>
+
+  <!-- Tiny glimmers -->
+  <circle cx="35" cy="50" r="1" fill="#2d4a3e" opacity="0.4"/>
+  <circle cx="85" cy="55" r="1.5" fill="#2d4a3e" opacity="0.5"/>
+  <circle cx="40" cy="85" r="1" fill="#2d4a3e" opacity="0.6"/>
+</svg>

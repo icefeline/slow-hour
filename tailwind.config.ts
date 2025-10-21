@@ -1,0 +1,90 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        // Forest green palette for nature-inspired tarot
+        forest: {
+          50: '#f4f7f5',
+          100: '#e3ebe6',
+          200: '#c8d8ce',
+          300: '#a3bfae',
+          400: '#7a9f88',
+          500: '#5a826a',
+          600: '#476854',
+          700: '#3a5444',
+          800: '#2f4437',
+          900: '#28392f',
+          950: '#141f19',
+        },
+        moss: {
+          50: '#f5f8f4',
+          100: '#e8f0e5',
+          200: '#d2e1cd',
+          300: '#adc9a5',
+          400: '#82ab77',
+          500: '#618e55',
+          600: '#4c7141',
+          700: '#3d5a35',
+          800: '#33482d',
+          900: '#2b3c27',
+          950: '#142013',
+        },
+        sage: {
+          50: '#f6f8f6',
+          100: '#e9ede9',
+          200: '#d4dcd4',
+          300: '#b1c0b1',
+          400: '#8a9e8a',
+          500: '#6b826b',
+          600: '#546754',
+          700: '#445344',
+          800: '#384338',
+          900: '#2f382f',
+          950: '#181e18',
+        },
+        cream: {
+          50: '#fdfdf9',
+          100: '#faf9f2',
+          200: '#f5f3e6',
+          300: '#ede9d1',
+          400: '#e1d9b3',
+          500: '#d3c594',
+          600: '#c4b07a',
+          700: '#a89462',
+          800: '#8a7652',
+          900: '#716145',
+          950: '#3c3223',
+        },
+        ink: {
+          50: '#f6f7f6',
+          100: '#e3e5e3',
+          200: '#c7cac7',
+          300: '#a4a8a4',
+          400: '#828682',
+          500: '#696d69',
+          600: '#545754',
+          700: '#464846',
+          800: '#3b3d3b',
+          900: '#343534',
+          950: '#1d1e1d',
+        },
+      },
+      fontFamily: {
+        serif: ['var(--font-serif)', 'serif'],
+        handwritten: ['var(--font-reenie-beanie)', 'cursive'],
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;

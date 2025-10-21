@@ -1,0 +1,40 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The Lovers: Two intertwining vines -->
+
+  <!-- Left vine -->
+  <path d="M35 95 Q30 80 35 65 Q40 50 35 35 Q32 25 35 15"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Right vine -->
+  <path d="M85 95 Q90 80 85 65 Q80 50 85 35 Q88 25 85 15"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Center intertwining -->
+  <path d="M35 65 Q50 60 65 65 Q80 70 85 65"
+        stroke="#2d4a3e"
+        stroke-width="2"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <path d="M35 45 Q50 50 65 45 Q80 40 85 45"
+        stroke="#2d4a3e"
+        stroke-width="2"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Small leaves (imperfect) -->
+  <ellipse cx="28" cy="50" rx="4" ry="6" fill="#2d4a3e" transform="rotate(-30 28 50)"/>
+  <ellipse cx="92" cy="50" rx="4" ry="6" fill="#2d4a3e" transform="rotate(30 92 50)"/>
+  <ellipse cx="38" cy="30" rx="3" ry="5" fill="#2d4a3e" transform="rotate(-20 38 30)"/>
+  <ellipse cx="82" cy="30" rx="3" ry="5" fill="#2d4a3e" transform="rotate(20 82 30)"/>
+
+  <!-- Small heart shape at top where vines meet -->
+  <path d="M55 18 Q52 15 50 18 Q48 15 50 12 Q52 15 55 12 Q57 15 55 18"
+        fill="#2d4a3e"/>
+</svg>

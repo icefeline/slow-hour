@@ -1,0 +1,58 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The Sun: Simple sun with hand-drawn rays -->
+
+  <!-- Center circle (slightly imperfect) -->
+  <circle cx="60" cy="60" r="18"
+          stroke="#2d4a3e"
+          stroke-width="2.5"
+          fill="none"/>
+
+  <!-- Inner circle -->
+  <circle cx="60" cy="60" r="12"
+          fill="#2d4a3e"
+          opacity="0.2"/>
+
+  <!-- Hand-drawn rays (varying lengths, slightly wavy) -->
+  <path d="M60 25 Q62 32 60 38"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M82 35 Q78 40 75 44"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M95 60 Q88 61 82 60"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M82 85 Q78 80 75 76"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M60 95 Q61 88 60 82"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M38 85 Q42 80 45 76"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M25 60 Q32 61 38 60"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <path d="M38 35 Q42 40 45 44"
+        stroke="#2d4a3e"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <!-- Small dots for extra texture -->
+  <circle cx="60" cy="60" r="1.5" fill="#2d4a3e"/>
+</svg>
