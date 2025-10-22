@@ -175,10 +175,10 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
   }, [selectedDate, selectedEntry]);
 
   return (
-    <div className="relative min-h-screen bg-cream-50 pt-12">
+    <div className="relative min-h-screen bg-cream-50">
       {/* Sticky header with gradient fade background */}
-      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-cream-50 via-cream-50 to-cream-50/0 pb-6 md:pb-8">
-        <div className="text-center pt-4 px-6 md:px-8">
+      <div className="sticky top-16 md:top-20 z-20 bg-cream-50 pt-6 pb-6 md:pb-8">
+        <div className="text-center px-6 md:px-8">
           <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
             {year}
           </h1>
@@ -227,10 +227,17 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
                 <button
                   onClick={() => {
-                    // On mobile, open drawer; on desktop, use onDateClick
+                    // On mobile: if today's card, navigate to today view; if past card, open drawer
+                    // On desktop: always use onDateClick
                     if (window.innerWidth < 768 && hasCard) {
-                      setSelectedDate(date);
-                      setDrawerOpen(true);
+                      if (isToday) {
+                        // Navigate to today view
+                        onDateClick(date);
+                      } else {
+                        // Open drawer for past cards
+                        setSelectedDate(date);
+                        setDrawerOpen(true);
+                      }
                     } else {
                       onDateClick(date);
                     }
@@ -325,12 +332,12 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
           {/* Drawer */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
             {/* Handle bar - sticky with higher z-index */}
-            <div className="sticky top-0 bg-cream-50 pt-4 pb-6 flex justify-center rounded-t-3xl z-10 shadow-sm">
+            <div className="sticky top-0 bg-cream-50 pt-4 pb-3 flex justify-center rounded-t-3xl z-10 shadow-sm">
               <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
             </div>
 
             {/* Content */}
-            <div className="px-6 pb-8">
+            <div className="px-6 pb-8 pt-6">
               {/* Date */}
               <div className="text-center mb-8">
                 <p className="text-forest-600 text-lg font-light tracking-wider uppercase">
