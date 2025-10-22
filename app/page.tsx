@@ -272,19 +272,36 @@ export default function Home() {
             )}
 
             {/* Reflection Area */}
-            {isRevealed && (
-              <div className="mt-16 p-8">
-                <h3 className="text-3xl font-light text-forest-900 mb-4">
-                  Reflection
-                </h3>
-                <textarea
-                  className="w-full h-48 bg-cream-50/80 text-forest-800 border border-forest-300 rounded-xl p-6 focus:outline-none focus:ring-2 focus:ring-forest-500 resize-none font-light text-xl leading-relaxed"
-                  placeholder="Write your thoughts here..."
-                  onChange={(e) => handleJournalChange(e.target.value)}
-                  defaultValue={localStorage.getItem(`reflection-${dateString}`) || ''}
-                />
-              </div>
-            )}
+            {isRevealed && (() => {
+              const today = new Date().toISOString().split('T')[0];
+              const isToday = dateString === today;
+              const reflection = localStorage.getItem(`reflection-${dateString}`) || '';
+
+              // Only show reflection section if it's today OR if there's a past reflection
+              if (!isToday && !reflection.trim()) {
+                return null;
+              }
+
+              return (
+                <div className="mt-16 p-8">
+                  <h3 className="text-3xl font-light text-forest-900 mb-4">
+                    Reflection
+                  </h3>
+                  {isToday ? (
+                    <textarea
+                      className="w-full h-48 bg-cream-50/80 text-forest-800 border border-forest-300 rounded-xl p-6 focus:outline-none focus:ring-2 focus:ring-forest-500 resize-none font-light text-xl leading-relaxed"
+                      placeholder="Write your thoughts here..."
+                      onChange={(e) => handleJournalChange(e.target.value)}
+                      defaultValue={reflection}
+                    />
+                  ) : (
+                    <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-6 text-forest-800 font-light text-xl leading-relaxed">
+                      {reflection}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 

@@ -325,7 +325,7 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
           {/* Drawer */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
             {/* Handle bar - sticky with higher z-index */}
-            <div className="sticky top-0 bg-cream-50 pt-3 pb-4 flex justify-center rounded-t-3xl z-10 shadow-sm">
+            <div className="sticky top-0 bg-cream-50 pt-4 pb-6 flex justify-center rounded-t-3xl z-10 shadow-sm">
               <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
             </div>
 
@@ -352,15 +352,23 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
                 />
               </div>
 
-              {/* Reflection - always show the container */}
-              <div className="mt-6">
-                <h3 className="text-2xl font-light text-forest-900 mb-3">
-                  Reflection
-                </h3>
-                <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed min-h-[100px]">
-                  {localStorage.getItem(`reflection-${selectedDate}`) || 'No reflection written for this day.'}
-                </div>
-              </div>
+              {/* Reflection - only show if there is one */}
+              {(() => {
+                const reflection = localStorage.getItem(`reflection-${selectedDate}`);
+                if (reflection && reflection.trim()) {
+                  return (
+                    <div className="mt-6 max-w-sm mx-auto">
+                      <h3 className="text-2xl font-light text-forest-900 mb-3">
+                        Reflection
+                      </h3>
+                      <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed">
+                        {reflection}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </div>
         </>
