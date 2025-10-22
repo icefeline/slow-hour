@@ -16,6 +16,7 @@ interface YearViewProps {
   year: number;
   journalEntries: JournalEntry[];
   onDateClick: (date: string) => void;
+  onNavigateToToday: () => void;
   currentDate: string;
 }
 
@@ -57,7 +58,7 @@ const MiniTarotCard = ({ isToday }: { isToday?: boolean }) => {
   );
 };
 
-export default function YearView({ year, journalEntries, onDateClick, currentDate }: YearViewProps) {
+export default function YearView({ year, journalEntries, onDateClick, onNavigateToToday, currentDate }: YearViewProps) {
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [animating, setAnimating] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -231,8 +232,9 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
                     // On desktop: always use onDateClick
                     if (window.innerWidth < 768 && hasCard) {
                       if (isToday) {
-                        // Navigate to today view
+                        // Navigate to today view on mobile
                         onDateClick(date);
+                        onNavigateToToday();
                       } else {
                         // Open drawer for past cards
                         setSelectedDate(date);

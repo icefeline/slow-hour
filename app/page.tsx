@@ -313,6 +313,10 @@ export default function Home() {
             year={new Date().getFullYear()}
             journalEntries={journalEntries}
             onDateClick={handleDateClick}
+            onNavigateToToday={() => {
+              setViewingPastCard(false);
+              setCurrentView('card');
+            }}
             currentDate={new Date().toISOString().split('T')[0]}
           />
         )}
