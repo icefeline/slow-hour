@@ -142,14 +142,18 @@ export default function Home() {
     const entry = journalEntries.find(e => e.date === date);
     if (!entry) return; // No card for this date
 
-    // Navigate to card view (desktop interaction for all devices)
     const reversed = localStorage.getItem(`reversed-${date}`) === 'true';
 
     setDateString(date);
     setIsReversed(reversed);
     setIsRevealed(true);
     setViewingPastCard(true);
-    setCurrentView('card');
+
+    // On desktop, navigate to card view
+    // On mobile, the drawer will open (handled in YearView)
+    if (window.innerWidth >= 768) {
+      setCurrentView('card');
+    }
   };
 
   const handleReset = () => {
@@ -232,7 +236,7 @@ export default function Home() {
 
         {currentView === 'card' && card && (
           <div className="max-w-2xl mx-auto px-4 py-12">
-            {/* Back button for past cards */}
+            {/* Back button for past cards - desktop only */}
             {viewingPastCard && (
               <button
                 onClick={() => {
@@ -240,7 +244,7 @@ export default function Home() {
                   setCurrentView('year');
                   // Don't reload today's card, keep the current state
                 }}
-                className="mb-6 px-4 py-2 text-forest-600 hover:text-forest-800 font-light flex items-center gap-2 transition-colors"
+                className="hidden md:flex mb-6 px-4 py-2 text-forest-600 hover:text-forest-800 font-light items-center gap-2 transition-colors"
               >
                 ← Back to Year View
               </button>

@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { getCardIcon } from './card-icons';
+import TarotCard from './TarotCard';
+import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 
 interface JournalEntry {
   date: string;
@@ -58,8 +60,12 @@ const MiniTarotCard = ({ isToday }: { isToday?: boolean }) => {
 export default function YearView({ year, journalEntries, onDateClick, currentDate }: YearViewProps) {
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [animating, setAnimating] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const currentMonthRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset animation each time component mounts (when switching to Year view)
   useEffect(() => {
@@ -106,13 +112,46 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
   // Scroll to current month on load
   useEffect(() => {
     if (currentMonthRef.current) {
+      // Delay scroll to avoid triggering glass effect on initial load
       setTimeout(() => {
+        // Temporarily disable scroll detection
+        setIsScrolling(false);
         currentMonthRef.current?.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
         });
+        // Keep glass hidden during initial auto-scroll
+        setTimeout(() => {
+          setIsScrolling(false);
+        }, 1000);
       }, 100);
     }
+  }, []);
+
+  // Detect scrolling to show/hide glass effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Hide glass effect after scrolling stops
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Count days with cards
@@ -120,16 +159,39 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
   const currentMonth = new Date(currentDate).getMonth();
 
-  return (
-    <div className="relative min-h-screen bg-cream-50">
-      {/* Glass morphism fade at top */}
-      <div className="fixed top-20 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-cream-50 via-cream-50/60 to-transparent backdrop-blur-sm z-30 pointer-events-none" />
+  // Get selected card data for drawer
+  const selectedEntry = selectedDate ? journalEntries.find(e => e.date === selectedDate) : null;
+  const [selectedCard, setSelectedCard] = useState<TarotCardType | null>(null);
 
-      {/* Glass morphism fade at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-t from-cream-50 via-cream-50/60 to-transparent backdrop-blur-sm z-30 pointer-events-none" />
+  // Fetch card data when a date is selected
+  useEffect(() => {
+    if (selectedDate && selectedEntry) {
+      // Fetch the card data from the API
+      fetch(`/api/daily-card?seed=${selectedDate}`)
+        .then(res => res.json())
+        .then(data => setSelectedCard(data.card))
+        .catch(err => console.error('Failed to load card:', err));
+    }
+  }, [selectedDate, selectedEntry]);
+
+  return (
+    <div className="relative min-h-screen bg-cream-50 pt-20">
+      {/* Glass morphism fade at top - only visible when scrolling */}
+      <div className={`fixed top-32 left-0 right-0 h-40 md:h-48 pointer-events-none z-30 transition-opacity duration-300 ${
+        isScrolling ? 'opacity-100' : 'opacity-0'
+      }`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-cream-50/95 via-cream-50/70 via-cream-50/40 via-cream-50/20 via-cream-50/5 to-transparent" />
+      </div>
+
+      {/* Glass morphism fade at bottom - only visible when scrolling */}
+      <div className={`fixed bottom-0 left-0 right-0 h-40 md:h-48 pointer-events-none z-30 transition-opacity duration-300 ${
+        isScrolling ? 'opacity-100' : 'opacity-0'
+      }`}>
+        <div className="absolute inset-0 bg-gradient-to-t from-cream-50/95 via-cream-50/70 via-cream-50/40 via-cream-50/20 via-cream-50/5 to-transparent" />
+      </div>
 
       <div className="max-w-6xl mx-auto py-4 px-4 md:py-8">
-        {/* Header */}
+        {/* Header - at top, visible above glass effect */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
             {year}
@@ -175,7 +237,15 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
                 )}
 
                 <button
-                  onClick={() => onDateClick(date)}
+                  onClick={() => {
+                    // On mobile, open drawer; on desktop, use onDateClick
+                    if (window.innerWidth < 768 && hasCard) {
+                      setSelectedDate(date);
+                      setDrawerOpen(true);
+                    } else {
+                      onDateClick(date);
+                    }
+                  }}
                   onMouseEnter={() => setHoveredDate(date)}
                   onMouseLeave={() => setHoveredDate(null)}
                   className={`
@@ -233,7 +303,7 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
                   {/* Hover tooltip */}
                   {hoveredDate === date && (
-                    <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 backdrop-blur-md bg-forest-800/90 text-cream-50 px-3 py-2 rounded-lg text-xs whitespace-nowrap z-40 shadow-lg border border-forest-600/30">
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-forest-800/90 text-cream-50 px-3 py-2 rounded-lg text-xs whitespace-nowrap z-50 shadow-lg border border-forest-600/30">
                       <div className="font-light">
                         {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
                           month: 'short',
@@ -253,6 +323,69 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
           })}
         </div>
       </div>
+
+      {/* Mobile bottom drawer */}
+      {drawerOpen && selectedDate && selectedCard && selectedEntry && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 bg-forest-900/40 backdrop-blur-sm z-40"
+            onClick={() => setDrawerOpen(false)}
+          />
+
+          {/* Drawer */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
+            {/* Handle bar */}
+            <div className="sticky top-0 bg-cream-50 pt-3 pb-2 flex justify-center rounded-t-3xl">
+              <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
+            </div>
+
+            {/* Content */}
+            <div className="px-6 pb-8">
+              {/* Date */}
+              <div className="text-center mb-6">
+                <p className="text-forest-600 text-lg font-light tracking-wider uppercase">
+                  {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </p>
+              </div>
+
+              {/* Card Display */}
+              <div className="max-w-sm mx-auto mb-6">
+                <TarotCard
+                  card={selectedCard}
+                  isReversed={selectedEntry.isReversed || false}
+                  isRevealed={true}
+                />
+              </div>
+
+              {/* Reflection */}
+              {selectedEntry.hasJournal && (
+                <div className="mt-6">
+                  <h3 className="text-2xl font-light text-forest-900 mb-3">
+                    Reflection
+                  </h3>
+                  <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed">
+                    {localStorage.getItem(`reflection-${selectedDate}`) || ''}
+                  </div>
+                </div>
+              )}
+
+              {/* Close button */}
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="mt-6 w-full px-6 py-3 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

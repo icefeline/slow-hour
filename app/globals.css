@@ -69,3 +69,17 @@ button, input, textarea {
   animation: cardFlip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   transform-origin: top center;
 }
+
+/* Bottom drawer slide up animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}

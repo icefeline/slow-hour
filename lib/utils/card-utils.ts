@@ -27,22 +27,22 @@ export function getTodayDateString(): string {
 /**
  * Get a specific card by date (deterministic)
  * The same date will always return the same card and orientation
- * Only returns Major Arcana cards (first 22 cards)
+ * Returns from the full 78-card tarot deck
  */
 export function getCardForDate(dateString: string): { card: TarotCard; isReversed: boolean } {
-  // Filter to only Major Arcana cards
-  const majorArcana = tarotDeck.filter(card => card.suite === 'major');
+  // Use the full tarot deck (all 78 cards)
+  const fullDeck = tarotDeck;
 
   // Use date as seed for card selection
   const cardSeed = seededRandom(dateString + '-card');
-  const cardIndex = Math.floor(cardSeed * majorArcana.length);
+  const cardIndex = Math.floor(cardSeed * fullDeck.length);
 
   // Use date as seed for orientation (50% chance of reversed)
   const orientationSeed = seededRandom(dateString + '-orientation');
   const isReversed = orientationSeed > 0.5;
 
   return {
-    card: majorArcana[cardIndex],
+    card: fullDeck[cardIndex],
     isReversed
   };
 }
