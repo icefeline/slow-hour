@@ -176,9 +176,9 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
   return (
     <div className="relative min-h-screen bg-cream-50 pt-12">
-      <div className="max-w-6xl mx-auto py-4 px-6 md:px-8 md:py-8">
-        {/* Header - at top, visible above glass effect */}
-        <div className="text-center mb-6 md:mb-8">
+      {/* Sticky header with gradient fade background */}
+      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-cream-50 via-cream-50 to-cream-50/0 pb-6 md:pb-8">
+        <div className="text-center pt-4 px-6 md:px-8">
           <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
             {year}
           </h1>
@@ -186,6 +186,9 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 md:px-8 pb-8">
 
         {/* Compact grid of all days - vertical lines and mini cards */}
         <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1 md:gap-1.5 justify-items-center">
@@ -321,15 +324,15 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
 
           {/* Drawer */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
-            {/* Handle bar */}
-            <div className="sticky top-0 bg-cream-50 pt-3 pb-2 flex justify-center rounded-t-3xl">
+            {/* Handle bar - sticky with higher z-index */}
+            <div className="sticky top-0 bg-cream-50 pt-3 pb-4 flex justify-center rounded-t-3xl z-10 shadow-sm">
               <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
             </div>
 
             {/* Content */}
             <div className="px-6 pb-8">
               {/* Date */}
-              <div className="text-center mb-6">
+              <div className="text-center mb-8">
                 <p className="text-forest-600 text-lg font-light tracking-wider uppercase">
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -349,25 +352,15 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
                 />
               </div>
 
-              {/* Reflection */}
-              {selectedEntry.hasJournal && (
-                <div className="mt-6">
-                  <h3 className="text-2xl font-light text-forest-900 mb-3">
-                    Reflection
-                  </h3>
-                  <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed">
-                    {localStorage.getItem(`reflection-${selectedDate}`) || ''}
-                  </div>
+              {/* Reflection - always show the container */}
+              <div className="mt-6">
+                <h3 className="text-2xl font-light text-forest-900 mb-3">
+                  Reflection
+                </h3>
+                <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed min-h-[100px]">
+                  {localStorage.getItem(`reflection-${selectedDate}`) || 'No reflection written for this day.'}
                 </div>
-              )}
-
-              {/* Close button */}
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="mt-6 w-full px-6 py-3 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200"
-              >
-                Close
-              </button>
+              </div>
             </div>
           </div>
         </>
