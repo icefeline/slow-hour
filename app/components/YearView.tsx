@@ -178,7 +178,7 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
     <div className="relative min-h-screen bg-cream-50 pt-12">
       {/* Sticky header with gradient fade background */}
       <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-cream-50 via-cream-50 to-cream-50/0 pb-6 md:pb-8">
-        <div className="text-center pt-4 px-6 md:px-8">
+        <div className="text-center pt-6 md:pt-4 px-6 md:px-8">
           <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
             {year}
           </h1>

@@ -218,13 +218,16 @@ export default function Home() {
             >
               Year
             </button>
-            <button
-              onClick={handleReset}
-              className="px-4 py-3 rounded-full text-2xl font-light bg-forest-50 text-forest-600 hover:bg-forest-100 transition-all"
-              title="Reset to see rolodex animation"
-            >
-              ↻
-            </button>
+            {/* Only show reset button in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <button
+                onClick={handleReset}
+                className="px-4 py-3 rounded-full text-2xl font-light bg-forest-50 text-forest-600 hover:bg-forest-100 transition-all"
+                title="Reset to see rolodex animation"
+              >
+                ↻
+              </button>
+            )}
           </div>
         </div>
       </div>
