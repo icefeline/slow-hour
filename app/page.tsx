@@ -191,7 +191,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-cream-50">
       {/* Header with View Toggle */}
-      <div className="fixed top-0 left-0 right-0 bg-cream-50/80 backdrop-blur-sm border-b border-forest-200 z-10">
+      <div className="fixed top-0 left-0 right-0 bg-cream-50/80 backdrop-blur-sm border-b border-forest-200 z-30">
         <div className="max-w-4xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
           <h1 className="text-3xl font-handwritten text-forest-900">
             Slow Hour
