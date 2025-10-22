@@ -175,22 +175,8 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
   }, [selectedDate, selectedEntry]);
 
   return (
-    <div className="relative min-h-screen bg-cream-50 pt-20">
-      {/* Glass morphism fade at top - only visible when scrolling */}
-      <div className={`fixed top-32 left-0 right-0 h-40 md:h-48 pointer-events-none z-30 transition-opacity duration-300 ${
-        isScrolling ? 'opacity-100' : 'opacity-0'
-      }`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-cream-50/95 via-cream-50/70 via-cream-50/40 via-cream-50/20 via-cream-50/5 to-transparent" />
-      </div>
-
-      {/* Glass morphism fade at bottom - only visible when scrolling */}
-      <div className={`fixed bottom-0 left-0 right-0 h-40 md:h-48 pointer-events-none z-30 transition-opacity duration-300 ${
-        isScrolling ? 'opacity-100' : 'opacity-0'
-      }`}>
-        <div className="absolute inset-0 bg-gradient-to-t from-cream-50/95 via-cream-50/70 via-cream-50/40 via-cream-50/20 via-cream-50/5 to-transparent" />
-      </div>
-
-      <div className="max-w-6xl mx-auto py-4 px-4 md:py-8">
+    <div className="relative min-h-screen bg-cream-50 pt-12">
+      <div className="max-w-6xl mx-auto py-4 px-6 md:px-8 md:py-8">
         {/* Header - at top, visible above glass effect */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
@@ -202,7 +188,7 @@ export default function YearView({ year, journalEntries, onDateClick, currentDat
         </div>
 
         {/* Compact grid of all days - vertical lines and mini cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1 md:gap-1.5 justify-items-start">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1 md:gap-1.5 justify-items-center">
           {allDaysInYear.map((dayData, idx) => {
             const { date, month, monthIndex } = dayData;
             const entry = cardMap.get(date);
