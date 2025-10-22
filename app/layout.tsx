@@ -9,8 +9,8 @@ const reenieBeanie = Reenie_Beanie({
 });
 
 export const metadata: Metadata = {
-  title: "Daily Tarot - Your Daily Card Reading",
-  description: "Discover your daily tarot card and reflect on its wisdom",
+  title: "slow hour - one card",
+  description: "one card. one moment. one day.",
 };
 
 export default function RootLayout({

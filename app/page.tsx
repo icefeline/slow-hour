@@ -5,9 +5,10 @@ import TarotCard from './components/TarotCard';
 import RolodexFlip from './components/RolodexFlip';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
+import NotificationSettings from './components/NotificationSettings';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 
-type View = 'rolodex' | 'card' | 'year';
+type View = 'rolodex' | 'card' | 'year' | 'settings';
 
 interface JournalEntry {
   date: string;
@@ -236,20 +237,6 @@ export default function Home() {
 
         {currentView === 'card' && card && (
           <div className="max-w-2xl mx-auto px-6 md:px-8 py-12">
-            {/* Back button for past cards - desktop only */}
-            {viewingPastCard && (
-              <button
-                onClick={() => {
-                  setViewingPastCard(false);
-                  setCurrentView('year');
-                  // Don't reload today's card, keep the current state
-                }}
-                className="hidden md:flex mb-6 px-4 py-2 text-forest-600 hover:text-forest-800 font-light items-center gap-2 transition-colors"
-              >
-                ← Back to Year View
-              </button>
-            )}
-
             {/* Date */}
             <div className="text-center mb-12">
               <p className="text-forest-600 text-2xl font-light tracking-wider uppercase">

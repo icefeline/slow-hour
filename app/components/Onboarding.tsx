@@ -8,9 +8,8 @@ interface OnboardingProps {
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [reminderTime, setReminderTime] = useState('08:00');
 
-  const totalSteps = 5; // 0-indexed, so 6 screens total
+  const totalSteps = 4; // 0-indexed, so 5 screens total (removed reminder screen)
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -18,15 +17,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     } else {
       // Save that onboarding is complete
       localStorage.setItem('onboardingComplete', 'true');
-      if (reminderTime) {
-        localStorage.setItem('reminderTime', reminderTime);
-      }
       onComplete();
     }
-  };
-
-  const handleSkipReminder = () => {
-    setCurrentStep(totalSteps);
   };
 
   const screens = [
@@ -88,7 +80,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </div>
 
         <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Each morning, draw a single tarot card
+          Each day, draw a single tarot card
         </h2>
 
         <p className="text-forest-600 text-lg font-light text-center">
@@ -180,44 +172,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
     </div>,
 
-    // Screen 4: Choose Your Time
-    <div key="reminder" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-md">
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          When would you like to draw?
-        </h2>
-
-        <p className="text-forest-600 text-lg font-light text-center mb-12">
-          We'll send a gentle reminder
-        </p>
-
-        <input
-          type="time"
-          value={reminderTime}
-          onChange={(e) => setReminderTime(e.target.value)}
-          className="text-4xl font-light text-forest-900 bg-transparent border-b-2 border-forest-300 focus:border-forest-600 outline-none px-4 py-2 text-center mb-12"
-        />
-      </div>
-
-      <div className="mb-12 flex gap-4">
-        <button
-          onClick={handleSkipReminder}
-          className="px-8 py-4 bg-forest-100 hover:bg-forest-200 text-forest-700 font-light rounded-full transition-all duration-200 text-lg"
-        >
-          Skip for now
-        </button>
-
-        <button
-          onClick={handleNext}
-          className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
-        >
-          Set reminder
-        </button>
-      </div>
-
-    </div>,
-
-    // Screen 5: Ready
+    // Screen 4: Ready
     <div key="ready" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
       <div className="flex-1 flex flex-col items-center justify-center">
         {/* Card back illustration */}
