@@ -83,3 +83,46 @@ button, input, textarea {
 .animate-slide-up {
   animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
+
+/* Kaleidoscope animation - elements move within the pattern */
+@keyframes kaleidoscope-layer-1 {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+}
+
+@keyframes kaleidoscope-layer-2 {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(-180deg) scale(0.9);
+  }
+}
+
+@keyframes kaleidoscope-layer-3 {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  33% {
+    transform: rotate(120deg);
+  }
+  66% {
+    transform: rotate(240deg);
+  }
+}
+
+.kaleidoscope-layer-1 {
+  animation: kaleidoscope-layer-1 20s ease-in-out infinite;
+}
+
+.kaleidoscope-layer-2 {
+  animation: kaleidoscope-layer-2 25s ease-in-out infinite;
+}
+
+.kaleidoscope-layer-3 {
+  animation: kaleidoscope-layer-3 30s ease-in-out infinite;
+}

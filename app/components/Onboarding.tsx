@@ -8,18 +8,27 @@ interface OnboardingProps {
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [name, setName] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay, setBirthDay] = useState('');
+  const [birthYear, setBirthYear] = useState('');
 
-  const totalSteps = 4; // 0-indexed, so 5 screens total (removed reminder screen)
+  const totalSteps = 4; // 0-indexed, so 5 screens total
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Save that onboarding is complete
+      // Save user data and mark onboarding as complete
+      localStorage.setItem('userName', name);
+      localStorage.setItem('userBirthdate', `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`);
       localStorage.setItem('onboardingComplete', 'true');
       onComplete();
     }
   };
+
+  const canContinueFromName = name.trim().length > 0;
+  const canContinueFromBirthdate = birthMonth && birthDay && birthYear;
 
   const screens = [
     // Screen 0: Welcome
@@ -48,7 +57,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             Slow Hour
           </h1>
 
-          <p className="text-forest-600 text-xl font-light">
+          <p className="text-forest-600 text-xl md:text-3xl font-light">
             One card. One moment. One day.
           </p>
         </div>
@@ -62,134 +71,168 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </button>
     </div>,
 
-    // Screen 1: The Practice
-    <div key="practice" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-md">
-        {/* Simple card flip visual */}
-        <div className="w-48 h-72 mb-12 perspective-1000">
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 bg-gradient-to-br from-forest-600 to-forest-800 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" className="w-32 h-32 text-cream-100">
-                <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.4" />
-                <circle cx="50" cy="50" r="20" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.5" />
-                <circle cx="50" cy="50" r="10" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.6" />
-                <circle cx="50" cy="50" r="4" fill="currentColor" opacity="0.5" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Each day, draw a single tarot card
+    // Screen 1: Name
+    <div key="name" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
+        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
+          What's your name?
         </h2>
 
-        <p className="text-forest-600 text-lg font-light text-center">
-          A gentle ritual for reflection and intention
+        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
+          So we can greet you properly
         </p>
+
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && canContinueFromName) {
+              handleNext();
+            }
+          }}
+          placeholder="Your name"
+          className="w-full max-w-sm px-6 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+          autoFocus
+        />
       </div>
 
       <div className="mb-12">
         <button
           onClick={handleNext}
-          className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+          disabled={!canContinueFromName}
+          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+            canContinueFromName
+              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
+              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+          }`}
         >
           Continue →
         </button>
       </div>
     </div>,
 
-    // Screen 2: Reflection
-    <div key="reflection" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-md">
-        {/* Hand-drawn journal icon */}
-        <div className="w-32 h-32 mb-12">
-          <svg viewBox="0 0 100 100" className="w-full h-full text-forest-700">
-            {/* Book/journal */}
-            <rect x="20" y="15" width="60" height="70" rx="3" fill="none" stroke="currentColor" strokeWidth="2.5" />
-            <line x1="40" y1="15" x2="40" y2="85" stroke="currentColor" strokeWidth="2" opacity="0.3" />
-            <line x1="30" y1="35" x2="70" y2="35" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
-            <line x1="30" y1="45" x2="70" y2="45" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
-            <line x1="30" y1="55" x2="65" y2="55" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
-          </svg>
-        </div>
-
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Write what it means to you
+    // Screen 2: Birthdate
+    <div key="birthdate" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
+        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
+          When were you born?
         </h2>
 
-        <p className="text-forest-600 text-lg font-light text-center">
-          Your reflections create a private journal,<br />
-          a chronicle of your inner year
+        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
+          Your cards will be drawn just for you
         </p>
+
+        <div className="flex gap-3 w-full max-w-sm">
+          <select
+            value={birthMonth}
+            onChange={(e) => setBirthMonth(e.target.value)}
+            className="flex-1 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center appearance-none cursor-pointer"
+          >
+            <option value="">Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+
+          <input
+            type="number"
+            value={birthDay}
+            onChange={(e) => setBirthDay(e.target.value)}
+            placeholder="Day"
+            min="1"
+            max="31"
+            className="w-24 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+          />
+
+          <input
+            type="number"
+            value={birthYear}
+            onChange={(e) => setBirthYear(e.target.value)}
+            placeholder="Year"
+            min="1900"
+            max="2024"
+            className="w-28 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+          />
+        </div>
       </div>
 
       <div className="mb-12">
         <button
           onClick={handleNext}
-          className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+          disabled={!canContinueFromBirthdate}
+          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+            canContinueFromBirthdate
+              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
+              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+          }`}
         >
           Continue →
         </button>
       </div>
     </div>,
 
-    // Screen 3: Your Journey
-    <div key="journey" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-md">
-        {/* Mini year view preview */}
-        <div className="mb-12 flex items-center gap-1 opacity-60">
-          {/* Mix of vertical lines and mini cards */}
-          {[...Array(30)].map((_, i) => {
-            const hasCard = i % 5 === 0;
-            return hasCard ? (
-              <div
-                key={i}
-                className="w-4 h-6 bg-cream-100 border border-forest-400 rounded-sm"
-              />
-            ) : (
-              <div key={i} className="w-0.5 h-6 bg-forest-300 opacity-40" />
-            );
-          })}
-        </div>
-
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Watch your year unfold
+    // Screen 3: About the App
+    <div key="about" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-lg w-full">
+        <h2 className="text-4xl font-light text-forest-900 mb-8 text-center">
+          Why one card each day?
         </h2>
 
-        <p className="text-forest-600 text-lg font-light text-center">
-          Every card you draw becomes part of<br />
-          your visual tapestry
-        </p>
+        <div className="space-y-6 text-forest-700 text-xl md:text-2xl font-light leading-relaxed">
+          <p>
+            In our fast-paced world, we often rush through moments without truly experiencing them.
+            Slow Hour invites you to pause.
+          </p>
+
+          <p>
+            Each day, you draw a single card. Not as fortune-telling, but as a gentle prompt for reflection.
+            A question to sit with. A theme to notice as your day unfolds.
+          </p>
+
+          <p>
+            Your daily card becomes a companion—something to return to, journal about, and carry with you.
+            Over time, you'll build a personal collection of moments and insights.
+          </p>
+        </div>
       </div>
 
-      <div className="mb-12">
-        <button
-          onClick={handleNext}
-          className="px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
-        >
-          Continue →
-        </button>
-      </div>
+      <button
+        onClick={handleNext}
+        className="mb-12 px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+      >
+        Continue →
+      </button>
     </div>,
 
-    // Screen 4: Ready
+    // Screen 4: Ready to Draw
     <div key="ready" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
       <div className="flex-1 flex flex-col items-center justify-center">
-        {/* Card back illustration */}
-        <div className="w-64 h-96 mb-12 bg-gradient-to-br from-forest-600 to-forest-800 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center">
-          <svg viewBox="0 0 100 100" className="w-40 h-40 text-cream-100">
-            <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.3" />
-            <circle cx="50" cy="50" r="25" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.4" />
-            <circle cx="50" cy="50" r="15" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.5" />
-            <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.4" />
-          </svg>
+        {/* Card back illustration with botanical pattern */}
+        <div className="w-64 h-96 mb-12 bg-cream-50 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center overflow-hidden relative">
+          <div
+            className="absolute inset-8 bg-cover bg-center"
+            style={{
+              backgroundImage: 'url(/card-back-pattern.png)',
+              backgroundSize: 'cover',
+            }}
+          />
         </div>
 
         <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Your first card awaits
+          Your first card awaits{name ? `, ${name}` : ''}
         </h2>
 
-        <p className="text-forest-600 text-lg font-light text-center mb-12">
+        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
           Take a breath. When you're ready...
         </p>
 

@@ -221,7 +221,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               >
                 {/* Month label */}
                 {isMonthStart && (
-                  <div className="absolute -top-5 md:-top-6 left-0 text-xs font-handwritten text-forest-600 whitespace-nowrap pointer-events-none">
+                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base font-handwritten text-forest-700 whitespace-nowrap pointer-events-none">
                     {month.slice(0, 3)}
                   </div>
                 )}

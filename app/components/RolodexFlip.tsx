@@ -79,7 +79,7 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
 
           {/* Main flipping card */}
           <div
-            className="relative aspect-[2/3] w-72 bg-cream-50 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center preserve-3d"
+            className="relative aspect-[2/3] w-72 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center preserve-3d"
             style={{
               transform: `rotateY(${rotationY}deg)`,
               transition: isSpinning
@@ -88,31 +88,32 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
               transformStyle: 'preserve-3d',
             }}
           >
-            {/* Card Back (when flipped) - Forest green background */}
+            {/* Card Back (when flipped) - Whimsical botanical pattern */}
             <div
-              className="absolute inset-0 rounded-2xl bg-gradient-to-br from-forest-600 to-forest-800 flex items-center justify-center backface-hidden"
+              className="absolute inset-0 rounded-2xl bg-sage-50 border-2 border-forest-300 flex items-center justify-center backface-hidden overflow-hidden"
               style={{
                 backfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)',
               }}
             >
               <div className="text-center w-full p-6">
-                <div className="w-44 h-44 mx-auto mb-3 flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" className="w-full h-full text-cream-100" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.3" />
-                    <circle cx="50" cy="50" r="25" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.4" />
-                    <circle cx="50" cy="50" r="15" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.5" />
-                    <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.4" />
-                  </svg>
+                <div className="w-44 h-44 mx-auto mb-3 flex items-center justify-center relative">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: 'url(/card-back-pattern.png)',
+                      backgroundSize: 'cover',
+                    }}
+                  />
                 </div>
-                <h3 className="text-2xl font-light text-cream-100 mb-1">Daily Card</h3>
-                <p className="text-cream-200 text-sm uppercase tracking-widest">Tarot</p>
+                <h3 className="text-2xl font-light text-forest-900 mb-1">Daily Card</h3>
+                <p className="text-forest-600 text-sm uppercase tracking-widest">Tarot</p>
               </div>
             </div>
 
             {/* Card Front - Shows actual card icon */}
             <div
-              className="absolute inset-0 rounded-2xl bg-cream-50 flex items-center justify-center backface-hidden"
+              className="absolute inset-0 rounded-2xl bg-cream-100 flex items-center justify-center backface-hidden"
               style={{
                 backfaceVisibility: 'hidden',
               }}

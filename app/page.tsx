@@ -6,7 +6,9 @@ import RolodexFlip from './components/RolodexFlip';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
 import NotificationSettings from './components/NotificationSettings';
+import CardSelector from './components/CardSelector';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
+import { tarotDeck } from '@/lib/data/tarot-deck';
 
 type View = 'rolodex' | 'card' | 'year' | 'settings';
 
@@ -50,9 +52,22 @@ export default function Home() {
 
   const loadTodaysCard = async () => {
     try {
-      // Add random seed as query param for testing different cards
-      const testSeed = localStorage.getItem('testSeed') || '';
-      const url = testSeed ? `/api/daily-card?seed=${testSeed}` : '/api/daily-card';
+      // Build URL with query parameters
+      const params = new URLSearchParams();
+
+      // Add test seed if present (for development)
+      const testSeed = localStorage.getItem('testSeed');
+      if (testSeed) {
+        params.append('seed', testSeed);
+      }
+
+      // Add birthdate for personalized card selection
+      const birthdate = localStorage.getItem('userBirthdate');
+      if (birthdate) {
+        params.append('birthdate', birthdate);
+      }
+
+      const url = params.toString() ? `/api/daily-card?${params.toString()}` : '/api/daily-card';
       const response = await fetch(url);
       const data = await response.json();
 
@@ -174,6 +189,18 @@ export default function Home() {
     setShowOnboarding(false);
     loadTodaysCard();
     loadJournalEntries();
+  };
+
+  const handleSelectCard = (cardId: string, reversed: boolean) => {
+    // Find the card in the deck
+    const selectedCard = tarotDeck.find(c => c.id === cardId);
+    if (selectedCard) {
+      setCard(selectedCard);
+      setIsReversed(reversed);
+      setIsRevealed(true);
+      setCurrentView('card');
+      setDateString(new Date().toISOString().split('T')[0]);
+    }
   };
 
   if (isLoading) {
@@ -321,6 +348,11 @@ export default function Home() {
           />
         )}
       </div>
+
+      {/* Development Card Selector */}
+      {process.env.NODE_ENV === 'development' && (
+        <CardSelector onSelectCard={handleSelectCard} />
+      )}
     </main>
   );
 }

@@ -26,19 +26,22 @@ export function getTodayDateString(): string {
 
 /**
  * Get a specific card by date (deterministic)
- * The same date will always return the same card and orientation
+ * The same date + birthdate combination will always return the same card and orientation
  * Returns from the full 78-card tarot deck
  */
-export function getCardForDate(dateString: string): { card: TarotCard; isReversed: boolean } {
+export function getCardForDate(dateString: string, birthdate?: string): { card: TarotCard; isReversed: boolean } {
   // Use the full tarot deck (all 78 cards)
   const fullDeck = tarotDeck;
 
-  // Use date as seed for card selection
-  const cardSeed = seededRandom(dateString + '-card');
+  // Create a unique seed that combines date and birthdate for personalized readings
+  const baseSeed = birthdate ? `${dateString}-${birthdate}` : dateString;
+
+  // Use combined seed for card selection
+  const cardSeed = seededRandom(baseSeed + '-card');
   const cardIndex = Math.floor(cardSeed * fullDeck.length);
 
-  // Use date as seed for orientation (50% chance of reversed)
-  const orientationSeed = seededRandom(dateString + '-orientation');
+  // Use combined seed for orientation (50% chance of reversed)
+  const orientationSeed = seededRandom(baseSeed + '-orientation');
   const isReversed = orientationSeed > 0.5;
 
   return {
@@ -48,11 +51,18 @@ export function getCardForDate(dateString: string): { card: TarotCard; isReverse
 }
 
 /**
- * Get today's card
+ * Get today's card (personalized based on user's birthdate if available)
  */
 export function getTodaysCard(): { card: TarotCard; isReversed: boolean } {
   const today = getTodayDateString();
-  return getCardForDate(today);
+
+  // Get user's birthdate from localStorage if available (client-side only)
+  let birthdate: string | undefined;
+  if (typeof window !== 'undefined') {
+    birthdate = localStorage.getItem('userBirthdate') || undefined;
+  }
+
+  return getCardForDate(today, birthdate);
 }
 
 /**

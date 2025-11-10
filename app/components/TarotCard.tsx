@@ -31,7 +31,7 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
             <div className="w-full h-full bg-cream-50 rounded-2xl flex flex-col items-center justify-center p-6 border-2 border-forest-300 shadow-md">
               <div className={`text-center w-full ${isReversed ? 'rotate-180' : ''}`}>
                 {/* Hand-drawn nature element icon - larger and more prominent */}
-                <div className="w-44 h-44 mx-auto mb-3 text-forest-700">
+                <div className="w-56 h-56 mx-auto mb-3 text-forest-700">
                   {CardIcon ? <CardIcon /> : (
                     <div className="w-full h-full rounded-full border-2 border-clay-400 flex items-center justify-center">
                       <div className="w-8 h-8 rounded-full bg-sage-300/40"></div>
@@ -43,17 +43,18 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
               </div>
             </div>
           ) : (
-            // Card Back - Matches front design for smooth transition
-            <div className="w-full h-full bg-cream-50 rounded-2xl flex flex-col items-center justify-center p-6 border-2 border-forest-300 shadow-md">
+            // Card Back - Whimsical botanical pattern
+            <div className="w-full h-full bg-cream-50 rounded-2xl flex flex-col items-center justify-center p-6 border-2 border-forest-300 shadow-md overflow-hidden relative">
               <div className="text-center w-full">
-                {/* Simple decorative pattern */}
-                <div className="w-44 h-44 mx-auto mb-3 flex items-center justify-center">
-                  <svg viewBox="0 0 100 100" className="w-full h-full text-forest-700" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.4" />
-                    <circle cx="50" cy="50" r="25" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.5" />
-                    <circle cx="50" cy="50" r="15" stroke="currentColor" strokeWidth="3" fill="none" opacity="0.6" />
-                    <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.5" />
-                  </svg>
+                {/* Botanical pattern */}
+                <div className="w-56 h-56 mx-auto mb-3 flex items-center justify-center relative">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: 'url(/card-back-pattern.png)',
+                      backgroundSize: 'cover',
+                    }}
+                  />
                 </div>
                 <h3 className="text-2xl font-light text-forest-900 mb-1">Daily Card</h3>
                 <p className="text-forest-600 text-sm uppercase tracking-widest">Tarot</p>

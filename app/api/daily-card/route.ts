@@ -5,18 +5,19 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const seed = searchParams.get('seed');
+    const birthdate = searchParams.get('birthdate') || undefined;
 
     let card, isReversed;
+    const today = new Date().toISOString().split('T')[0];
 
     if (seed) {
       // Use seed for testing/shuffling
-      const today = new Date().toISOString().split('T')[0];
-      const result = getCardForDate(today + '-' + seed);
+      const result = getCardForDate(today + '-' + seed, birthdate);
       card = result.card;
       isReversed = result.isReversed;
     } else {
-      // Normal date-based card
-      const result = getTodaysCard();
+      // Normal date-based card with optional birthdate personalization
+      const result = getCardForDate(today, birthdate);
       card = result.card;
       isReversed = result.isReversed;
     }
@@ -24,7 +25,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       card,
       isReversed,
-      date: new Date().toISOString().split('T')[0]
+      date: today
     });
   } catch (error) {
     return NextResponse.json(

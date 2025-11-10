@@ -1,162 +1,198 @@
-// Hand-drawn style icons for Minor Arcana suits
+// Loose, whimsical pen-drawn icons for Minor Arcana suits
+// Thin flowing strokes (1.2-2.5px) with mixed weights for artistic depth
 
-// Cups suit - hand-drawn chalice
+// Cups suit - delicate chalice with flowing water
 export const CupsIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-    {/* Chalice cup */}
+  <svg viewBox="0 0 100 100" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+    {/* Chalice bowl - loose organic shape */}
     <path
-      d="M 30 25 Q 28 35 28 40 L 28 45 Q 28 52 35 55 L 35 70 Q 35 72 37 72 L 63 72 Q 65 72 65 70 L 65 55 Q 72 52 72 45 L 72 40 Q 72 35 70 25 Z"
+      d="M 31 28 Q 29.5 36 29.5 42 Q 29.5 48 35 52 L 35 68 Q 35 70 37 70 L 63 70 Q 65 70 65 68 L 65 52 Q 70.5 48 70.5 42 Q 70.5 36 69 28 Z"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.5"
-      opacity="0.85"
+      strokeWidth="2.2"
+    />
+    {/* Stem */}
+    <path
+      d="M 48 70 L 48 76"
+      stroke="currentColor"
+      strokeWidth="2"
     />
     {/* Base */}
+    <ellipse cx="48" cy="79" rx="11" ry="3.5" fill="none" stroke="currentColor" strokeWidth="2.2" />
+    {/* Handle - left (loose curve) */}
     <path
-      d="M 40 72 L 40 78 L 35 78 Q 33 78 33 80 L 67 80 Q 67 78 65 78 L 60 78 L 60 72"
+      d="M 29.5 36 Q 22 36.5 21 41 Q 20.5 44.5 24 45.5"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.5"
-      opacity="0.85"
-    />
-    {/* Handle - left */}
-    <path
-      d="M 28 35 Q 20 35 20 40 Q 20 45 25 45"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.7"
       opacity="0.75"
     />
-    {/* Handle - right */}
+    {/* Handle - right (loose curve) */}
     <path
-      d="M 72 35 Q 80 35 80 40 Q 80 45 75 45"
+      d="M 70.5 36 Q 78 36.5 79 41 Q 79.5 44.5 76 45.5"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.7"
       opacity="0.75"
+    />
+    {/* Water ripple inside */}
+    <path
+      d="M 38 38 Q 48 39.5 62 38"
+      stroke="currentColor"
+      strokeWidth="1.3"
+      opacity="0.4"
     />
   </svg>
 );
 
-// Wands suit - hand-drawn staff/wand
+// Wands suit - living branch with sprouting leaves
 export const WandsIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-    {/* Main wand shaft with slight curve */}
+  <svg viewBox="0 0 100 100" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+    {/* Main branch with organic curve */}
     <path
-      d="M 48 15 Q 49 35 48 50 Q 47 65 48 85"
+      d="M 49 16 Q 49.5 32 48.5 48 Q 48 64 49 82"
       fill="none"
       stroke="currentColor"
-      strokeWidth="3.5"
-      strokeLinecap="round"
-      opacity="0.85"
+      strokeWidth="2.4"
     />
-    {/* Top ornament */}
-    <circle cx="48" cy="15" r="4" opacity="0.8" />
-    {/* Leaves sprouting from wand */}
+    {/* Top bud */}
+    <circle cx="49" cy="14" r="3.5" fill="currentColor" opacity="0.13" stroke="currentColor" strokeWidth="1.8" />
+    {/* Leaves sprouting - loose curves */}
     <path
-      d="M 48 30 Q 38 28 35 32"
+      d="M 48.5 28 Q 40 27 36 31"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      opacity="0.7"
+      strokeWidth="1.6"
     />
     <path
-      d="M 48 35 Q 58 33 61 37"
+      d="M 48.5 33 Q 57 32 61 36"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      opacity="0.7"
+      strokeWidth="1.6"
     />
     <path
-      d="M 48 55 Q 40 53 37 57"
+      d="M 48 44 Q 41 43 37.5 47"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      opacity="0.7"
+      strokeWidth="1.6"
     />
     <path
-      d="M 48 60 Q 56 58 59 62"
+      d="M 48 49 Q 55 48 58.5 52"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      opacity="0.7"
+      strokeWidth="1.6"
     />
+    <path
+      d="M 48.5 60 Q 42 59 38.5 63"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M 48.5 65 Q 55 64 58.5 68"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    {/* Little leaf details */}
+    <path d="M 37 30 Q 35.5 29 34 29" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+    <path d="M 60 35 Q 61.5 34 63 34" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
   </svg>
 );
 
-// Swords suit - hand-drawn sword
+// Swords suit - elegant blade with delicate details
 export const SwordsIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-    {/* Blade */}
+  <svg viewBox="0 0 100 100" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+    {/* Blade - narrow with subtle fill */}
     <path
-      d="M 48 15 L 50 15 L 52 70 L 48 70 Z"
+      d="M 49 16 L 49.5 16 L 51 68 L 49 68 Z"
       fill="currentColor"
-      opacity="0.3"
+      opacity="0.12"
     />
+    {/* Blade outline */}
     <path
-      d="M 48 15 L 50 15 L 52 70 L 48 70 Z"
+      d="M 49 16 L 49.5 16 L 51 68 L 49 68 Z"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      opacity="0.85"
+      strokeWidth="1.8"
     />
     {/* Point */}
     <path
-      d="M 48 15 L 50 10 L 52 15"
+      d="M 49 16 L 50 11 L 51 16"
       fill="currentColor"
-      opacity="0.85"
-    />
-    {/* Cross guard */}
-    <path
-      d="M 35 70 L 65 70"
+      opacity="0.14"
       stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      opacity="0.85"
+      strokeWidth="1.6"
     />
-    {/* Handle */}
-    <rect
-      x="46"
-      y="70"
-      width="8"
-      height="12"
+    {/* Cross guard - delicate */}
+    <path
+      d="M 36 68 Q 36.5 70 38 70 L 62 70 Q 63.5 70 64 68"
+      stroke="currentColor"
+      strokeWidth="2.2"
+    />
+    {/* Handle grip */}
+    <path
+      d="M 47 70 L 47 80 L 53 80 L 53 70"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      opacity="0.85"
+      strokeWidth="1.8"
     />
+    <path d="M 47 73 L 53 73 M 47 76 L 53 76" stroke="currentColor" strokeWidth="1.3" opacity="0.5" />
     {/* Pommel */}
-    <circle cx="50" cy="85" r="4.5" opacity="0.8" />
+    <circle cx="50" cy="83" r="3.5" fill="currentColor" opacity="0.13" stroke="currentColor" strokeWidth="1.8" />
   </svg>
 );
 
-// Pentacles suit - hand-drawn pentacle/coin
+// Pentacles suit - organic flower mandala
 export const PentaclesIcon = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-    {/* Outer circle */}
+  <svg viewBox="0 0 100 100" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+    {/* Outer circle - loose */}
     <circle
       cx="50"
       cy="50"
-      r="32"
+      r="30"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.5"
-      opacity="0.85"
+      strokeWidth="2.2"
     />
-    {/* Inner pentagram star */}
+    {/* Inner flower/star pattern - 5 petals */}
     <path
-      d="M 50 25 L 57 45 L 78 45 L 61 57 L 68 77 L 50 65 L 32 77 L 39 57 L 22 45 L 43 45 Z"
-      fill="none"
+      d="M 50 26 Q 48 34 49 38 Q 50 40 51 38 Q 52 34 50 26 Z"
+      fill="currentColor"
+      opacity="0.12"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-      opacity="0.75"
+      strokeWidth="1.6"
     />
-    {/* Center dot */}
-    <circle cx="50" cy="50" r="3" opacity="0.7" />
+    <path
+      d="M 65.5 38 Q 60 42 57 44 Q 55.5 45 56.5 46.5 Q 60 48 65.5 38 Z"
+      fill="currentColor"
+      opacity="0.12"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    <path
+      d="M 62 62 Q 55 60 52 59 Q 50.5 59 51 60.5 Q 53 64 62 62 Z"
+      fill="currentColor"
+      opacity="0.12"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    <path
+      d="M 38 62 Q 45 60 48 59 Q 49.5 59 49 60.5 Q 47 64 38 62 Z"
+      fill="currentColor"
+      opacity="0.12"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    <path
+      d="M 34.5 38 Q 40 42 43 44 Q 44.5 45 43.5 46.5 Q 40 48 34.5 38 Z"
+      fill="currentColor"
+      opacity="0.12"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    {/* Center circle */}
+    <circle cx="50" cy="50" r="5" fill="currentColor" opacity="0.13" stroke="currentColor" strokeWidth="1.8" />
+    <circle cx="50" cy="50" r="2" fill="currentColor" opacity="0.3" />
   </svg>
 );
