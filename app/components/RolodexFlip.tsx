@@ -58,7 +58,7 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
       {/* Date */}
       {dateString && (
         <div className="text-center mb-12">
-          <p className="text-forest-600 text-2xl font-light tracking-wider uppercase">
+          <p className="text-[#CEF17B] text-2xl font-handwritten tracking-wider">
             {new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',
@@ -73,13 +73,13 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
         <div className="relative perspective-1000">
           {/* Card stack effect - multiple cards behind */}
           <div className="relative">
-          <div className="absolute inset-0 bg-forest-200 rounded-2xl transform translate-y-3 translate-x-3 opacity-20 blur-sm aspect-[2/3] w-72" />
-          <div className="absolute inset-0 bg-forest-300 rounded-2xl transform translate-y-2 translate-x-2 opacity-30 blur-sm aspect-[2/3] w-72" />
-          <div className="absolute inset-0 bg-forest-400 rounded-2xl transform translate-y-1 translate-x-1 opacity-40 aspect-[2/3] w-72" />
+          <div className="absolute inset-0 bg-[#CEF17B]/10 rounded-2xl transform translate-y-3 translate-x-3 opacity-20 blur-sm aspect-[2/3] w-72" />
+          <div className="absolute inset-0 bg-[#CEF17B]/15 rounded-2xl transform translate-y-2 translate-x-2 opacity-30 blur-sm aspect-[2/3] w-72" />
+          <div className="absolute inset-0 bg-[#CEF17B]/20 rounded-2xl transform translate-y-1 translate-x-1 opacity-40 aspect-[2/3] w-72" />
 
           {/* Main flipping card */}
           <div
-            className="relative aspect-[2/3] w-72 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center preserve-3d"
+            className="relative aspect-[2/3] w-72 rounded-2xl shadow-2xl border-2 border-[#CEF17B]/40 flex items-center justify-center preserve-3d"
             style={{
               transform: `rotateY(${rotationY}deg)`,
               transition: isSpinning
@@ -88,9 +88,9 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
               transformStyle: 'preserve-3d',
             }}
           >
-            {/* Card Back (when flipped) - Whimsical botanical pattern */}
+            {/* Card Back (when flipped) - White card back */}
             <div
-              className="absolute inset-0 rounded-2xl bg-sage-50 border-2 border-forest-300 flex items-center justify-center backface-hidden overflow-hidden"
+              className="absolute inset-0 rounded-2xl bg-white border-2 border-[#CEF17B]/40 flex items-center justify-center backface-hidden overflow-hidden"
               style={{
                 backfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)',
@@ -99,27 +99,31 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
               <div className="text-center w-full p-6">
                 <div className="w-44 h-44 mx-auto mb-3 flex items-center justify-center relative">
                   <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{
                       backgroundImage: 'url(/card-back-pattern.png)',
                       backgroundSize: 'cover',
                     }}
                   />
+                  {/* Decorative pattern fallback */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 border-4 border-[#CEF17B]/20 rounded-full"></div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-light text-forest-900 mb-1">Daily Card</h3>
-                <p className="text-forest-600 text-sm uppercase tracking-widest">Tarot</p>
+                <h3 className="text-2xl font-handwritten text-[#172211] mb-1">Daily Card</h3>
+                <p className="text-[#172211]/60 text-sm font-handwritten uppercase tracking-widest">Tarot</p>
               </div>
             </div>
 
             {/* Card Front - Shows actual card icon */}
             <div
-              className="absolute inset-0 rounded-2xl bg-cream-100 flex items-center justify-center backface-hidden"
+              className="absolute inset-0 rounded-2xl bg-white flex items-center justify-center backface-hidden"
               style={{
                 backfaceVisibility: 'hidden',
               }}
             >
               <div className="text-center w-full p-6">
-                <div className="w-44 h-44 mx-auto mb-3 text-forest-700">
+                <div className="w-44 h-44 mx-auto mb-3 text-[#172211]">
                   {CardIcon && !isSpinning ? (
                     <CardIcon />
                   ) : (
@@ -133,10 +137,10 @@ export default function RolodexFlip({ finalCard, onComplete, dateString }: Rolod
                     </div>
                   )}
                 </div>
-                <h3 className="text-2xl font-light text-forest-900 mb-1">
+                <h3 className="text-2xl font-handwritten text-[#172211] mb-1">
                   {displayCardName}
                 </h3>
-                <p className="text-forest-600 text-sm uppercase tracking-widest">
+                <p className="text-[#172211]/60 text-sm font-handwritten uppercase tracking-widest">
                   {isSpinning ? 'Shuffling...' : 'Major Arcana'}
                 </p>
               </div>

@@ -13,7 +13,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [birthDay, setBirthDay] = useState('');
   const [birthYear, setBirthYear] = useState('');
 
-  const totalSteps = 4; // 0-indexed, so 5 screens total
+  const totalSteps = 3; // 0-indexed, so 4 screens total (0: logo, 1: name, 2: birthdate, 3: about)
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -31,55 +31,89 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const canContinueFromBirthdate = birthMonth && birthDay && birthYear;
 
   const screens = [
-    // Screen 0: Welcome
-    <div key="welcome" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    // Screen 0: "slow hour" Logo (THE MOST IMPORTANT SCREEN - Perfected on Jan 19, 2026)
+    <div key="welcome" className="flex flex-col items-center justify-center min-h-screen bg-white px-8">
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          {/* Hand-drawn sun/moon icon */}
-          <div className="w-32 h-32 mx-auto mb-8">
-            <svg viewBox="0 0 100 100" className="w-full h-full text-forest-700">
-              {/* Crescent moon */}
-              <path
-                d="M 50 10 A 30 30 0 1 0 50 90 A 25 25 0 1 1 50 10 Z"
-                fill="currentColor"
-                opacity="0.15"
-              />
-              <path
-                d="M 50 10 A 30 30 0 1 0 50 90 A 25 25 0 1 1 50 10 Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
-            </svg>
+        <div style={{
+          overflow: 'visible',
+          marginTop: '-100px',
+          marginLeft: '-40px'
+        }}>
+          {/* "slow" line */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0',
+            overflow: 'visible'
+          }}>
+            <span style={{
+              fontSize: '550px',
+              lineHeight: '0.15',
+              letterSpacing: '-0.07em',
+              color: '#000000',
+              fontFamily: 'Reenie Beanie, cursive'
+            }}>
+              sl
+            </span>
+
+            <img
+              src="/spiral-logo.svg?v=3"
+              alt="o"
+              style={{
+                height: '342px',
+                width: 'auto',
+                marginTop: '61px',
+                marginLeft: '-18px',
+                marginRight: '-18px',
+                transform: 'scaleX(0.93)',
+                filter: 'brightness(0)'
+              }}
+            />
+
+            <span style={{
+              fontSize: '550px',
+              lineHeight: '0.15',
+              letterSpacing: '-0.07em',
+              color: '#000000',
+              marginLeft: '-30px',
+              fontFamily: 'Reenie Beanie, cursive'
+            }}>
+              w
+            </span>
           </div>
 
-          <h1 className="text-6xl font-handwritten text-forest-900 mb-4">
-            Slow Hour
-          </h1>
-
-          <p className="text-forest-600 text-xl md:text-3xl font-light">
-            One card. One moment. One day.
-          </p>
+          {/* "hour" line */}
+          <div>
+            <span style={{
+              fontSize: '550px',
+              lineHeight: '0.15',
+              letterSpacing: '-0.07em',
+              color: '#000000',
+              fontFamily: 'Reenie Beanie, cursive'
+            }}>
+              hour
+            </span>
+          </div>
         </div>
       </div>
 
       <button
         onClick={handleNext}
-        className="mb-12 px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+        className="mb-12 px-8 py-4 bg-black hover:bg-gray-800 text-white font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
       >
         Begin →
       </button>
     </div>,
 
     // Screen 1: Name
-    <div key="name" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    <div key="name" className="flex flex-col items-center justify-center min-h-screen bg-[#172211] px-8">
       <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
+        <h2 className="text-5xl font-handwritten text-[#E1EEFC] mb-4 text-center" style={{fontSize: '48px'}}>
           What's your name?
         </h2>
 
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          So we can greet you properly
+        <p className="text-[#E1EEFC]/70 text-2xl font-handwritten text-center mb-12" style={{fontSize: '24px'}}>
+          This will be the name Slow Hour uses to refer to you
         </p>
 
         <input
@@ -92,7 +126,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             }
           }}
           placeholder="Your name"
-          className="w-full max-w-sm px-6 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+          className="w-full max-w-sm px-6 py-4 font-handwritten text-[#172211] bg-white border-2 border-[#CEF17B]/20 rounded-2xl focus:outline-none focus:border-[#CEF17B] transition-colors text-center"
+          style={{fontSize: '36px'}}
           autoFocus
         />
       </div>
@@ -101,10 +136,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <button
           onClick={handleNext}
           disabled={!canContinueFromName}
-          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+          className={`px-8 py-4 font-handwritten rounded-full transition-all duration-200 text-lg ${
             canContinueFromName
-              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
-              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+              ? 'bg-[#CEF17B] hover:bg-[#CEF17B]/90 text-[#172211] hover:shadow-lg'
+              : 'bg-[#CEF17B]/20 text-[#E1EEFC]/30 cursor-not-allowed'
           }`}
         >
           Continue →
@@ -113,21 +148,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     </div>,
 
     // Screen 2: Birthdate
-    <div key="birthdate" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    <div key="birthdate" className="flex flex-col items-center justify-center min-h-screen bg-[#172211] px-8">
       <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
+        <h2 className="text-5xl font-handwritten text-[#E1EEFC] mb-4 text-center" style={{fontSize: '48px'}}>
           When were you born?
         </h2>
 
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          Your cards will be drawn just for you
+        <p className="text-[#E1EEFC]/70 text-2xl font-handwritten text-center mb-12" style={{fontSize: '24px'}}>
+          Slow Hour may surprise you with a birthday gift
         </p>
 
         <div className="flex gap-3 w-full max-w-sm">
           <select
             value={birthMonth}
             onChange={(e) => setBirthMonth(e.target.value)}
-            className="flex-1 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center appearance-none cursor-pointer"
+            className="flex-1 px-4 py-4 font-handwritten text-[#172211] bg-white border-2 border-[#CEF17B]/20 rounded-2xl focus:outline-none focus:border-[#CEF17B] transition-colors text-center appearance-none cursor-pointer"
           >
             <option value="">Month</option>
             <option value="1">January</option>
@@ -151,7 +186,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             placeholder="Day"
             min="1"
             max="31"
-            className="w-24 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+            className="w-24 px-4 py-4 font-handwritten text-[#172211] bg-white border-2 border-[#CEF17B]/20 rounded-2xl focus:outline-none focus:border-[#CEF17B] transition-colors text-center"
           />
 
           <input
@@ -160,8 +195,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             onChange={(e) => setBirthYear(e.target.value)}
             placeholder="Year"
             min="1900"
-            max="2024"
-            className="w-28 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+            max="2026"
+            className="w-28 px-4 py-4 font-handwritten text-[#172211] bg-white border-2 border-[#CEF17B]/20 rounded-2xl focus:outline-none focus:border-[#CEF17B] transition-colors text-center"
           />
         </div>
       </div>
@@ -170,10 +205,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <button
           onClick={handleNext}
           disabled={!canContinueFromBirthdate}
-          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+          className={`px-8 py-4 font-handwritten rounded-full transition-all duration-200 text-lg ${
             canContinueFromBirthdate
-              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
-              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+              ? 'bg-[#CEF17B] hover:bg-[#CEF17B]/90 text-[#172211] hover:shadow-lg'
+              : 'bg-[#CEF17B]/20 text-[#E1EEFC]/30 cursor-not-allowed'
           }`}
         >
           Continue →
@@ -182,13 +217,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     </div>,
 
     // Screen 3: About the App
-    <div key="about" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    <div key="about" className="flex flex-col items-center justify-center min-h-screen bg-[#172211] px-8">
       <div className="flex-1 flex flex-col items-center justify-center max-w-lg w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-8 text-center">
+        <h2 className="text-4xl font-handwritten text-[#E1EEFC] mb-8 text-center">
           Why one card each day?
         </h2>
 
-        <div className="space-y-6 text-forest-700 text-xl md:text-2xl font-light leading-relaxed">
+        <div className="space-y-6 text-[#E1EEFC]/80 text-xl font-handwritten leading-relaxed">
           <p>
             In our fast-paced world, we often rush through moments without truly experiencing them.
             Slow Hour invites you to pause.
@@ -208,43 +243,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       <button
         onClick={handleNext}
-        className="mb-12 px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+        className="mb-12 px-8 py-4 bg-[#CEF17B] hover:bg-[#CEF17B]/90 text-[#172211] font-handwritten rounded-full transition-all duration-200 hover:shadow-lg text-lg"
       >
-        Continue →
+        Draw my first card →
       </button>
     </div>,
 
-    // Screen 4: Ready to Draw
-    <div key="ready" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center">
-        {/* Card back illustration with botanical pattern */}
-        <div className="w-64 h-96 mb-12 bg-cream-50 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center overflow-hidden relative">
-          <div
-            className="absolute inset-8 bg-cover bg-center"
-            style={{
-              backgroundImage: 'url(/card-back-pattern.png)',
-              backgroundSize: 'cover',
-            }}
-          />
-        </div>
-
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Your first card awaits{name ? `, ${name}` : ''}
-        </h2>
-
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          Take a breath. When you're ready...
-        </p>
-
-        <button
-          onClick={handleNext}
-          className="px-12 py-5 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-xl"
-        >
-          Draw my card
-        </button>
-      </div>
-
-    </div>,
   ];
 
   return <>{screens[currentStep]}</>;

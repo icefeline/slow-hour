@@ -205,8 +205,8 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream-50">
-        <div className="text-forest-600 text-lg font-light">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#172211]">
+        <div className="text-[#E1EEFC] text-lg font-handwritten">Loading...</div>
       </div>
     );
   }
@@ -216,44 +216,75 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-cream-50">
+    <main className="min-h-screen bg-[#172211]">
       {/* Header with View Toggle */}
-      <div className="fixed top-0 left-0 right-0 bg-cream-50/80 backdrop-blur-sm border-b border-forest-200 z-30">
+      <div className="fixed top-0 left-0 right-0 z-30" style={{
+        backgroundColor: 'rgba(23, 34, 17, 0.85)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(206, 241, 123, 0.2)'
+      }}>
         <div className="max-w-4xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
-          <h1 className="text-3xl font-handwritten text-forest-900">
-            Slow Hour
-          </h1>
+          {/* Logo with spiral */}
+          <div className="flex items-center gap-2">
+            <span className="text-3xl font-handwritten text-[#E1EEFC]">
+              sl
+            </span>
+            <img
+              src="/spiral-logo.svg"
+              alt="o"
+              style={{
+                height: '48px',
+                width: 'auto',
+                filter: 'brightness(0) invert(1)'
+              }}
+            />
+            <span className="text-3xl font-handwritten text-[#E1EEFC]">
+              w hour
+            </span>
+          </div>
 
           <div className="flex gap-3">
             <button
               onClick={() => setCurrentView('card')}
-              className={`px-6 py-3 rounded-full text-xl font-light transition-all ${
+              className={`px-6 py-3 rounded-full text-xl font-handwritten transition-all ${
                 currentView === 'card'
-                  ? 'bg-forest-500 text-cream-50'
-                  : 'bg-forest-100 text-forest-700 hover:bg-forest-200'
+                  ? 'bg-[#CEF17B] text-[#172211]'
+                  : 'bg-[#CEF17B]/20 text-[#E1EEFC] hover:bg-[#CEF17B]/30'
               }`}
             >
-              Today
+              today
             </button>
             <button
               onClick={() => setCurrentView('year')}
-              className={`px-6 py-3 rounded-full text-xl font-light transition-all ${
+              className={`px-6 py-3 rounded-full text-xl font-handwritten transition-all ${
                 currentView === 'year'
-                  ? 'bg-forest-500 text-cream-50'
-                  : 'bg-forest-100 text-forest-700 hover:bg-forest-200'
+                  ? 'bg-[#CEF17B] text-[#172211]'
+                  : 'bg-[#CEF17B]/20 text-[#E1EEFC] hover:bg-[#CEF17B]/30'
               }`}
             >
-              Year
+              year
             </button>
             {/* Only show reset button in development */}
             {process.env.NODE_ENV === 'development' && (
-              <button
-                onClick={handleReset}
-                className="px-4 py-3 rounded-full text-2xl font-light bg-forest-50 text-forest-600 hover:bg-forest-100 transition-all"
-                title="Reset to see rolodex animation"
-              >
-                ↻
-              </button>
+              <>
+                <button
+                  onClick={handleReset}
+                  className="px-4 py-3 rounded-full text-2xl font-handwritten bg-[#CEF17B]/10 text-[#CEF17B] hover:bg-[#CEF17B]/20 transition-all"
+                  title="Reset to see rolodex animation"
+                >
+                  ↻
+                </button>
+                <button
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                  className="px-4 py-3 rounded-full text-2xl font-handwritten bg-[#CEF17B]/10 text-[#CEF17B] hover:bg-[#CEF17B]/20 transition-all"
+                  title="Full reset (clear all data)"
+                >
+                  🔄
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -269,7 +300,7 @@ export default function Home() {
           <div className="max-w-2xl mx-auto px-6 md:px-8 py-12">
             {/* Date */}
             <div className="text-center mb-12">
-              <p className="text-forest-600 text-2xl font-light tracking-wider uppercase">
+              <p className="text-[#CEF17B] text-2xl font-handwritten tracking-wider">
                 {new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
@@ -291,11 +322,11 @@ export default function Home() {
               <div className="text-center mt-16">
                 <button
                   onClick={handleRevealCard}
-                  className="px-8 py-3 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-md"
+                  className="px-8 py-3 bg-[#CEF17B] hover:bg-[#CEF17B]/90 text-[#172211] font-handwritten rounded-full transition-all duration-200 hover:shadow-md"
                 >
                   Reveal Card
                 </button>
-                <p className="text-forest-500 text-xs mt-4 font-light">
+                <p className="text-[#E1EEFC]/50 text-xs mt-4 font-handwritten">
                   Take a moment to center yourself
                 </p>
               </div>
@@ -314,18 +345,19 @@ export default function Home() {
 
               return (
                 <div className="mt-16 p-8">
-                  <h3 className="text-3xl font-light text-forest-900 mb-4">
+                  <h3 className="text-3xl font-handwritten text-[#E1EEFC] mb-4">
                     Reflection
                   </h3>
                   {isToday ? (
                     <textarea
-                      className="w-full h-48 bg-cream-50/80 text-forest-800 border border-forest-300 rounded-xl p-6 focus:outline-none focus:ring-2 focus:ring-forest-500 resize-none font-light text-xl leading-relaxed"
+                      className="w-full h-48 bg-[#172211]/50 text-[#E1EEFC] border border-[#CEF17B]/20 rounded-xl p-6 focus:outline-none focus:ring-2 focus:ring-[#CEF17B] resize-none font-handwritten text-xl leading-relaxed"
+                      style={{fontSize: '40px', fontFamily: 'Reenie Beanie, cursive'}}
                       placeholder="Write your thoughts here..."
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
                     />
                   ) : (
-                    <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-6 text-forest-800 font-light text-xl leading-relaxed">
+                    <div className="bg-[#172211]/30 border border-[#CEF17B]/20 rounded-xl p-6 text-[#E1EEFC] font-handwritten text-xl leading-relaxed">
                       {reflection}
                     </div>
                   )}

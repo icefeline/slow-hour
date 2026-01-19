@@ -42,7 +42,7 @@ const VerticalLine = ({ isToday }: { isToday?: boolean }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-        className={isToday ? "text-forest-700" : "text-forest-300"}
+        style={{ color: isToday ? '#CEF17B' : 'rgba(206, 241, 123, 0.3)' }}
         opacity={isToday ? "0.8" : "0.4"}
       />
     </svg>
@@ -53,7 +53,7 @@ const VerticalLine = ({ isToday }: { isToday?: boolean }) => {
 const MiniTarotCard = ({ isToday }: { isToday?: boolean }) => {
   return (
     <div className={`w-full h-full rounded border-2 ${
-      isToday ? "border-forest-700 bg-cream-100" : "border-forest-400 bg-cream-50"
+      isToday ? "border-[#CEF17B] bg-[#CEF17B]/20" : "border-[#CEF17B]/40 bg-[#CEF17B]/10"
     } shadow-sm`} />
   );
 };
@@ -176,14 +176,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   }, [selectedDate, selectedEntry]);
 
   return (
-    <div className="relative min-h-screen bg-cream-50 pt-12">
+    <div className="relative min-h-screen bg-[#172211] pt-12">
       {/* Sticky header with gradient fade background */}
-      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-cream-50 via-cream-50 to-cream-50/0 pb-6 md:pb-8">
+      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-6 md:pb-8">
         <div className="text-center pt-6 md:pt-4 px-6 md:px-8">
-          <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-handwritten text-[#E1EEFC] mb-2">
             {year}
           </h1>
-          <p className="text-forest-600 text-base md:text-lg font-light">
+          <p className="text-[#CEF17B] text-base md:text-lg font-handwritten">
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
         </div>
@@ -221,7 +221,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               >
                 {/* Month label */}
                 {isMonthStart && (
-                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base font-handwritten text-forest-700 whitespace-nowrap pointer-events-none">
+                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base font-handwritten text-[#CEF17B] whitespace-nowrap pointer-events-none">
                     {month.slice(0, 3)}
                   </div>
                 )}
@@ -271,7 +271,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                       {/* Card icon */}
                       {CardIcon && (
                         <div
-                          className={`absolute inset-0 p-0.5 text-forest-700 ${
+                          className={`absolute inset-0 p-0.5 text-[#172211] ${
                             isReversed ? 'rotate-180' : ''
                           }`}
                         >
@@ -282,7 +282,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                       {/* Reversed indicator - tiny curve below card */}
                       {isReversed && (
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
-                          <svg viewBox="0 0 8 4" className="w-2 h-2 text-forest-600" opacity="0.6">
+                          <svg viewBox="0 0 8 4" className="w-2 h-2 text-[#CEF17B]" opacity="0.6">
                             <path
                               d="M 1 1 Q 4 3 7 1"
                               stroke="currentColor"
@@ -301,15 +301,15 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
 
                   {/* Hover tooltip */}
                   {hoveredDate === date && (
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-forest-800/90 text-cream-50 px-3 py-2 rounded-lg text-xs whitespace-nowrap z-50 shadow-lg border border-forest-600/30">
-                      <div className="font-light">
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-[#172211]/90 text-[#E1EEFC] px-3 py-2 rounded-lg text-xs whitespace-nowrap z-50 shadow-lg border border-[#CEF17B]/30">
+                      <div className="font-handwritten">
                         {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric'
                         })}
                       </div>
                       {hasCard && entry && (
-                        <div className="font-handwritten text-sm">
+                        <div className="font-handwritten text-sm text-[#CEF17B]">
                           {isReversed ? '↻ Reversed' : 'Upright'}
                         </div>
                       )}
@@ -327,22 +327,22 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         <>
           {/* Backdrop */}
           <div
-            className="md:hidden fixed inset-0 bg-forest-900/40 backdrop-blur-sm z-40"
+            className="md:hidden fixed inset-0 bg-[#172211]/80 backdrop-blur-sm z-40"
             onClick={() => setDrawerOpen(false)}
           />
 
           {/* Drawer */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#CEF17B]/30">
             {/* Handle bar - sticky with higher z-index */}
-            <div className="sticky top-0 bg-cream-50 pt-4 pb-3 flex justify-center rounded-t-3xl z-10">
-              <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
+            <div className="sticky top-0 bg-[#172211] pt-4 pb-3 flex justify-center rounded-t-3xl z-10">
+              <div className="w-12 h-1.5 bg-[#CEF17B]/40 rounded-full" />
             </div>
 
             {/* Content */}
             <div className="px-6 pb-8 pt-6">
               {/* Date */}
               <div className="text-center mb-8">
-                <p className="text-forest-600 text-lg font-light tracking-wider uppercase">
+                <p className="text-[#CEF17B] text-lg font-handwritten tracking-wider">
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -367,10 +367,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 if (reflection && reflection.trim()) {
                   return (
                     <div className="mt-6 max-w-sm mx-auto">
-                      <h3 className="text-2xl font-light text-forest-900 mb-3">
+                      <h3 className="text-2xl font-handwritten text-[#E1EEFC] mb-3">
                         Reflection
                       </h3>
-                      <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed">
+                      <div className="bg-[#172211]/50 border border-[#CEF17B]/20 rounded-xl p-4 text-[#E1EEFC] font-handwritten text-base leading-relaxed">
                         {reflection}
                       </div>
                     </div>

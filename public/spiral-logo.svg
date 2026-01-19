@@ -1,0 +1,14 @@
+<svg width="342" height="342" viewBox="0 0 342 342" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Spiral design for the "o" in slow hour -->
+  <path d="M171 171 Q 171 100, 230 100 Q 270 100, 270 140 Q 270 180, 230 180 Q 180 180, 180 140 Q 180 110, 205 110 Q 220 110, 220 125 Q 220 140, 205 140 Q 195 140, 195 130 Q 195 125, 200 125"
+        stroke="black"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+  <path d="M171 171 Q 171 242, 112 242 Q 72 242, 72 202 Q 72 162, 112 162 Q 162 162, 162 202 Q 162 232, 137 232 Q 122 232, 122 217 Q 122 202, 137 202 Q 147 202, 147 212 Q 147 217, 142 217"
+        stroke="black"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+  <circle cx="171" cy="171" r="8" fill="black"/>
+</svg>
