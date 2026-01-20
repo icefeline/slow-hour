@@ -3,29 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --background: #fdfdf9;
-  --foreground: #28392f;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #f4f7f5;
-    --foreground: #141f19;
-  }
+  --background: #172211;
+  --foreground: #E1EEFC;
+  --accent: #CEF17B;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-reenie-beanie), cursive;
-  font-size: 1.875rem;
-  line-height: 1.5;
-  text-transform: lowercase;
 }
 
-button, input, textarea {
+button, input, textarea, select {
   font-family: var(--font-reenie-beanie), cursive;
-  text-transform: lowercase;
 }
 
 @layer utilities {
@@ -125,4 +115,14 @@ button, input, textarea {
 
 .kaleidoscope-layer-3 {
   animation: kaleidoscope-layer-3 30s ease-in-out infinite;
+}
+
+/* Circular marquee animation for keywords */
+@keyframes circular-revolve {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg);
+  }
 }

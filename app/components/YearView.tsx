@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { getCardIcon } from './card-icons';
 import TarotCard from './TarotCard';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
+import { tarotDeck } from '@/lib/data/tarot-deck';
 
 interface JournalEntry {
   date: string;
@@ -42,19 +43,36 @@ const VerticalLine = ({ isToday }: { isToday?: boolean }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-        className={isToday ? "text-forest-700" : "text-forest-300"}
-        opacity={isToday ? "0.8" : "0.4"}
+        className={isToday ? "text-[#CEF17B]" : "text-[#CEF17B]"}
+        opacity={isToday ? "0.6" : "0.2"}
       />
     </svg>
   );
 };
 
 // Mini tarot card component for opened dates
-const MiniTarotCard = ({ isToday }: { isToday?: boolean }) => {
+const MiniTarotCard = ({ cardId, cardName, isToday }: { cardId: string; cardName: string; isToday?: boolean }) => {
+  // Convert card ID to filename
+  const getCardFilename = (cardId: string, cardName: string) => {
+    // For major arcana, add the name part (e.g., "major-1" -> "major-1-magician")
+    if (cardId.startsWith('major-')) {
+      const namePart = cardName.toLowerCase().replace(/\s+/g, '-').replace(/^the-/, '');
+      return `${cardId}-${namePart}`;
+    }
+    // For minor arcana, just use the ID (e.g., "cups-ace", "wands-2")
+    return cardId;
+  };
+
   return (
-    <div className={`w-full h-full rounded border-2 ${
-      isToday ? "border-forest-700 bg-cream-100" : "border-forest-400 bg-cream-50"
-    } shadow-sm`} />
+    <div className={`w-full h-full rounded overflow-hidden ${
+      isToday ? "ring-2 ring-[#CEF17B] shadow-lg" : "shadow-sm"
+    }`}>
+      <img
+        src={`/cards/${getCardFilename(cardId, cardName)}.png`}
+        alt={cardName}
+        className="w-full h-full object-cover"
+      />
+    </div>
   );
 };
 
@@ -67,6 +85,15 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   const containerRef = useRef<HTMLDivElement>(null);
   const currentMonthRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Create a card lookup map
+  const cardLookup = useMemo(() => {
+    const map = new Map<string, TarotCardType>();
+    tarotDeck.forEach(card => {
+      map.set(card.id, card);
+    });
+    return map;
+  }, []);
 
   // Reset animation each time component mounts (when switching to Year view)
   useEffect(() => {
@@ -89,7 +116,8 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       const monthName = new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long' });
 
       for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day).toISOString().split('T')[0];
+        // Use Date.UTC to avoid timezone issues
+        const date = new Date(Date.UTC(year, month, day)).toISOString().split('T')[0];
         days.push({
           date,
           month: monthName,
@@ -110,23 +138,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     return map;
   }, [journalEntries]);
 
-  // Scroll to current month on load
+  // Scroll to top (January 1st) on load
   useEffect(() => {
-    if (currentMonthRef.current) {
-      // Delay scroll to avoid triggering glass effect on initial load
-      setTimeout(() => {
-        // Temporarily disable scroll detection
-        setIsScrolling(false);
-        currentMonthRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-        // Keep glass hidden during initial auto-scroll
-        setTimeout(() => {
-          setIsScrolling(false);
-        }, 1000);
-      }, 100);
-    }
+    // Scroll to top of page to show January 1st
+    window.scrollTo({
+      top: 0,
+      behavior: 'auto'
+    });
   }, []);
 
   // Detect scrolling to show/hide glass effect
@@ -176,23 +194,23 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   }, [selectedDate, selectedEntry]);
 
   return (
-    <div className="relative min-h-screen bg-cream-50 pt-12">
+    <div className="relative min-h-screen bg-[#172211] pt-12">
       {/* Sticky header with gradient fade background */}
-      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-cream-50 via-cream-50 to-cream-50/0 pb-6 md:pb-8">
+      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-6 md:pb-8">
         <div className="text-center pt-6 md:pt-4 px-6 md:px-8">
-          <h1 className="text-4xl md:text-5xl font-handwritten text-forest-900 mb-2">
+          <h1 className="text-4xl md:text-5xl text-[#CEF17B] mb-2" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             {year}
           </h1>
-          <p className="text-forest-600 text-base md:text-lg font-light">
+          <p className="text-[#E1EEFC] text-base md:text-lg opacity-70" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-8 pb-8">
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 pb-8">
 
         {/* Compact grid of all days - vertical lines and mini cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(20px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(24px,1fr))] gap-1 md:gap-1.5 justify-items-center">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(22px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(28px,1fr))] gap-1 gap-y-6 md:gap-5 md:gap-y-8 justify-items-center items-end">
           {allDaysInYear.map((dayData, idx) => {
             const { date, month, monthIndex } = dayData;
             const entry = cardMap.get(date);
@@ -213,16 +231,17 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             return (
               <div
                 key={date}
-                className="relative"
+                className="relative flex items-end"
                 ref={monthIndex === currentMonth && isMonthStart ? currentMonthRef : null}
                 style={{
-                  animationDelay: hasCard ? `${animationDelay}ms` : '0ms'
+                  animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
+                  height: 'clamp(36px, 7vw, 48px)'
                 }}
               >
                 {/* Month label */}
                 {isMonthStart && (
-                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base font-handwritten text-forest-700 whitespace-nowrap pointer-events-none">
-                    {month.slice(0, 3)}
+                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base text-[#CEF17B] whitespace-nowrap pointer-events-none" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                    {month.slice(0, 3).toLowerCase()}
                   </div>
                 )}
 
@@ -253,8 +272,8 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                     ${hasCard && animating ? 'card-flip-enter' : ''}
                   `}
                   style={{
-                    width: hasCard ? 'clamp(20px, 5vw, 24px)' : '3px',
-                    height: 'clamp(28px, 7vw, 36px)',
+                    width: hasCard ? 'clamp(24px, 5vw, 32px)' : '2.5px',
+                    height: hasCard ? '100%' : 'clamp(28px, 6vw, 36px)',
                     animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
                     animationFillMode: 'backwards',
                   }}
@@ -266,23 +285,20 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                   {hasCard ? (
                     // Mini tarot card for opened dates
                     <>
-                      <MiniTarotCard isToday={isToday} />
-
-                      {/* Card icon */}
-                      {CardIcon && (
-                        <div
-                          className={`absolute inset-0 p-0.5 text-forest-700 ${
-                            isReversed ? 'rotate-180' : ''
-                          }`}
-                        >
-                          <CardIcon />
+                      {entry && cardLookup.get(entry.cardId) && (
+                        <div className={isReversed ? 'rotate-180 w-full h-full' : 'w-full h-full'}>
+                          <MiniTarotCard
+                            cardId={entry.cardId}
+                            cardName={cardLookup.get(entry.cardId)!.name}
+                            isToday={isToday}
+                          />
                         </div>
                       )}
 
                       {/* Reversed indicator - tiny curve below card */}
                       {isReversed && (
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
-                          <svg viewBox="0 0 8 4" className="w-2 h-2 text-forest-600" opacity="0.6">
+                          <svg viewBox="0 0 8 4" className="w-2 h-2 text-[#CEF17B]" opacity="0.6">
                             <path
                               d="M 1 1 Q 4 3 7 1"
                               stroke="currentColor"
@@ -301,16 +317,16 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
 
                   {/* Hover tooltip */}
                   {hoveredDate === date && (
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-forest-800/90 text-cream-50 px-3 py-2 rounded-lg text-xs whitespace-nowrap z-50 shadow-lg border border-forest-600/30">
-                      <div className="font-light">
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-[#172211]/95 text-[#CEF17B] px-3 py-2 rounded-lg text-xl whitespace-nowrap z-50 shadow-lg border border-[#CEF17B]/30" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                      <div>
                         {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric'
-                        })}
+                        }).toLowerCase()}
                       </div>
                       {hasCard && entry && (
-                        <div className="font-handwritten text-sm">
-                          {isReversed ? '↻ Reversed' : 'Upright'}
+                        <div className="text-xl">
+                          {isReversed ? '↻ reversed' : 'upright'}
                         </div>
                       )}
                     </div>
@@ -327,28 +343,28 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         <>
           {/* Backdrop */}
           <div
-            className="md:hidden fixed inset-0 bg-forest-900/40 backdrop-blur-sm z-40"
+            className="md:hidden fixed inset-0 bg-[#172211]/60 backdrop-blur-sm z-40"
             onClick={() => setDrawerOpen(false)}
           />
 
           {/* Drawer */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-cream-50 rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up">
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#CEF17B]/30">
             {/* Handle bar - sticky with higher z-index */}
-            <div className="sticky top-0 bg-cream-50 pt-4 pb-3 flex justify-center rounded-t-3xl z-10">
-              <div className="w-12 h-1.5 bg-forest-300 rounded-full" />
+            <div className="sticky top-0 bg-[#172211] pt-4 pb-3 flex justify-center rounded-t-3xl z-10">
+              <div className="w-12 h-1.5 bg-[#CEF17B]/40 rounded-full" />
             </div>
 
             {/* Content */}
             <div className="px-6 pb-8 pt-6">
               {/* Date */}
               <div className="text-center mb-8">
-                <p className="text-forest-600 text-lg font-light tracking-wider uppercase">
+                <p className="text-[#CEF17B] text-2xl tracking-wider" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric'
-                  })}
+                  }).toLowerCase()}
                 </p>
               </div>
 
@@ -367,10 +383,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 if (reflection && reflection.trim()) {
                   return (
                     <div className="mt-6 max-w-sm mx-auto">
-                      <h3 className="text-2xl font-light text-forest-900 mb-3">
-                        Reflection
+                      <h3 className="text-3xl text-[#CEF17B] mb-3" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                        reflection
                       </h3>
-                      <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-4 text-forest-800 font-light text-base leading-relaxed">
+                      <div className="bg-[#172211] border-2 border-[#CEF17B]/20 rounded-xl p-4 text-[#E1EEFC] text-2xl leading-relaxed" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                         {reflection}
                       </div>
                     </div>

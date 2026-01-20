@@ -15,10 +15,15 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
 
-  // Convert card ID to filename (e.g., "major-1" -> "major-1-magician")
+  // Convert card ID to filename
   const getCardFilename = (cardId: string, cardName: string) => {
-    const namePart = cardName.toLowerCase().replace(/\s+/g, '-').replace(/^the-/, '');
-    return `${cardId}-${namePart}`;
+    // For major arcana, add the name part (e.g., "major-1" -> "major-1-magician")
+    if (cardId.startsWith('major-')) {
+      const namePart = cardName.toLowerCase().replace(/\s+/g, '-').replace(/^the-/, '');
+      return `${cardId}-${namePart}`;
+    }
+    // For minor arcana, just use the ID (e.g., "cups-ace", "wands-2")
+    return cardId;
   };
 
   return (

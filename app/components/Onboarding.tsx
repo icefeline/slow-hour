@@ -13,7 +13,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [birthDay, setBirthDay] = useState('');
   const [birthYear, setBirthYear] = useState('');
 
-  const totalSteps = 4; // 0-indexed, so 5 screens total
+  const totalSteps = 3; // 0-indexed, so 4 screens total (0, 1, 2, 3)
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -31,55 +31,116 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const canContinueFromBirthdate = birthMonth && birthDay && birthYear;
 
   const screens = [
-    // Screen 0: Welcome
-    <div key="welcome" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          {/* Hand-drawn sun/moon icon */}
-          <div className="w-32 h-32 mx-auto mb-8">
-            <svg viewBox="0 0 100 100" className="w-full h-full text-forest-700">
-              {/* Crescent moon */}
-              <path
-                d="M 50 10 A 30 30 0 1 0 50 90 A 25 25 0 1 1 50 10 Z"
-                fill="currentColor"
-                opacity="0.15"
-              />
-              <path
-                d="M 50 10 A 30 30 0 1 0 50 90 A 25 25 0 1 1 50 10 Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
-            </svg>
-          </div>
+    // Screen 0: "slow hour" Logo - MOST CRITICAL!
+    <div key="logo" className="min-h-screen flex items-center justify-center bg-[#172211] overflow-hidden relative">
+      {/* Optional background video */}
+      {/* <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-10">
+        <source src="/onboarding-bg.mp4" type="video/mp4" />
+      </video> */}
 
-          <h1 className="text-6xl font-handwritten text-forest-900 mb-4">
-            Slow Hour
-          </h1>
+      <div
+        className="relative z-10"
+        style={{
+          overflow: 'visible',
+          marginTop: '-100px',
+          marginLeft: '-40px'
+        }}
+      >
+        {/* "slow" line */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0',
+          overflow: 'visible'
+        }}>
+          <span style={{
+            fontSize: 'clamp(200px, 30vw, 550px)',
+            lineHeight: '0.15',
+            letterSpacing: '-0.07em',
+            color: '#CEF17B',
+            fontFamily: 'var(--font-reenie-beanie), cursive'
+          }}>
+            sl
+          </span>
 
-          <p className="text-forest-600 text-xl md:text-3xl font-light">
-            One card. One moment. One day.
-          </p>
+          {/* Spiral logo as "o" - NOTE: You need to add spiral-logo.png to /public/ */}
+          <img
+            src="/spiral-logo.png?v=3"
+            alt="o"
+            style={{
+              height: 'clamp(125px, 18vw, 342px)',
+              width: 'auto',
+              marginTop: 'clamp(22px, 3.2vw, 61px)',
+              marginLeft: 'clamp(-7px, -1vw, -18px)',
+              marginRight: 'clamp(-7px, -1vw, -18px)',
+              transform: 'scaleX(0.93)',
+              filter: 'brightness(0) saturate(100%) invert(90%) sepia(13%) saturate(1487%) hue-rotate(27deg) brightness(104%) contrast(95%)'
+            }}
+            onError={(e) => {
+              // Fallback if spiral logo doesn't exist
+              e.currentTarget.style.display = 'none';
+              const fallback = document.createElement('span');
+              fallback.textContent = 'o';
+              fallback.style.fontSize = 'clamp(200px, 30vw, 550px)';
+              fallback.style.lineHeight = '0.15';
+              fallback.style.letterSpacing = '-0.07em';
+              fallback.style.color = '#CEF17B';
+              fallback.style.fontFamily = 'var(--font-reenie-beanie), cursive';
+              e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget.nextSibling);
+            }}
+          />
+
+          <span style={{
+            fontSize: 'clamp(200px, 30vw, 550px)',
+            lineHeight: '0.15',
+            letterSpacing: '-0.07em',
+            color: '#CEF17B',
+            marginLeft: 'clamp(-11px, -1.6vw, -30px)',
+            fontFamily: 'var(--font-reenie-beanie), cursive'
+          }}>
+            w
+          </span>
+        </div>
+
+        {/* "hour" line */}
+        <div>
+          <span style={{
+            fontSize: 'clamp(200px, 30vw, 550px)',
+            lineHeight: '0.15',
+            letterSpacing: '-0.07em',
+            color: '#CEF17B',
+            fontFamily: 'var(--font-reenie-beanie), cursive'
+          }}>
+            hour
+          </span>
         </div>
       </div>
 
+      {/* Continue button */}
       <button
         onClick={handleNext}
-        className="mb-12 px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 px-8 py-4 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 text-4xl"
+        style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
       >
-        Begin →
+        begin →
       </button>
     </div>,
 
-    // Screen 1: Name
-    <div key="name" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    // Screen 1: Name Input
+    <div key="name" className="min-h-screen flex flex-col items-center justify-center bg-[#172211] px-8">
       <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
-          What's your name?
+        <h2
+          className="text-[#CEF17B] mb-4 text-center"
+          style={{ fontSize: 'clamp(32px, 6vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        >
+          what's your name?
         </h2>
 
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          So we can greet you properly
+        <p
+          className="text-[#E1EEFC] text-center mb-12"
+          style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontFamily: 'var(--font-reenie-beanie), cursive', opacity: 0.8 }}
+        >
+          this will be the name slow hour uses to refer to you
         </p>
 
         <input
@@ -91,8 +152,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               handleNext();
             }
           }}
-          placeholder="Your name"
-          className="w-full max-w-sm px-6 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+          placeholder="your name"
+          className="w-full max-w-sm px-6 py-4 bg-[#172211] border-2 border-[#CEF17B]/20 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] text-[#E1EEFC] rounded-2xl focus:outline-none transition-colors text-center"
+          style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
           autoFocus
         />
       </div>
@@ -101,67 +163,77 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <button
           onClick={handleNext}
           disabled={!canContinueFromName}
-          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+          className={`px-8 py-4 rounded-full transition-all duration-200 ${
             canContinueFromName
-              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
-              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+              ? 'bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211]'
+              : 'bg-[#CEF17B]/20 text-[#E1EEFC]/40 cursor-not-allowed'
           }`}
+          style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
         >
-          Continue →
+          continue →
         </button>
       </div>
     </div>,
 
     // Screen 2: Birthdate
-    <div key="birthdate" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
+    <div key="birthdate" className="min-h-screen flex flex-col items-center justify-center bg-[#172211] px-8">
       <div className="flex-1 flex flex-col items-center justify-center max-w-md w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-2 text-center">
-          When were you born?
+        <h2
+          className="text-[#CEF17B] mb-4 text-center"
+          style={{ fontSize: 'clamp(32px, 6vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        >
+          when were you born?
         </h2>
 
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          Your cards will be drawn just for you
+        <p
+          className="text-[#E1EEFC] text-center mb-12"
+          style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontFamily: 'var(--font-reenie-beanie), cursive', opacity: 0.8 }}
+        >
+          slow hour may surprise you with a birthday gift
         </p>
 
         <div className="flex gap-3 w-full max-w-sm">
           <select
             value={birthMonth}
             onChange={(e) => setBirthMonth(e.target.value)}
-            className="flex-1 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center appearance-none cursor-pointer"
+            className="flex-1 px-4 py-4 bg-[#172211] border-2 border-[#CEF17B]/20 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] text-[#E1EEFC] rounded-2xl focus:outline-none transition-colors text-center appearance-none cursor-pointer"
+            style={{ fontSize: 'clamp(16px, 2.5vw, 24px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
           >
-            <option value="">Month</option>
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
+            <option value="">month</option>
+            <option value="1">january</option>
+            <option value="2">february</option>
+            <option value="3">march</option>
+            <option value="4">april</option>
+            <option value="5">may</option>
+            <option value="6">june</option>
+            <option value="7">july</option>
+            <option value="8">august</option>
+            <option value="9">september</option>
+            <option value="10">october</option>
+            <option value="11">november</option>
+            <option value="12">december</option>
           </select>
 
           <input
             type="number"
             value={birthDay}
             onChange={(e) => setBirthDay(e.target.value)}
-            placeholder="Day"
+            placeholder="day"
             min="1"
             max="31"
-            className="w-24 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+            className="w-24 px-4 py-4 bg-[#172211] border-2 border-[#CEF17B]/20 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] text-[#E1EEFC] rounded-2xl focus:outline-none transition-colors text-center"
+            style={{ fontSize: 'clamp(16px, 2.5vw, 24px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
           />
 
           <input
             type="number"
             value={birthYear}
             onChange={(e) => setBirthYear(e.target.value)}
-            placeholder="Year"
+            placeholder="year"
             min="1900"
-            max="2024"
-            className="w-28 px-4 py-4 text-lg font-light text-forest-900 bg-white border-2 border-forest-200 rounded-2xl focus:outline-none focus:border-forest-500 transition-colors text-center"
+            max="2026"
+            className="w-28 px-4 py-4 bg-[#172211] border-2 border-[#CEF17B]/20 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] text-[#E1EEFC] rounded-2xl focus:outline-none transition-colors text-center"
+            style={{ fontSize: 'clamp(16px, 2.5vw, 24px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
           />
         </div>
       </div>
@@ -170,80 +242,50 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <button
           onClick={handleNext}
           disabled={!canContinueFromBirthdate}
-          className={`px-8 py-4 font-light rounded-full transition-all duration-200 text-lg ${
+          className={`px-8 py-4 rounded-full transition-all duration-200 ${
             canContinueFromBirthdate
-              ? 'bg-forest-600 hover:bg-forest-700 text-cream-50 hover:shadow-lg'
-              : 'bg-forest-200 text-forest-400 cursor-not-allowed'
+              ? 'bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211]'
+              : 'bg-[#CEF17B]/20 text-[#E1EEFC]/40 cursor-not-allowed'
           }`}
+          style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
         >
-          Continue →
+          continue →
         </button>
       </div>
     </div>,
 
-    // Screen 3: About the App
-    <div key="about" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center max-w-lg w-full">
-        <h2 className="text-4xl font-light text-forest-900 mb-8 text-center">
-          Why one card each day?
+    // Screen 3: About - "Why one card each day?"
+    <div key="about" className="min-h-screen flex flex-col items-center justify-center bg-[#172211] px-8">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-2xl w-full">
+        <h2
+          className="text-[#CEF17B] mb-12 text-center"
+          style={{ fontSize: 'clamp(32px, 6vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        >
+          why one card each day?
         </h2>
 
-        <div className="space-y-6 text-forest-700 text-xl md:text-2xl font-light leading-relaxed">
+        <div className="space-y-8 text-[#E1EEFC]" style={{ fontSize: 'clamp(20px, 3vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.6' }}>
           <p>
-            In our fast-paced world, we often rush through moments without truly experiencing them.
-            Slow Hour invites you to pause.
+            in our fast-paced world, we often rush through moments without truly experiencing them. slow hour invites you to pause.
           </p>
 
           <p>
-            Each day, you draw a single card. Not as fortune-telling, but as a gentle prompt for reflection.
-            A question to sit with. A theme to notice as your day unfolds.
+            each day, you draw a single card. not as fortune-telling, but as a gentle prompt for reflection. a question to sit with. a theme to notice as your day unfolds.
           </p>
 
           <p>
-            Your daily card becomes a companion—something to return to, journal about, and carry with you.
-            Over time, you'll build a personal collection of moments and insights.
+            your daily card becomes a companion—something to return to, journal about, and carry with you. over time, you'll build a personal collection of moments and insights.
           </p>
         </div>
       </div>
 
       <button
         onClick={handleNext}
-        className="mb-12 px-8 py-4 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-lg"
+        className="mb-12 px-12 py-5 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 shadow-lg"
+        style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
       >
-        Continue →
+        draw my first card →
       </button>
-    </div>,
-
-    // Screen 4: Ready to Draw
-    <div key="ready" className="flex flex-col items-center justify-center min-h-screen bg-cream-50 px-8">
-      <div className="flex-1 flex flex-col items-center justify-center">
-        {/* Card back illustration with botanical pattern */}
-        <div className="w-64 h-96 mb-12 bg-cream-50 rounded-2xl shadow-2xl border-2 border-forest-300 flex items-center justify-center overflow-hidden relative">
-          <div
-            className="absolute inset-8 bg-cover bg-center"
-            style={{
-              backgroundImage: 'url(/card-back-pattern.png)',
-              backgroundSize: 'cover',
-            }}
-          />
-        </div>
-
-        <h2 className="text-4xl font-light text-forest-900 mb-4 text-center">
-          Your first card awaits{name ? `, ${name}` : ''}
-        </h2>
-
-        <p className="text-forest-600 text-xl md:text-2xl font-light text-center mb-12">
-          Take a breath. When you're ready...
-        </p>
-
-        <button
-          onClick={handleNext}
-          className="px-12 py-5 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-lg text-xl"
-        >
-          Draw my card
-        </button>
-      </div>
-
     </div>,
   ];
 

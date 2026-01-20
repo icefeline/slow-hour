@@ -5,12 +5,11 @@ import TarotCard from './components/TarotCard';
 import RolodexFlip from './components/RolodexFlip';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
-import NotificationSettings from './components/NotificationSettings';
 import CardSelector from './components/CardSelector';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
-type View = 'rolodex' | 'card' | 'year' | 'settings';
+type View = 'rolodex' | 'card' | 'year';
 
 interface JournalEntry {
   date: string;
@@ -95,9 +94,8 @@ export default function Home() {
   const loadJournalEntries = () => {
     // Load all journal entries from localStorage
     const entries: JournalEntry[] = [];
-    const year = new Date().getFullYear();
 
-    // First, get all cards drawn (not just those with reflections)
+    // Get all cards drawn
     const cardsDrawn = new Set<string>();
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -124,7 +122,6 @@ export default function Home() {
       }
     });
 
-    console.log('Loaded journal entries:', entries);
     setJournalEntries(entries);
   };
 
@@ -185,6 +182,37 @@ export default function Home() {
     window.location.reload();
   };
 
+  const handleFullReset = () => {
+    // Clear everything including onboarding
+    localStorage.clear();
+    window.location.reload();
+  };
+
+  const generateRandomCards = () => {
+    // Generate 60 random cards across the year
+    const today = new Date();
+    const year = today.getFullYear();
+    const usedDates = new Set<number>();
+
+    // Generate 60 unique random day numbers (0-364)
+    while (usedDates.size < 60) {
+      usedDates.add(Math.floor(Math.random() * 365));
+    }
+
+    // Convert to dates and save cards
+    usedDates.forEach(dayOfYear => {
+      const date = new Date(year, 0, dayOfYear + 1);
+      const dateString = date.toISOString().split('T')[0];
+      const randomCard = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
+      const isReversed = Math.random() > 0.5;
+
+      localStorage.setItem(`card-${dateString}`, randomCard.id);
+      localStorage.setItem(`reversed-${dateString}`, isReversed.toString());
+    });
+
+    loadJournalEntries();
+  };
+
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
     loadTodaysCard();
@@ -205,8 +233,8 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream-50">
-        <div className="text-forest-600 text-lg font-light">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#172211]">
+        <div className="text-[#CEF17B] text-lg" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>loading...</div>
       </div>
     );
   }
@@ -216,44 +244,81 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-cream-50">
-      {/* Header with View Toggle */}
-      <div className="fixed top-0 left-0 right-0 bg-cream-50/80 backdrop-blur-sm border-b border-forest-200 z-30">
+    <main className="min-h-screen bg-[#172211]">
+      {/* Navigation Header with Backdrop Blur */}
+      <div className="fixed top-0 left-0 right-0 z-30" style={{
+        background: 'rgba(23, 34, 17, 0.85)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(206, 241, 123, 0.2)'
+      }}>
         <div className="max-w-4xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
-          <h1 className="text-3xl font-handwritten text-forest-900">
-            Slow Hour
-          </h1>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => setCurrentView('card')}
-              className={`px-6 py-3 rounded-full text-xl font-light transition-all ${
-                currentView === 'card'
-                  ? 'bg-forest-500 text-cream-50'
-                  : 'bg-forest-100 text-forest-700 hover:bg-forest-200'
-              }`}
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[#CEF17B]"
+              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
             >
-              Today
+              slow hour
+            </span>
+          </div>
+
+          {/* View Toggle Buttons */}
+          <div className="flex gap-3 items-center">
+            <button
+              onClick={() => {
+                setViewingPastCard(false);
+                setCurrentView('card');
+              }}
+              className={`px-6 py-2 rounded-full transition-all text-2xl ${
+                currentView === 'card'
+                  ? 'bg-[#CEF17B] text-[#172211]'
+                  : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
+              }`}
+              style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+            >
+              today
             </button>
             <button
               onClick={() => setCurrentView('year')}
-              className={`px-6 py-3 rounded-full text-xl font-light transition-all ${
+              className={`px-6 py-2 rounded-full transition-all text-2xl ${
                 currentView === 'year'
-                  ? 'bg-forest-500 text-cream-50'
-                  : 'bg-forest-100 text-forest-700 hover:bg-forest-200'
+                  ? 'bg-[#CEF17B] text-[#172211]'
+                  : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
               }`}
+              style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
             >
-              Year
+              year
             </button>
-            {/* Only show reset button in development */}
+
+            {/* Development Reset Buttons */}
             {process.env.NODE_ENV === 'development' && (
-              <button
-                onClick={handleReset}
-                className="px-4 py-3 rounded-full text-2xl font-light bg-forest-50 text-forest-600 hover:bg-forest-100 transition-all"
-                title="Reset to see rolodex animation"
-              >
-                ↻
-              </button>
+              <>
+                <button
+                  onClick={handleReset}
+                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  title="Reset today's card (see rolodex again)"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  ↻
+                </button>
+                <button
+                  onClick={generateRandomCards}
+                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  title="Generate 60 random cards"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  60
+                </button>
+                <button
+                  onClick={handleFullReset}
+                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  title="Full reset (including onboarding)"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  🔄
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -266,16 +331,19 @@ export default function Home() {
         )}
 
         {currentView === 'card' && card && (
-          <div className="max-w-2xl mx-auto px-6 md:px-8 py-12">
+          <div className="max-w-4xl mx-auto px-6 md:px-8 py-12">
             {/* Date */}
-            <div className="text-center mb-12">
-              <p className="text-forest-600 text-2xl font-light tracking-wider uppercase">
+            <div className="text-center mb-8">
+              <p
+                className="text-[#CEF17B]"
+                style={{ fontSize: 'clamp(26px, 3.5vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+              >
                 {new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'
-                })}
+                }).toLowerCase()}
               </p>
             </div>
 
@@ -291,12 +359,13 @@ export default function Home() {
               <div className="text-center mt-16">
                 <button
                   onClick={handleRevealCard}
-                  className="px-8 py-3 bg-forest-600 hover:bg-forest-700 text-cream-50 font-light rounded-full transition-all duration-200 hover:shadow-md"
+                  className="px-8 py-3 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 shadow-lg"
+                  style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
-                  Reveal Card
+                  reveal card
                 </button>
-                <p className="text-forest-500 text-xs mt-4 font-light">
-                  Take a moment to center yourself
+                <p className="text-[#E1EEFC] mt-4 opacity-60" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  take a moment to center yourself
                 </p>
               </div>
             )}
@@ -313,19 +382,20 @@ export default function Home() {
               }
 
               return (
-                <div className="mt-16 p-8">
-                  <h3 className="text-3xl font-light text-forest-900 mb-4">
-                    Reflection
+                <div className="mt-12 w-full">
+                  <h3 className="text-[#CEF17B] mb-6" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                    spill about it
                   </h3>
                   {isToday ? (
                     <textarea
-                      className="w-full h-48 bg-cream-50/80 text-forest-800 border border-forest-300 rounded-xl p-6 focus:outline-none focus:ring-2 focus:ring-forest-500 resize-none font-light text-xl leading-relaxed"
-                      placeholder="Write your thoughts here..."
+                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#CEF17B]/30 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] rounded-xl p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
+                      placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
+                      style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
                     />
                   ) : (
-                    <div className="bg-cream-100/50 border border-forest-200 rounded-xl p-6 text-forest-800 font-light text-xl leading-relaxed">
+                    <div className="bg-[#172211] border border-[#CEF17B]/20 rounded-xl p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                       {reflection}
                     </div>
                   )}
