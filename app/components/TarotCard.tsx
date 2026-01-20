@@ -30,20 +30,16 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
     <div className="w-full mx-auto">
       {/* Card Back/Front */}
       <div className="relative mb-8">
-        <div
-          className={`
-            aspect-[2/3] w-96 mx-auto rounded-2xl
-            transition-all duration-1000 transform-gpu
-            ${isReversed && isRevealed ? 'rotate-180' : ''}
-          `}
-        >
+        <div className="aspect-[2/3] w-96 mx-auto rounded-2xl overflow-visible relative">
           {isRevealed ? (
             // Card Front - Actual card image
-            <div className="relative w-full h-full">
+            <div className={`relative w-full h-full rounded-2xl overflow-hidden transition-all duration-1000 transform-gpu ${
+              isReversed ? 'rotate-180' : ''
+            }`}>
               <img
                 src={`/cards/${getCardFilename(card.id, card.name)}.png`}
                 alt={card.name}
-                className="w-full h-full object-cover rounded-2xl shadow-xl"
+                className="w-full h-full object-cover shadow-xl"
                 onError={(e) => {
                   // Fallback to SVG if PNG doesn't exist
                   e.currentTarget.src = card.imagePath;
@@ -83,7 +79,7 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
                 overflow: 'visible',
                 WebkitTextStroke: '2px #172211',
                 textStroke: '2px #172211',
-                transform: 'rotate(-2.3deg)',
+                transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
                 transformOrigin: 'center center',
                 letterSpacing: '-0.05em'
               }}
@@ -129,13 +125,13 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
           {/* Meaning */}
           <div>
             <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '40px' }}>{activeMeaning.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '60px' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
           {/* Description */}
           <div>
             <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '40px' }}>{card.description.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '60px' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}
