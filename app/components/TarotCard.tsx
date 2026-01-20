@@ -15,36 +15,39 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
 
+  // Convert card ID to filename (e.g., "major-1" -> "major-1-magician")
+  const getCardFilename = (cardId: string, cardName: string) => {
+    const namePart = cardName.toLowerCase().replace(/\s+/g, '-').replace(/^the-/, '');
+    return `${cardId}-${namePart}`;
+  };
+
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full mx-auto">
       {/* Card Back/Front */}
       <div className="relative mb-8">
         <div
           className={`
-            aspect-[2/3] w-72 mx-auto rounded-2xl
+            aspect-[2/3] w-96 mx-auto rounded-2xl
             transition-all duration-1000 transform-gpu
             ${isReversed && isRevealed ? 'rotate-180' : ''}
           `}
         >
           {isRevealed ? (
-            // Card Front - Hand-drawn style with forest green ink
-            <div className="w-full h-full bg-cream-50 rounded-2xl flex flex-col items-center justify-center p-6 border-2 border-forest-300 shadow-md">
-              <div className={`text-center w-full ${isReversed ? 'rotate-180' : ''}`}>
-                {/* Hand-drawn nature element icon - larger and more prominent */}
-                <div className="w-56 h-56 mx-auto mb-3 text-forest-700">
-                  {CardIcon ? <CardIcon /> : (
-                    <div className="w-full h-full rounded-full border-2 border-clay-400 flex items-center justify-center">
-                      <div className="w-8 h-8 rounded-full bg-sage-300/40"></div>
-                    </div>
-                  )}
-                </div>
-                <h3 className="text-2xl font-light text-forest-900 mb-1">{card.name}</h3>
-                <p className="text-forest-600 text-sm uppercase tracking-widest">{formatSuite(card.suite)}</p>
-              </div>
+            // Card Front - Actual card image
+            <div className="relative w-full h-full">
+              <img
+                src={`/cards/${getCardFilename(card.id, card.name)}.png`}
+                alt={card.name}
+                className="w-full h-full object-cover rounded-2xl shadow-xl"
+                onError={(e) => {
+                  // Fallback to SVG if PNG doesn't exist
+                  e.currentTarget.src = card.imagePath;
+                }}
+              />
             </div>
           ) : (
-            // Card Back - Whimsical botanical pattern
-            <div className="w-full h-full bg-cream-50 rounded-2xl flex flex-col items-center justify-center p-6 border-2 border-forest-300 shadow-md overflow-hidden relative">
+            // Card Back - White with botanical pattern
+            <div className="w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-6 shadow-xl overflow-hidden relative">
               <div className="text-center w-full">
                 {/* Botanical pattern */}
                 <div className="w-56 h-56 mx-auto mb-3 flex items-center justify-center relative">
@@ -56,55 +59,78 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
                     }}
                   />
                 </div>
-                <h3 className="text-2xl font-light text-forest-900 mb-1">Daily Card</h3>
-                <p className="text-forest-600 text-sm uppercase tracking-widest">Tarot</p>
               </div>
             </div>
           )}
         </div>
+
+        {/* Title sprawled below the card */}
+        {isRevealed && (
+          <div className="absolute left-0 right-0 flex items-end justify-center pointer-events-none" style={{ bottom: '-100px' }}>
+            <h3
+              className="text-center px-2"
+              style={{
+                fontSize: '200px',
+                fontFamily: 'var(--font-reenie-beanie), cursive',
+                lineHeight: '1',
+                color: '#CEF17B',
+                whiteSpace: 'nowrap',
+                overflow: 'visible',
+                WebkitTextStroke: '2px #172211',
+                textStroke: '2px #172211',
+                transform: 'rotate(-2.3deg)',
+                transformOrigin: 'center center',
+                letterSpacing: '-0.05em'
+              }}
+            >
+              {card.name.toLowerCase()}
+            </h3>
+          </div>
+        )}
       </div>
 
-      {/* Card Information (only shown when revealed) */}
+      {/* Card Name and Info (only shown when revealed) */}
       {isRevealed && (
-        <div className="space-y-6 animate-fade-in">
-          {/* Orientation Badge */}
-          <div className="flex justify-center">
-            <span className={`
-              px-4 py-1 rounded-full text-xs font-light tracking-wider uppercase
-              ${isReversed
-                ? 'bg-clay-100 text-clay-700 border border-clay-300'
-                : 'bg-sage-100 text-sage-700 border border-sage-300'
-              }
-            `}>
-              {isReversed ? 'Reversed' : 'Upright'}
-            </span>
-          </div>
+        <div className="w-full space-y-8 animate-fade-in">
 
-          {/* Keywords */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {activeKeywords.slice(0, 5).map((keyword, index) => (
-              <span
-                key={index}
-                className="px-4 py-2 bg-forest-100 text-forest-800 rounded-full text-lg border-2 border-forest-400 font-light transform hover:scale-105 transition-transform"
-                style={{
-                  transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`
-                }}
-              >
-                {keyword}
-              </span>
-            ))}
+          {/* Keywords - Circular Marquee */}
+          <div className="relative w-64 h-64 mx-auto mt-24">
+            {activeKeywords.slice(0, 5).map((keyword, index) => {
+              const totalKeywords = Math.min(activeKeywords.length, 5);
+              const startAngle = (index / totalKeywords) * 360;
+              const animationDelay = -(index / totalKeywords) * 20; // Stagger start positions
+
+              return (
+                <span
+                  key={index}
+                  className="absolute text-[#CEF17B]"
+                  style={{
+                    fontSize: 'clamp(22px, 3.5vw, 32px)',
+                    fontFamily: 'var(--font-reenie-beanie), cursive',
+                    left: '50%',
+                    top: '50%',
+                    transformOrigin: '0 0',
+                    animation: 'circular-revolve 20s linear infinite',
+                    animationDelay: `${animationDelay}s`,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {keyword.toLowerCase()}
+                </span>
+              );
+            })}
           </div>
 
           {/* Meaning */}
-          <div className="p-8">
-            <h4 className="text-3xl font-light text-ink-900 mb-6">Meaning</h4>
-            <p className="text-ink-700 leading-relaxed text-2xl font-light">{activeMeaning}</p>
+          <div>
+            <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '40px' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
           {/* Description */}
-          <div className="p-8">
-            <h4 className="text-3xl font-light text-ink-900 mb-6">About This Card</h4>
-            <p className="text-ink-700 leading-relaxed text-2xl font-light">{card.description}</p>
+          <div>
+            <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '40px' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}
