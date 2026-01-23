@@ -263,8 +263,8 @@ export default function Home() {
             <img
               src="/spiral-logo.png"
               alt=""
-              className="h-12"
               style={{
+                height: 'clamp(40px, 6vw, 56px)',
                 filter: 'brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(346%) hue-rotate(183deg) brightness(103%) contrast(97%)',
                 width: 'auto'
               }}
