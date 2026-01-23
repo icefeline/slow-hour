@@ -48,7 +48,7 @@ export default function Home() {
     }
   }, [currentView]);
 
-  const loadTodaysCard = async () => {
+  const loadTodaysCard = async (autoReveal = false) => {
     try {
       // Build URL with query parameters
       const params = new URLSearchParams();
@@ -81,6 +81,17 @@ export default function Home() {
       if (lastDrawDate === today && wasRevealed) {
         setCurrentView('card');
         setIsRevealed(true);
+      } else if (autoReveal) {
+        // Auto-reveal after onboarding (first time only)
+        setCurrentView('card');
+        setIsRevealed(true);
+        localStorage.setItem('lastDrawDate', today);
+        localStorage.setItem('cardRevealed', 'true');
+        if (data.card) {
+          localStorage.setItem(`card-${data.date}`, data.card.id);
+          localStorage.setItem(`reversed-${data.date}`, data.isReversed.toString());
+        }
+        loadJournalEntries();
       }
 
       setIsLoading(false);
@@ -214,7 +225,7 @@ export default function Home() {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
-    loadTodaysCard();
+    loadTodaysCard(true); // Auto-reveal after onboarding
     loadJournalEntries();
   };
 
