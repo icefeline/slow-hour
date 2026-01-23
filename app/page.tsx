@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import TarotCard from './components/TarotCard';
-import RolodexFlip from './components/RolodexFlip';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
 import CardSelector from './components/CardSelector';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
-type View = 'rolodex' | 'card' | 'year';
+type View = 'card' | 'year';
 
 interface JournalEntry {
   date: string;
@@ -21,7 +20,7 @@ interface JournalEntry {
 
 export default function Home() {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [currentView, setCurrentView] = useState<View>('rolodex');
+  const [currentView, setCurrentView] = useState<View>('card');
   const [card, setCard] = useState<TarotCardType | null>(null);
   const [isReversed, setIsReversed] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -125,10 +124,6 @@ export default function Home() {
     setJournalEntries(entries);
   };
 
-  const handleRolodexComplete = () => {
-    setCurrentView('card');
-    handleRevealCard();
-  };
 
   const handleRevealCard = () => {
     setIsRevealed(true);
@@ -179,7 +174,11 @@ export default function Home() {
     localStorage.removeItem(`reflection-${today}`);
     // Add random timestamp to force different card draw
     localStorage.setItem('testSeed', Math.random().toString());
-    window.location.reload();
+
+    // Reset view and reload card
+    setCurrentView('card');
+    setIsRevealed(false);
+    loadTodaysCard();
   };
 
   const handleFullReset = () => {
@@ -252,19 +251,28 @@ export default function Home() {
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(206, 241, 123, 0.2)'
       }}>
-        <div className="max-w-4xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span
-              className="text-[#CEF17B]"
+              className="text-[#E1EEFC]"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
             >
               slow hour
             </span>
+            <img
+              src="/spiral-logo.png"
+              alt=""
+              className="h-12"
+              style={{
+                filter: 'brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(346%) hue-rotate(183deg) brightness(103%) contrast(97%)',
+                width: 'auto'
+              }}
+            />
           </div>
 
           {/* View Toggle Buttons */}
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-3 items-center ml-12">
             <button
               onClick={() => {
                 setViewingPastCard(false);
@@ -297,7 +305,7 @@ export default function Home() {
                 <button
                   onClick={handleReset}
                   className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
-                  title="Reset today's card (see rolodex again)"
+                  title="Reset today's card"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   ↻
@@ -326,10 +334,6 @@ export default function Home() {
 
       {/* Content */}
       <div className="pt-20">
-        {currentView === 'rolodex' && card && (
-          <RolodexFlip finalCard={card} onComplete={handleRolodexComplete} dateString={dateString} />
-        )}
-
         {currentView === 'card' && card && (
           <div className="max-w-4xl mx-auto px-6 md:px-8 py-12">
             {/* Date */}
@@ -384,7 +388,7 @@ export default function Home() {
               return (
                 <div className="mt-12 w-full">
                   <h3 className="text-[#CEF17B] mb-6" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                    spill about it
+                    talk about it
                   </h3>
                   {isToday ? (
                     <textarea

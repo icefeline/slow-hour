@@ -47,20 +47,13 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
               />
             </div>
           ) : (
-            // Card Back - White with botanical pattern
-            <div className="w-full h-full bg-white rounded-2xl flex flex-col items-center justify-center p-6 shadow-xl overflow-hidden relative">
-              <div className="text-center w-full">
-                {/* Botanical pattern */}
-                <div className="w-56 h-56 mx-auto mb-3 flex items-center justify-center relative">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundImage: 'url(/card-back-pattern.png)',
-                      backgroundSize: 'cover',
-                    }}
-                  />
-                </div>
-              </div>
+            // Card Back - Use the actual card back design
+            <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl">
+              <img
+                src="/card-back.png"
+                alt="Card back"
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
         </div>
@@ -77,8 +70,8 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
                 color: '#CEF17B',
                 whiteSpace: 'nowrap',
                 overflow: 'visible',
-                WebkitTextStroke: '2px #172211',
-                textStroke: '2px #172211',
+                WebkitTextStroke: '1px #172211',
+                textStroke: '1px #172211',
                 transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
                 transformOrigin: 'center center',
                 letterSpacing: '-0.05em'
