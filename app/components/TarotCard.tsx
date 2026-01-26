@@ -3,14 +3,16 @@
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
 import { getCardIcon } from './card-icons';
+import { ActiveInsight } from './ActiveInsight';
 
 interface TarotCardProps {
   card: TarotCardType;
   isReversed: boolean;
   isRevealed: boolean;
+  userName?: string; // Optional: user's first name for personalization
 }
 
-export default function TarotCard({ card, isReversed, isRevealed }: TarotCardProps) {
+export default function TarotCard({ card, isReversed, isRevealed, userName }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
@@ -85,7 +87,7 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
 
       {/* Card Name and Info (only shown when revealed) */}
       {isRevealed && (
-        <div className="w-full space-y-8 animate-fade-in">
+        <div className="w-full space-y-12 animate-fade-in">
 
           {/* Keywords - Circular Marquee */}
           <div className="relative w-64 h-64 mx-auto mt-24">
@@ -118,13 +120,30 @@ export default function TarotCard({ card, isReversed, isRevealed }: TarotCardPro
           {/* Meaning */}
           <div>
             <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '60px' }}>{activeMeaning.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '48px' }}>{activeMeaning.toLowerCase()}</p>
           </div>
+
+          {/* Active Insight - Personalized Context */}
+          <ActiveInsight
+            keyPhrase="time to name what's crumbling"
+            insight="Pluto square Moon is almost exact. The Tower is here to help you name what you're feeling before it names you. The Tower in your 4th house, foundations and family. What's crumbling isn't your enemy. It's making space for what's true."
+            transitInfo="Pluto square Moon • approaching • 58 days remaining"
+            userName={userName}
+            transitExplanation={{
+              transitingPlanet: "Pluto",
+              transitingPlanetMeaning: "transformation, power, the unconscious",
+              natalPlanet: "Moon",
+              natalPlanetMeaning: "emotions, home, nurturing, your inner world",
+              aspectType: "square",
+              aspectMeaning: "a 90° angle creating tension and challenge that demands action",
+              phaseMeaning: "You're in the approaching phase, meaning the intensity is building as the transit gets closer to being exact. This is when you start feeling the pressure most strongly."
+            }}
+          />
 
           {/* Description */}
           <div>
             <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '60px' }}>{card.description.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '48px' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}
