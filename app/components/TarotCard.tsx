@@ -1,9 +1,13 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
 import { getCardIcon } from './card-icons';
 import { ActiveInsight } from './ActiveInsight';
+import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
+import { mockTransits } from '@/lib/data/mock-transits';
+import type { ActiveTransit } from '@/lib/types/astrology';
 
 interface TarotCardProps {
   card: TarotCardType;
@@ -12,10 +16,59 @@ interface TarotCardProps {
   userName?: string; // Optional: user's first name for personalization
 }
 
+// Helper function to convert ActiveTransit to TransitData
+function convertToTransitData(transit: ActiveTransit): TransitData {
+  // Map phase to generator's expected format
+  const phaseMap: Record<string, 'approaching' | 'peak' | 'separating'> = {
+    'beginning': 'approaching',
+    'approaching': 'approaching',
+    'peak': 'peak',
+    'separating': 'separating',
+    'integration': 'separating'
+  };
+
+  // Calculate days remaining until exact date
+  const today = new Date();
+  const exactDate = new Date(transit.exactDate);
+  const daysRemaining = Math.ceil((exactDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  return {
+    transitingPlanet: transit.transitingPlanet.charAt(0).toUpperCase() + transit.transitingPlanet.slice(1),
+    natalPlanet: transit.natalPlanet.charAt(0).toUpperCase() + transit.natalPlanet.slice(1),
+    aspectType: transit.aspect,
+    phase: phaseMap[transit.phase] || 'approaching',
+    house: transit.house,
+    daysRemaining: daysRemaining > 0 ? daysRemaining : undefined
+  };
+}
+
 export default function TarotCard({ card, isReversed, isRevealed, userName }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
+
+  // State for generated insight
+  const [generatedInsight, setGeneratedInsight] = useState<GeneratedInsight | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Generate insight when card is revealed
+  useEffect(() => {
+    if (isRevealed && !generatedInsight) {
+      setIsGenerating(true);
+
+      // Use a random transit from mock data (in production, this would be user's actual transit)
+      const transits = Object.values(mockTransits);
+      const randomTransit = transits[Math.floor(Math.random() * transits.length)];
+      const transitData = convertToTransitData(randomTransit);
+
+      // Simulate thinking delay for better UX
+      setTimeout(() => {
+        const insight = generateInsight(card.id, transitData, isReversed);
+        setGeneratedInsight(insight);
+        setIsGenerating(false);
+      }, 1500);
+    }
+  }, [isRevealed, card.id, isReversed, generatedInsight]);
 
   // Convert card ID to filename
   const getCardFilename = (cardId: string, cardName: string) => {
@@ -125,19 +178,20 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
           {/* Active Insight - Personalized Context */}
           <ActiveInsight
-            keyPhrase="the foundation is asking for truth"
-            insight="Pluto square Moon is closing in, and The Tower landed in your 4th house. That's home territory - the foundation, the family dynamics, the stuff you thought was solid. Here's the thing: what's falling apart was probably held together with hope and effort for too long. The breakdown isn't the enemy. It's the truth finally getting loud enough to hear."
-            transitInfo="Pluto square Moon • approaching • 58 days remaining"
+            keyPhrase={generatedInsight?.keyPhrase || ""}
+            insight={generatedInsight?.insight || ""}
+            transitInfo={generatedInsight?.transitInfo || ""}
             userName={userName}
-            transitExplanation={{
-              transitingPlanet: "Pluto",
-              transitingPlanetMeaning: "transformation, power, the unconscious",
-              natalPlanet: "Moon",
-              natalPlanetMeaning: "emotions, home, nurturing, your inner world",
-              aspectType: "square",
-              aspectMeaning: "a 90° angle creating tension and challenge that demands action",
-              phaseMeaning: "You're in the approaching phase, meaning the intensity is building as the transit gets closer to being exact. This is when you start feeling the pressure most strongly."
+            transitExplanation={generatedInsight?.transitExplanation || {
+              transitingPlanet: "",
+              transitingPlanetMeaning: "",
+              natalPlanet: "",
+              natalPlanetMeaning: "",
+              aspectType: "",
+              aspectMeaning: "",
+              phaseMeaning: ""
             }}
+            isLoading={isGenerating}
           />
 
           {/* Description */}
