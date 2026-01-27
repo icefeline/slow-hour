@@ -432,18 +432,29 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const renderScreenContent = () => {
     switch (currentStep) {
       case 0:
-        // Welcome screen
+        // Welcome screen with logo
         return (
           <div className="flex flex-col items-center justify-center h-full px-12">
-            <div className="flex-1 flex flex-col items-center justify-center max-w-lg w-full">
-              <img
-                src="/spiral-logo.png"
-                alt="Slow Hour"
-                className="w-64 h-auto mb-8"
-              />
+            <div className="flex-1 flex flex-col items-center justify-center max-w-2xl w-full">
+              {/* "slow hour" logo image */}
+              <div className="relative mb-16 w-full px-8">
+                <img
+                  src="/slow-hour-logo.png"
+                  alt="slow hour"
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    maxWidth: '900px',
+                    margin: '0 auto',
+                    display: 'block'
+                  }}
+                />
+              </div>
+
               <button
                 onClick={handleNext}
-                className="px-12 py-4 bg-black text-white rounded-full transition-all duration-200 hover:bg-black/80 text-2xl"
+                className="px-12 py-4 bg-black text-white rounded-full transition-all duration-200 hover:bg-black/80 text-3xl"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 continue →

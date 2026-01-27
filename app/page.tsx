@@ -367,6 +367,7 @@ export default function Home() {
               card={card}
               isReversed={isReversed}
               isRevealed={isRevealed}
+              userName={localStorage.getItem('userName') || undefined}
             />
 
             {/* Reveal Button */}

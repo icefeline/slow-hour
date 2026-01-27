@@ -42,9 +42,10 @@ export interface GeneratedInsight {
  */
 export function generateInsight(
   cardId: string,
-  transit: TransitData
+  transit: TransitData,
+  isReversed: boolean = false
 ): GeneratedInsight | null {
-  const cardArchetype = getCardArchetype(cardId);
+  const cardArchetype = getCardArchetype(cardId, isReversed);
   if (!cardArchetype) {
     console.error(`No archetype found for card: ${cardId}`);
     return null;
@@ -57,7 +58,7 @@ export function generateInsight(
   const structureTemplate = selectStructureTemplate(cardArchetype, transit, combinedTone);
 
   // Build the insight
-  const insight = buildInsight(cardArchetype, transit, structureTemplate, combinedTone);
+  const insight = buildInsight(cardId, cardArchetype, transit, structureTemplate, combinedTone, isReversed);
 
   // Build the key phrase
   const keyPhrase = buildKeyPhrase(cardArchetype, transit, combinedTone);
@@ -80,7 +81,7 @@ export function generateInsight(
  * Determine the combined emotional tone
  */
 function getCombinedTone(
-  cardArchetype: CardArchetype,
+  cardArchetype: CardArchetype['upright'],
   transit: TransitData
 ): 'challenging' | 'neutral' | 'expansive' {
   const transitTone = getTransitTone(transit.aspectType);
@@ -121,7 +122,7 @@ function getTransitTone(aspectType: string): 'challenging' | 'neutral' | 'expans
  * Select appropriate structure template
  */
 function selectStructureTemplate(
-  cardArchetype: CardArchetype,
+  cardArchetype: CardArchetype['upright'],
   transit: TransitData,
   combinedTone: 'challenging' | 'neutral' | 'expansive'
 ) {
@@ -147,10 +148,12 @@ function selectStructureTemplate(
  * Build the full insight text
  */
 function buildInsight(
-  cardArchetype: CardArchetype,
+  cardId: string,
+  cardArchetype: CardArchetype['upright'],
   transit: TransitData,
   structureTemplate: any,
-  combinedTone: 'challenging' | 'neutral' | 'expansive'
+  combinedTone: 'challenging' | 'neutral' | 'expansive',
+  isReversed: boolean
 ): string {
   let insight = structureTemplate.structure;
 
@@ -161,7 +164,7 @@ function buildInsight(
     transit.natalPlanet
   ));
 
-  insight = insight.replace('{card_phrase}', getRandomCardPhrase(cardArchetype.id));
+  insight = insight.replace('{card_phrase}', getRandomCardPhrase(cardId, isReversed));
 
   insight = insight.replace('{house_context}', getRandomHousePhrase(transit.house));
 
@@ -185,7 +188,7 @@ function buildInsight(
 /**
  * Build emotional reality statement
  */
-function buildEmotionalReality(cardArchetype: CardArchetype, transit: TransitData): string {
+function buildEmotionalReality(cardArchetype: CardArchetype['upright'], transit: TransitData): string {
   const templates = {
     challenging: [
       'everything feels unclear right now',
@@ -215,7 +218,7 @@ function buildEmotionalReality(cardArchetype: CardArchetype, transit: TransitDat
 /**
  * Fill in perspective template with card-specific details
  */
-function fillPerspective(template: string, cardArchetype: CardArchetype): string {
+function fillPerspective(template: string, cardArchetype: CardArchetype['upright']): string {
   let filled = template;
 
   // Replace card action
@@ -241,7 +244,7 @@ function fillPerspective(template: string, cardArchetype: CardArchetype): string
 /**
  * Fill in closing template with card-specific details
  */
-function fillClosing(template: string, cardArchetype: CardArchetype): string {
+function fillClosing(template: string, cardArchetype: CardArchetype['upright']): string {
   let filled = template;
 
   if (filled.includes('{card_action}')) {
@@ -261,7 +264,7 @@ function fillClosing(template: string, cardArchetype: CardArchetype): string {
  * Build key phrase
  */
 function buildKeyPhrase(
-  cardArchetype: CardArchetype,
+  cardArchetype: CardArchetype['upright'],
   transit: TransitData,
   combinedTone: 'challenging' | 'neutral' | 'expansive'
 ): string {
@@ -280,9 +283,22 @@ function buildKeyPhrase(
   }
 
   if (phrase.includes('{house_theme}')) {
-    // Extract a short house theme
-    const houseThemes = ['foundation', 'future', 'work', 'home', 'self', 'relationships', 'beliefs'];
-    const theme = houseThemes[transit.house % houseThemes.length];
+    // Map house number to meaningful theme
+    const houseThemeMap: Record<number, string> = {
+      1: 'self',
+      2: 'worth',
+      3: 'voice',
+      4: 'foundation',
+      5: 'joy',
+      6: 'work',
+      7: 'relationships',
+      8: 'transformation',
+      9: 'beliefs',
+      10: 'legacy',
+      11: 'future',
+      12: 'inner world'
+    };
+    const theme = houseThemeMap[transit.house] || 'life';
     phrase = phrase.replace('{house_theme}', theme);
   }
 

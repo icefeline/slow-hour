@@ -82,9 +82,9 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
           </p>
 
           {transitInfo && (
-            <div className="mt-6">
+            <div className="mt-6 -mx-6">
               <div
-                className="overflow-hidden cursor-pointer"
+                className="overflow-hidden cursor-pointer pb-2 transition-all"
                 onClick={() => setIsExpanded(!isExpanded)}
                 role="button"
                 tabIndex={0}
@@ -104,7 +104,10 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
                       fontSize: 'clamp(16px, 2vw, 18px)',
                       fontFamily: 'var(--font-vt323), monospace',
                       animation: 'marquee 15s linear infinite',
-                      fontWeight: 400
+                      fontWeight: 400,
+                      textDecoration: 'underline',
+                      textDecorationStyle: 'dotted',
+                      textUnderlineOffset: '4px'
                     }}
                   >
                     {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()}
@@ -114,7 +117,7 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
 
               {isExpanded && transitExplanation && (
                 <div
-                  className="mt-4 pt-4"
+                  className="mt-4 pt-4 px-6"
                   style={{
                     fontSize: 'clamp(18px, 2.5vw, 20px)',
                     fontFamily: 'var(--font-vt323), monospace',
@@ -123,15 +126,6 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
                     fontWeight: 400
                   }}
                 >
-                  <div
-                    className="text-[#172211]/40 mb-4 text-center"
-                    style={{
-                      fontSize: 'clamp(16px, 2vw, 18px)',
-                      fontFamily: 'var(--font-vt323), monospace',
-                    }}
-                  >
-                    ***
-                  </div>
                   <p className="mb-3">
                     <strong>{transitExplanation.transitingPlanet.toLowerCase()}</strong> ({transitExplanation.transitingPlanetMeaning.toLowerCase()}) is making a <strong>{transitExplanation.aspectType.toLowerCase()}</strong> ({transitExplanation.aspectMeaning.toLowerCase()}) to your natal <strong>{transitExplanation.natalPlanet.toLowerCase()}</strong> ({transitExplanation.natalPlanetMeaning.toLowerCase()}).
                   </p>
