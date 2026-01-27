@@ -10,8 +10,8 @@
 
 import { CardArchetype, getCardArchetype, getRandomCardPhrase } from '../data/card-archetypes';
 import { getRandomTransitOpener, getTimingPhrase, planetMeanings } from '../data/transit-templates';
-import { getRandomHousePhrase, getHouseEmotionalResonance, getRandomHouseQuestion } from '../data/house-contexts';
-import { insightStructureTemplates, perspectiveTemplates, closingTemplates, keyPhraseTemplates } from '../data/insight-structure-templates';
+import { getRandomHousePhrase, getHouseEmotionalResonance, getRandomHouseQuestion, houseContexts } from '../data/house-contexts';
+import { insightStructureTemplates, perspectiveTemplates, closingTemplates, keyPhraseTemplates, cardWisdomTemplates } from '../data/insight-structure-templates';
 
 export interface TransitData {
   transitingPlanet: string;
@@ -166,9 +166,16 @@ function buildInsight(
 
   insight = insight.replace('{card_phrase}', getRandomCardPhrase(cardId, isReversed));
 
-  insight = insight.replace('{house_context}', getRandomHousePhrase(transit.house));
+  // Always use house phrase WITH number (first item in naturalPhrases array)
+  const houseContext = houseContexts[transit.house];
+  const housePhraseWithNumber = houseContext ? houseContext.naturalPhrases[0] : getRandomHousePhrase(transit.house);
+  insight = insight.replace('{house_context}', housePhraseWithNumber);
 
   insight = insight.replace('{house_emotional_context}', getHouseEmotionalResonance(transit.house));
+
+  // Card wisdom - what the card is specifically telling you
+  const cardWisdom = selectRandomFromArray(cardWisdomTemplates[combinedTone]);
+  insight = insight.replace('{card_wisdom}', cardWisdom);
 
   // Emotional reality - describe what it feels like
   const emotionalReality = buildEmotionalReality(cardArchetype, transit);
