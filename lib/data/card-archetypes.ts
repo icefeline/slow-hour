@@ -777,6 +777,186 @@ export const cardArchetypes: Record<string, CardArchetype> = {
     }
   },
 
+  'wands-3': {
+    id: 'wands-3',
+    name: 'Three of Wands',
+    upright: {
+      coreThemes: ['expansion', 'foresight', 'progress', 'looking ahead', 'momentum building'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['trusting what you\'ve set in motion', 'looking to horizons', 'waiting with confidence'],
+      actionQualities: ['expanding', 'planning ahead', 'watching it unfold', 'building momentum', 'trusting the process'],
+      naturalPhrases: [
+        'what you\'ve set in motion',
+        'the expansion happening',
+        'looking to the horizon',
+        'the momentum building',
+        'watching it grow'
+      ]
+    },
+    reversed: {
+      coreThemes: ['delays', 'lack of foresight', 'obstacles', 'playing small', 'limited vision'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['plans stalling', 'can\'t see ahead', 'momentum lost'],
+      actionQualities: ['stalling', 'losing sight', 'playing small', 'blocking expansion', 'losing confidence'],
+      naturalPhrases: [
+        'the delays piling up',
+        'when vision narrows',
+        'momentum stalling',
+        'staying too small'
+      ]
+    }
+  },
+
+  'wands-4': {
+    id: 'wands-4',
+    name: 'Four of Wands',
+    upright: {
+      coreThemes: ['celebration', 'homecoming', 'harmony', 'milestone', 'community joy'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['celebrating progress', 'feeling at home', 'stability achieved'],
+      actionQualities: ['celebrating', 'enjoying stability', 'gathering together', 'marking milestones', 'feeling grounded in joy'],
+      naturalPhrases: [
+        'the celebration earned',
+        'coming home to yourself',
+        'the stability you\'ve built',
+        'this moment of harmony',
+        'the milestone reached'
+      ]
+    },
+    reversed: {
+      coreThemes: ['instability', 'lack of roots', 'disrupted celebration', 'transition without grounding'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t settle', 'celebration feels hollow', 'lacking foundation'],
+      actionQualities: ['unsettled', 'disrupting harmony', 'homeless feeling', 'can\'t celebrate'],
+      naturalPhrases: [
+        'when home doesn\'t feel stable',
+        'celebration interrupted',
+        'the grounding missing',
+        'can\'t settle in'
+      ]
+    }
+  },
+
+  'wands-5': {
+    id: 'wands-5',
+    name: 'Five of Wands',
+    upright: {
+      coreThemes: ['conflict', 'competition', 'tension', 'struggle', 'creative clash'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['everyone pulling different directions', 'healthy competition vs chaos', 'creative tension'],
+      actionQualities: ['competing', 'clashing', 'struggling together', 'fighting for space', 'creative conflict'],
+      naturalPhrases: [
+        'everyone pulling different ways',
+        'the creative clash',
+        'the struggle for space',
+        'competing energies',
+        'when wills collide'
+      ]
+    },
+    reversed: {
+      coreThemes: ['avoiding conflict', 'resolution', 'inner conflict', 'harmony restored'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['conflict resolving', 'finding common ground', 'inner struggle'],
+      actionQualities: ['avoiding fight', 'finding harmony', 'internal struggle', 'resolving tension'],
+      naturalPhrases: [
+        'the conflict easing',
+        'finding common ground',
+        'the internal battle',
+        'tension releasing'
+      ]
+    }
+  },
+
+  'wands-6': {
+    id: 'wands-6',
+    name: 'Six of Wands',
+    upright: {
+      coreThemes: ['victory', 'recognition', 'success', 'public acknowledgment', 'confidence'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['being seen for achievement', 'deserved recognition', 'success earned'],
+      actionQualities: ['succeeding', 'being recognized', 'leading', 'receiving acknowledgment', 'claiming victory'],
+      naturalPhrases: [
+        'the recognition arriving',
+        'victory earned',
+        'being seen for what you did',
+        'the success visible',
+        'leading the way'
+      ]
+    },
+    reversed: {
+      coreThemes: ['lack of recognition', 'private achievement', 'ego', 'fall from grace'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['success without recognition', 'ego inflated', 'achievement unseen'],
+      actionQualities: ['going unnoticed', 'ego leading', 'private victory', 'recognition withheld'],
+      naturalPhrases: [
+        'when achievement goes unseen',
+        'ego taking over',
+        'the victory that\'s hollow',
+        'recognition you\'re not getting'
+      ]
+    }
+  },
+
+  'wands-8': {
+    id: 'wands-8',
+    name: 'Eight of Wands',
+    upright: {
+      coreThemes: ['swift action', 'momentum', 'rapid change', 'messages arriving', 'movement'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['things moving fast', 'momentum accelerating', 'swift progress'],
+      actionQualities: ['moving quickly', 'accelerating', 'rushing forward', 'messages flying', 'rapid change'],
+      naturalPhrases: [
+        'things moving fast now',
+        'the acceleration',
+        'momentum taking over',
+        'rapid movement',
+        'everything rushing forward'
+      ]
+    },
+    reversed: {
+      coreThemes: ['delays', 'slowing down', 'miscommunication', 'patience needed'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['expected speed not happening', 'messages delayed', 'patience tested'],
+      actionQualities: ['slowing', 'delaying', 'messages missed', 'momentum stalled'],
+      naturalPhrases: [
+        'the delays frustrating you',
+        'when speed stalls',
+        'momentum slowing',
+        'messages not arriving'
+      ]
+    }
+  },
+
+  'wands-9': {
+    id: 'wands-9',
+    name: 'Nine of Wands',
+    upright: {
+      coreThemes: ['resilience', 'persistence', 'last stand', 'wounded but standing', 'defensiveness'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['battle-worn but not giving up', 'defending what you\'ve built', 'resilience tested'],
+      actionQualities: ['persisting', 'defending', 'standing despite wounds', 'holding on', 'one more round'],
+      naturalPhrases: [
+        'wounded but standing',
+        'the resilience you\'re showing',
+        'one more fight left',
+        'battle-worn but not done',
+        'defending what you\'ve built'
+      ]
+    },
+    reversed: {
+      coreThemes: ['exhaustion', 'giving up', 'paranoia', 'dropping defenses'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['too tired to continue', 'defenses too high or too low', 'ready to give up'],
+      actionQualities: ['exhausted', 'dropping guard', 'giving in', 'paranoid defending', 'too tired to fight'],
+      naturalPhrases: [
+        'the exhaustion winning',
+        'defenses too high',
+        'ready to give up',
+        'when you can\'t fight anymore'
+      ]
+    }
+  },
+
   'wands-10': {
     id: 'wands-10',
     name: 'Ten of Wands',
@@ -898,6 +1078,96 @@ export const cardArchetypes: Record<string, CardArchetype> = {
     }
   },
 
+  'cups-4': {
+    id: 'cups-4',
+    name: 'Four of Cups',
+    upright: {
+      coreThemes: ['apathy', 'contemplation', 'discontent', 'missing opportunity', 'withdrawal'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['lost in thoughts', 'not seeing what\'s offered', 'emotional withdrawal'],
+      actionQualities: ['withdrawing', 'contemplating', 'refusing offers', 'looking inward too much', 'apathetic'],
+      naturalPhrases: [
+        'missing what\'s being offered',
+        'lost in your head',
+        'the apathy settling',
+        'withdrawn from the world',
+        'not seeing the gift'
+      ]
+    },
+    reversed: {
+      coreThemes: ['awareness returning', 'seeing opportunities', 'engagement', 'coming out of withdrawal'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['seeing what\'s available', 'ready to engage again', 'awareness dawning'],
+      actionQualities: ['noticing', 'engaging', 'accepting offers', 'coming back', 'seeing clearly'],
+      naturalPhrases: [
+        'awareness returning',
+        'seeing what you missed',
+        'coming out of withdrawal',
+        'ready to engage again'
+      ]
+    }
+  },
+
+  'cups-5': {
+    id: 'cups-5',
+    name: 'Five of Cups',
+    upright: {
+      coreThemes: ['loss', 'grief', 'regret', 'disappointment', 'focusing on what\'s gone'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['mourning what\'s lost', 'can\'t see what remains', 'dwelling in regret'],
+      actionQualities: ['grieving', 'regretting', 'focusing on loss', 'missing what\'s still there', 'mourning'],
+      naturalPhrases: [
+        'the loss you\'re mourning',
+        'what spilled and can\'t be recovered',
+        'grief taking over',
+        'regret consuming you',
+        'can\'t see what\'s still standing'
+      ]
+    },
+    reversed: {
+      coreThemes: ['acceptance', 'moving on', 'seeing what remains', 'forgiveness', 'healing'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['ready to move forward', 'seeing what\'s still here', 'accepting loss'],
+      actionQualities: ['moving on', 'accepting', 'seeing forward', 'releasing regret', 'healing'],
+      naturalPhrases: [
+        'ready to move forward',
+        'seeing what still remains',
+        'acceptance arriving',
+        'releasing the regret'
+      ]
+    }
+  },
+
+  'cups-6': {
+    id: 'cups-6',
+    name: 'Six of Cups',
+    upright: {
+      coreThemes: ['nostalgia', 'innocence', 'childhood', 'memories', 'past connections'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['revisiting the past', 'childhood patterns', 'innocent joy'],
+      actionQualities: ['remembering', 'revisiting', 'reconnecting with innocence', 'looking back', 'nostalgia'],
+      naturalPhrases: [
+        'the past revisiting you',
+        'childhood patterns surfacing',
+        'nostalgia pulling you back',
+        'innocent connections',
+        'what you remember'
+      ]
+    },
+    reversed: {
+      coreThemes: ['stuck in past', 'leaving childhood behind', 'unrealistic nostalgia', 'moving forward'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t move past childhood', 'nostalgia unhelpful', 'ready to grow up'],
+      actionQualities: ['stuck in memories', 'idealizing past', 'refusing to grow', 'letting go of childhood'],
+      naturalPhrases: [
+        'stuck in what was',
+        'when nostalgia traps you',
+        'ready to leave the past',
+        'childhood you can\'t outgrow'
+      ]
+    }
+  },
+
   'cups-7': {
     id: 'cups-7',
     name: 'Seven of Cups',
@@ -924,6 +1194,66 @@ export const cardArchetypes: Record<string, CardArchetype> = {
         'seeing what\'s actually there',
         'fantasy falling away',
         'the real choice emerging'
+      ]
+    }
+  },
+
+  'cups-8': {
+    id: 'cups-8',
+    name: 'Eight of Cups',
+    upright: {
+      coreThemes: ['walking away', 'seeking deeper meaning', 'disappointment', 'leaving behind', 'spiritual journey'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['knowing it\'s time to leave', 'seeking something more', 'emotional departure'],
+      actionQualities: ['walking away', 'leaving', 'seeking more', 'abandoning', 'journeying inward'],
+      naturalPhrases: [
+        'walking away from what\'s not enough',
+        'leaving it all behind',
+        'seeking something deeper',
+        'the departure',
+        'knowing you need more'
+      ]
+    },
+    reversed: {
+      coreThemes: ['afraid to leave', 'aimless wandering', 'staying put', 'fear of change'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['too scared to walk away', 'staying in dissatisfaction', 'wandering without purpose'],
+      actionQualities: ['staying stuck', 'afraid to leave', 'aimless searching', 'clinging'],
+      naturalPhrases: [
+        'too scared to leave',
+        'staying in what doesn\'t work',
+        'wandering without direction',
+        'afraid of what\'s next'
+      ]
+    }
+  },
+
+  'cups-9': {
+    id: 'cups-9',
+    name: 'Nine of Cups',
+    upright: {
+      coreThemes: ['contentment', 'satisfaction', 'wish fulfillment', 'emotional happiness', 'having enough'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['satisfaction with what is', 'emotional fulfillment', 'wishes granted'],
+      actionQualities: ['enjoying', 'being satisfied', 'feeling content', 'having enough', 'receiving wishes'],
+      naturalPhrases: [
+        'the contentment you\'re feeling',
+        'wishes coming true',
+        'satisfaction with what is',
+        'emotional happiness',
+        'having enough'
+      ]
+    },
+    reversed: {
+      coreThemes: ['greed', 'dissatisfaction', 'materialism', 'never enough', 'shallow happiness'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['nothing feels enough', 'seeking external validation', 'hollow satisfaction'],
+      actionQualities: ['wanting more', 'dissatisfied', 'seeking externally', 'greedy', 'never satisfied'],
+      naturalPhrases: [
+        'never enough',
+        'satisfaction that\'s hollow',
+        'wanting more and more',
+        'happiness that doesn\'t last'
       ]
     }
   },
@@ -1079,6 +1409,96 @@ export const cardArchetypes: Record<string, CardArchetype> = {
     }
   },
 
+  'swords-4': {
+    id: 'swords-4',
+    name: 'Four of Swords',
+    upright: {
+      coreThemes: ['rest', 'recuperation', 'contemplation', 'pause', 'mental recovery'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['needing rest', 'recovering mentally', 'contemplative pause'],
+      actionQualities: ['resting', 'recovering', 'contemplating', 'pausing', 'withdrawing to heal'],
+      naturalPhrases: [
+        'the rest you need',
+        'recovering your mind',
+        'the pause that heals',
+        'contemplative stillness',
+        'mental recuperation'
+      ]
+    },
+    reversed: {
+      coreThemes: ['restlessness', 'burnout', 'forced rest', 'can\'t stop', 'exhaustion'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t rest', 'pushing past exhaustion', 'rest feeling impossible'],
+      actionQualities: ['restless', 'burned out', 'unable to stop', 'resisting rest', 'exhausted'],
+      naturalPhrases: [
+        'the rest you can\'t take',
+        'burnout setting in',
+        'can\'t stop moving',
+        'exhaustion you\'re ignoring'
+      ]
+    }
+  },
+
+  'swords-6': {
+    id: 'swords-6',
+    name: 'Six of Swords',
+    upright: {
+      coreThemes: ['transition', 'moving on', 'travel', 'leaving difficulty', 'recovery'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['moving toward calmer waters', 'transition in progress', 'leaving pain behind'],
+      actionQualities: ['transitioning', 'moving forward', 'traveling', 'leaving behind', 'recovering'],
+      naturalPhrases: [
+        'the transition happening',
+        'moving toward calmer waters',
+        'leaving the storm',
+        'the journey forward',
+        'recovery in motion'
+      ]
+    },
+    reversed: {
+      coreThemes: ['resisting change', 'stuck in transition', 'unfinished business', 'baggage'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t move on', 'carrying too much forward', 'resisting transition'],
+      actionQualities: ['stuck', 'resisting movement', 'bringing baggage', 'transition stalled'],
+      naturalPhrases: [
+        'stuck in transition',
+        'the baggage you\'re carrying',
+        'resisting the journey',
+        'can\'t leave it behind'
+      ]
+    }
+  },
+
+  'swords-7': {
+    id: 'swords-7',
+    name: 'Seven of Swords',
+    upright: {
+      coreThemes: ['deception', 'strategy', 'sneaking', 'getting away with something', 'cunning'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['deceiving self or others', 'strategic but dishonest', 'taking shortcuts'],
+      actionQualities: ['sneaking', 'deceiving', 'being strategic', 'getting away with it', 'cunning'],
+      naturalPhrases: [
+        'the deception',
+        'sneaking around',
+        'getting away with something',
+        'the strategy that\'s dishonest',
+        'what you\'re hiding'
+      ]
+    },
+    reversed: {
+      coreThemes: ['truth revealed', 'getting caught', 'coming clean', 'honesty'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['deception exposed', 'ready to be honest', 'consequences arriving'],
+      actionQualities: ['getting caught', 'confessing', 'being honest', 'facing consequences', 'truth emerging'],
+      naturalPhrases: [
+        'the truth coming out',
+        'getting caught',
+        'ready to be honest',
+        'deception revealed'
+      ]
+    }
+  },
+
   'swords-8': {
     id: 'swords-8',
     name: 'Eight of Swords',
@@ -1105,6 +1525,36 @@ export const cardArchetypes: Record<string, CardArchetype> = {
         'seeing the way out',
         'the blindfold coming off',
         'recognizing you were never trapped'
+      ]
+    }
+  },
+
+  'swords-9': {
+    id: 'swords-9',
+    name: 'Nine of Swords',
+    upright: {
+      coreThemes: ['anxiety', 'worry', 'nightmares', 'mental anguish', 'fear'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['consumed by worry', 'nightmares literal or mental', 'anxiety overwhelming'],
+      actionQualities: ['worrying', 'anxious', 'unable to sleep', 'consumed by fear', 'mental torture'],
+      naturalPhrases: [
+        'the anxiety consuming you',
+        'nightmares keeping you up',
+        'worry spiraling',
+        'the mental anguish',
+        'fear taking over'
+      ]
+    },
+    reversed: {
+      coreThemes: ['releasing anxiety', 'hope returning', 'recovery from trauma', 'worst fears unfounded'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['anxiety easing', 'seeing fears weren\'t real', 'hope emerging'],
+      actionQualities: ['releasing worry', 'recovering', 'finding hope', 'anxiety lifting', 'sleeping again'],
+      naturalPhrases: [
+        'the anxiety releasing',
+        'hope returning',
+        'worry easing',
+        'fears weren\'t real'
       ]
     }
   },
@@ -1200,6 +1650,126 @@ export const cardArchetypes: Record<string, CardArchetype> = {
     }
   },
 
+  'pentacles-2': {
+    id: 'pentacles-2',
+    name: 'Two of Pentacles',
+    upright: {
+      coreThemes: ['balance', 'juggling', 'adaptability', 'multitasking', 'flexibility'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['managing multiple demands', 'staying flexible', 'finding balance'],
+      actionQualities: ['juggling', 'balancing', 'adapting', 'multitasking', 'staying flexible'],
+      naturalPhrases: [
+        'juggling it all',
+        'the balancing act',
+        'staying flexible',
+        'managing the demands',
+        'keeping everything moving'
+      ]
+    },
+    reversed: {
+      coreThemes: ['overwhelm', 'imbalance', 'dropping balls', 'poor time management', 'chaos'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t keep up', 'losing balance', 'too much to handle'],
+      actionQualities: ['dropping things', 'losing balance', 'overwhelmed', 'can\'t juggle', 'chaos'],
+      naturalPhrases: [
+        'dropping the balls',
+        'balance lost',
+        'too much to handle',
+        'when juggling fails'
+      ]
+    }
+  },
+
+  'pentacles-4': {
+    id: 'pentacles-4',
+    name: 'Four of Pentacles',
+    upright: {
+      coreThemes: ['control', 'security', 'possession', 'holding on', 'conservatism'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['clinging to security', 'fear of loss', 'holding too tight'],
+      actionQualities: ['holding tight', 'controlling', 'possessing', 'hoarding', 'refusing to let go'],
+      naturalPhrases: [
+        'holding on too tight',
+        'the control',
+        'clinging to security',
+        'what you won\'t release',
+        'the grip you have'
+      ]
+    },
+    reversed: {
+      coreThemes: ['generosity', 'letting go', 'releasing control', 'greed', 'material loss'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['learning to let go', 'releasing grip', 'finding generosity'],
+      actionQualities: ['releasing', 'letting go', 'being generous', 'loosening grip', 'sharing'],
+      naturalPhrases: [
+        'loosening your grip',
+        'learning to let go',
+        'the release',
+        'finding generosity'
+      ]
+    }
+  },
+
+  'pentacles-5': {
+    id: 'pentacles-5',
+    name: 'Five of Pentacles',
+    upright: {
+      coreThemes: ['hardship', 'poverty', 'exclusion', 'loss', 'struggle'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['feeling left out', 'material hardship', 'spiritual poverty'],
+      actionQualities: ['struggling', 'suffering', 'being excluded', 'lacking', 'enduring hardship'],
+      naturalPhrases: [
+        'the hardship',
+        'feeling left out in the cold',
+        'the struggle for basics',
+        'material loss',
+        'when you have nothing'
+      ]
+    },
+    reversed: {
+      coreThemes: ['recovery', 'charity', 'improvement', 'getting help', 'hard times ending'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['accepting help', 'situation improving', 'recovery beginning'],
+      actionQualities: ['recovering', 'accepting help', 'improving', 'finding resources', 'getting through'],
+      naturalPhrases: [
+        'help arriving',
+        'the recovery beginning',
+        'accepting what\'s offered',
+        'hardship easing'
+      ]
+    }
+  },
+
+  'pentacles-6': {
+    id: 'pentacles-6',
+    name: 'Six of Pentacles',
+    upright: {
+      coreThemes: ['generosity', 'charity', 'giving and receiving', 'sharing', 'balance of power'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['balancing giving and receiving', 'sharing resources', 'power dynamics'],
+      actionQualities: ['giving', 'receiving', 'sharing', 'being generous', 'balancing exchange'],
+      naturalPhrases: [
+        'the generosity flowing',
+        'what you\'re giving',
+        'what you\'re receiving',
+        'the balanced exchange',
+        'sharing resources'
+      ]
+    },
+    reversed: {
+      coreThemes: ['inequality', 'debt', 'strings attached', 'one-sided giving', 'power imbalance'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['unequal exchange', 'giving with strings', 'receiving with obligation'],
+      actionQualities: ['unequal giving', 'controlling through giving', 'indebted', 'unbalanced exchange'],
+      naturalPhrases: [
+        'the strings attached',
+        'unequal exchange',
+        'when giving controls',
+        'the debt weighing on you'
+      ]
+    }
+  },
+
   'pentacles-7': {
     id: 'pentacles-7',
     name: 'Seven of Pentacles',
@@ -1230,6 +1800,66 @@ export const cardArchetypes: Record<string, CardArchetype> = {
     }
   },
 
+  'pentacles-8': {
+    id: 'pentacles-8',
+    name: 'Eight of Pentacles',
+    upright: {
+      coreThemes: ['mastery', 'skill development', 'dedication', 'craftsmanship', 'quality work'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['honing your craft', 'dedicated practice', 'pursuit of excellence'],
+      actionQualities: ['practicing', 'mastering', 'refining', 'dedicating', 'perfecting'],
+      naturalPhrases: [
+        'the mastery you\'re building',
+        'honing your craft',
+        'dedicated work',
+        'the skill developing',
+        'perfecting your art'
+      ]
+    },
+    reversed: {
+      coreThemes: ['lack of focus', 'poor quality', 'perfectionism', 'wasted effort', 'shortcuts'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t focus on one thing', 'perfectionism blocking', 'cutting corners'],
+      actionQualities: ['unfocused', 'cutting corners', 'perfectionism', 'wasting effort', 'poor quality'],
+      naturalPhrases: [
+        'the focus scattered',
+        'when perfectionism blocks',
+        'cutting corners',
+        'effort without direction'
+      ]
+    }
+  },
+
+  'pentacles-9': {
+    id: 'pentacles-9',
+    name: 'Nine of Pentacles',
+    upright: {
+      coreThemes: ['independence', 'self-sufficiency', 'luxury', 'refinement', 'abundance alone'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['enjoying what you\'ve built', 'self-reliance', 'refined living'],
+      actionQualities: ['enjoying abundance', 'being self-sufficient', 'living well', 'refined taste', 'independence'],
+      naturalPhrases: [
+        'the abundance you\'ve built',
+        'self-sufficiency',
+        'enjoying what you created',
+        'refined independence',
+        'luxury earned'
+      ]
+    },
+    reversed: {
+      coreThemes: ['financial dependence', 'lack of discipline', 'overwork', 'material setbacks'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['can\'t enjoy what you have', 'dependent on others', 'overworked without reward'],
+      actionQualities: ['dependent', 'overworking', 'can\'t enjoy', 'lacking discipline', 'setbacks'],
+      naturalPhrases: [
+        'dependent on others',
+        'can\'t enjoy what you built',
+        'overworked without pleasure',
+        'the discipline missing'
+      ]
+    }
+  },
+
   'pentacles-10': {
     id: 'pentacles-10',
     name: 'Ten of Pentacles',
@@ -1256,6 +1886,490 @@ export const cardArchetypes: Record<string, CardArchetype> = {
         'security you can\'t count on',
         'family fighting over what\'s left',
         'when wealth divides'
+      ]
+    }
+  },
+
+  // COURT CARDS - WANDS
+  'wands-page': {
+    id: 'wands-page',
+    name: 'Page of Wands',
+    upright: {
+      coreThemes: ['enthusiasm', 'exploration', 'discovery', 'news', 'free spirit'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['curious and eager', 'open to adventure', 'youthful energy'],
+      actionQualities: ['exploring', 'discovering', 'being enthusiastic', 'trying new things', 'free-spirited'],
+      naturalPhrases: [
+        'the enthusiasm rising',
+        'ready to explore',
+        'new adventures calling',
+        'curious energy',
+        'the spark of discovery'
+      ]
+    },
+    reversed: {
+      coreThemes: ['immaturity', 'lack of direction', 'procrastination', 'bad news'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['scattered energy', 'immature approach', 'avoiding commitment'],
+      actionQualities: ['procrastinating', 'scattered', 'immature', 'lacking follow-through'],
+      naturalPhrases: [
+        'enthusiasm without direction',
+        'the scattered energy',
+        'avoiding commitment',
+        'immature approach'
+      ]
+    }
+  },
+
+  'wands-knight': {
+    id: 'wands-knight',
+    name: 'Knight of Wands',
+    upright: {
+      coreThemes: ['passion', 'action', 'adventure', 'impulsiveness', 'energy'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['charging forward', 'passionate pursuit', 'fearless action'],
+      actionQualities: ['charging ahead', 'taking action', 'pursuing passionately', 'adventuring', 'bold moves'],
+      naturalPhrases: [
+        'charging forward',
+        'the passionate pursuit',
+        'bold action',
+        'fearless movement',
+        'the adventure beginning'
+      ]
+    },
+    reversed: {
+      coreThemes: ['recklessness', 'impatience', 'delays', 'frustration', 'anger'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['impulsive and reckless', 'frustrated by delays', 'anger driving'],
+      actionQualities: ['reckless', 'impatient', 'frustrated', 'angry', 'forcing'],
+      naturalPhrases: [
+        'reckless energy',
+        'impatience taking over',
+        'frustrated movement',
+        'anger driving you'
+      ]
+    }
+  },
+
+  'wands-queen': {
+    id: 'wands-queen',
+    name: 'Queen of Wands',
+    upright: {
+      coreThemes: ['confidence', 'independence', 'determination', 'vibrancy', 'charisma'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['self-assured and vibrant', 'confidently independent', 'magnetic presence'],
+      actionQualities: ['leading confidently', 'being vibrant', 'attracting', 'self-assured', 'independent'],
+      naturalPhrases: [
+        'the confidence you embody',
+        'your vibrant presence',
+        'self-assured independence',
+        'magnetic energy',
+        'leading with charisma'
+      ]
+    },
+    reversed: {
+      coreThemes: ['insecurity', 'jealousy', 'selfishness', 'demanding', 'vindictive'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['insecure and jealous', 'demanding attention', 'vengeful'],
+      actionQualities: ['jealous', 'demanding', 'selfish', 'vindictive', 'insecure'],
+      naturalPhrases: [
+        'jealousy consuming',
+        'demanding everything',
+        'insecurity showing',
+        'the vindictive energy'
+      ]
+    }
+  },
+
+  'wands-king': {
+    id: 'wands-king',
+    name: 'King of Wands',
+    upright: {
+      coreThemes: ['leadership', 'vision', 'entrepreneurship', 'honor', 'boldness'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['natural leader', 'visionary thinking', 'honorable action'],
+      actionQualities: ['leading', 'envisioning', 'building empires', 'bold decisions', 'inspiring'],
+      naturalPhrases: [
+        'the leader emerging',
+        'visionary action',
+        'bold leadership',
+        'the empire you\'re building',
+        'inspiring others'
+      ]
+    },
+    reversed: {
+      coreThemes: ['tyranny', 'domineering', 'ruthless', 'arrogance', 'impulsiveness'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['dominating others', 'arrogant leadership', 'ruthless pursuit'],
+      actionQualities: ['dominating', 'ruthless', 'arrogant', 'tyrannical', 'impulsive leadership'],
+      naturalPhrases: [
+        'tyrannical control',
+        'arrogance leading',
+        'ruthless ambition',
+        'dominating everyone'
+      ]
+    }
+  },
+
+  // COURT CARDS - CUPS
+  'cups-page': {
+    id: 'cups-page',
+    name: 'Page of Cups',
+    upright: {
+      coreThemes: ['intuition', 'sensitivity', 'creativity', 'curiosity', 'gentleness'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['emotionally open', 'intuitive messages', 'creative stirrings'],
+      actionQualities: ['feeling deeply', 'creating', 'being sensitive', 'following intuition', 'gentle approach'],
+      naturalPhrases: [
+        'the intuitive message',
+        'emotional openness',
+        'creative stirrings',
+        'gentle sensitivity',
+        'what your heart says'
+      ]
+    },
+    reversed: {
+      coreThemes: ['emotional immaturity', 'insecurity', 'unrealistic', 'moodiness'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['emotionally immature', 'overly sensitive', 'unrealistic expectations'],
+      actionQualities: ['moody', 'overly sensitive', 'immature emotionally', 'unrealistic'],
+      naturalPhrases: [
+        'emotional immaturity',
+        'oversensitive reactions',
+        'unrealistic dreams',
+        'moody energy'
+      ]
+    }
+  },
+
+  'cups-knight': {
+    id: 'cups-knight',
+    name: 'Knight of Cups',
+    upright: {
+      coreThemes: ['romance', 'charm', 'imagination', 'proposals', 'following the heart'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['romantic pursuit', 'following heart', 'charming approach'],
+      actionQualities: ['pursuing romance', 'charming', 'proposing', 'following heart', 'imagining'],
+      naturalPhrases: [
+        'the romantic pursuit',
+        'following your heart',
+        'the charming approach',
+        'love\'s messenger',
+        'the proposal coming'
+      ]
+    },
+    reversed: {
+      coreThemes: ['moodiness', 'unrealistic', 'jealousy', 'overemotional', 'disappointment'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['mood swings', 'unrealistic romance', 'overly emotional'],
+      actionQualities: ['moody', 'jealous', 'overemotional', 'unrealistic expectations', 'disappointed'],
+      naturalPhrases: [
+        'the mood swings',
+        'unrealistic romance',
+        'jealousy rising',
+        'emotional overwhelm'
+      ]
+    }
+  },
+
+  'cups-queen': {
+    id: 'cups-queen',
+    name: 'Queen of Cups',
+    upright: {
+      coreThemes: ['compassion', 'intuition', 'emotional security', 'nurturing', 'wisdom'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['emotionally mature', 'deeply compassionate', 'intuitively wise'],
+      actionQualities: ['nurturing', 'being compassionate', 'trusting intuition', 'emotionally secure', 'caring deeply'],
+      naturalPhrases: [
+        'the compassion flowing',
+        'emotional wisdom',
+        'nurturing presence',
+        'intuitive knowing',
+        'secure in feeling'
+      ]
+    },
+    reversed: {
+      coreThemes: ['insecurity', 'co-dependency', 'martyrdom', 'emotional manipulation'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['emotionally insecure', 'manipulating through feeling', 'martyring self'],
+      actionQualities: ['co-dependent', 'manipulating', 'martyring', 'insecure', 'smothering'],
+      naturalPhrases: [
+        'emotional manipulation',
+        'co-dependent patterns',
+        'martyring yourself',
+        'insecurity showing'
+      ]
+    }
+  },
+
+  'cups-king': {
+    id: 'cups-king',
+    name: 'King of Cups',
+    upright: {
+      coreThemes: ['emotional balance', 'diplomacy', 'compassion', 'wisdom', 'calm'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['emotionally balanced', 'wise compassion', 'diplomatic approach'],
+      actionQualities: ['balancing emotion', 'being diplomatic', 'wise leadership', 'calm presence', 'compassionate'],
+      naturalPhrases: [
+        'emotional mastery',
+        'the balanced heart',
+        'diplomatic wisdom',
+        'calm compassion',
+        'mature feeling'
+      ]
+    },
+    reversed: {
+      coreThemes: ['emotional manipulation', 'moodiness', 'coldness', 'volatility'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['emotionally manipulative', 'cold or volatile', 'suppressed feelings'],
+      actionQualities: ['manipulating', 'volatile', 'cold', 'suppressing emotion', 'moody'],
+      naturalPhrases: [
+        'emotional manipulation',
+        'the coldness',
+        'volatile moods',
+        'feelings suppressed'
+      ]
+    }
+  },
+
+  // COURT CARDS - SWORDS
+  'swords-page': {
+    id: 'swords-page',
+    name: 'Page of Swords',
+    upright: {
+      coreThemes: ['curiosity', 'mental agility', 'vigilance', 'new ideas', 'communication'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['mentally curious', 'watchful', 'learning'],
+      actionQualities: ['investigating', 'questioning', 'learning', 'communicating', 'being vigilant'],
+      naturalPhrases: [
+        'the curious mind',
+        'questioning everything',
+        'new ideas emerging',
+        'mental vigilance',
+        'learning actively'
+      ]
+    },
+    reversed: {
+      coreThemes: ['gossip', 'hurtful words', 'deception', 'lack of planning'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['using words to hurt', 'spreading rumors', 'scattered thinking'],
+      actionQualities: ['gossiping', 'deceiving', 'hurtful communication', 'scattered', 'plotting'],
+      naturalPhrases: [
+        'the gossip spreading',
+        'hurtful words',
+        'deceptive communication',
+        'scattered thoughts'
+      ]
+    }
+  },
+
+  'swords-knight': {
+    id: 'swords-knight',
+    name: 'Knight of Swords',
+    upright: {
+      coreThemes: ['action', 'speed', 'directness', 'assertiveness', 'drive'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['direct and fast', 'assertive pursuit', 'cutting through'],
+      actionQualities: ['charging forward', 'being direct', 'asserting', 'fast action', 'cutting through'],
+      naturalPhrases: [
+        'charging ahead',
+        'direct action',
+        'cutting through obstacles',
+        'the swift pursuit',
+        'assertive movement'
+      ]
+    },
+    reversed: {
+      coreThemes: ['recklessness', 'impulsiveness', 'rudeness', 'scatter-brained'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['recklessly direct', 'impulsive and rude', 'unfocused aggression'],
+      actionQualities: ['reckless', 'impulsive', 'rude', 'scattered', 'aggressive'],
+      naturalPhrases: [
+        'reckless charge',
+        'impulsive action',
+        'the rudeness',
+        'scattered aggression'
+      ]
+    }
+  },
+
+  'swords-queen': {
+    id: 'swords-queen',
+    name: 'Queen of Swords',
+    upright: {
+      coreThemes: ['clarity', 'honesty', 'independence', 'intellect', 'direct communication'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['clear-minded', 'intellectually independent', 'honest'],
+      actionQualities: ['thinking clearly', 'being honest', 'independent thought', 'direct communication', 'cutting through BS'],
+      naturalPhrases: [
+        'the clear mind',
+        'honest communication',
+        'intellectual independence',
+        'cutting through illusion',
+        'direct truth'
+      ]
+    },
+    reversed: {
+      coreThemes: ['coldness', 'cruelty', 'bitterness', 'harsh judgment'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['cold and cruel', 'bitter thinking', 'harsh with self and others'],
+      actionQualities: ['cold', 'cruel', 'bitter', 'harshly judging', 'cutting meanly'],
+      naturalPhrases: [
+        'the coldness',
+        'cruel honesty',
+        'bitter thoughts',
+        'harsh judgment'
+      ]
+    }
+  },
+
+  'swords-king': {
+    id: 'swords-king',
+    name: 'King of Swords',
+    upright: {
+      coreThemes: ['intellectual power', 'authority', 'truth', 'clarity', 'ethical'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['intellectual authority', 'clear thinking', 'ethical judgment'],
+      actionQualities: ['thinking strategically', 'judging fairly', 'leading intellectually', 'seeking truth', 'ethical'],
+      naturalPhrases: [
+        'intellectual authority',
+        'strategic thinking',
+        'ethical judgment',
+        'clear leadership',
+        'the truth seeker'
+      ]
+    },
+    reversed: {
+      coreThemes: ['manipulation', 'abuse of power', 'cruelty', 'lack of ethics'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['intellectually manipulative', 'abusing authority', 'cruel logic'],
+      actionQualities: ['manipulating', 'abusing power', 'cruel', 'unethical', 'tyrannical thinking'],
+      naturalPhrases: [
+        'intellectual manipulation',
+        'abusing authority',
+        'cruel logic',
+        'unethical power'
+      ]
+    }
+  },
+
+  // COURT CARDS - PENTACLES
+  'pentacles-page': {
+    id: 'pentacles-page',
+    name: 'Page of Pentacles',
+    upright: {
+      coreThemes: ['manifestation', 'study', 'diligence', 'new opportunities', 'ambition'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['eager to learn', 'practical focus', 'ambitious start'],
+      actionQualities: ['studying', 'planning', 'being diligent', 'manifesting', 'starting practically'],
+      naturalPhrases: [
+        'the practical start',
+        'eager learning',
+        'new opportunity',
+        'diligent focus',
+        'ambitious beginning'
+      ]
+    },
+    reversed: {
+      coreThemes: ['lack of progress', 'procrastination', 'poor planning', 'lack of ambition'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['not following through', 'poor planning', 'unmotivated'],
+      actionQualities: ['procrastinating', 'poor planning', 'lacking ambition', 'unfocused'],
+      naturalPhrases: [
+        'procrastination winning',
+        'poor planning',
+        'ambition lacking',
+        'unfocused effort'
+      ]
+    }
+  },
+
+  'pentacles-knight': {
+    id: 'pentacles-knight',
+    name: 'Knight of Pentacles',
+    upright: {
+      coreThemes: ['reliability', 'hard work', 'commitment', 'routine', 'persistence'],
+      emotionalTone: 'neutral',
+      psychologicalFocus: ['steady and reliable', 'committed to work', 'persistent'],
+      actionQualities: ['working steadily', 'being reliable', 'committing', 'persisting', 'routine'],
+      naturalPhrases: [
+        'steady progress',
+        'reliable work',
+        'the commitment',
+        'persistent effort',
+        'showing up daily'
+      ]
+    },
+    reversed: {
+      coreThemes: ['laziness', 'boredom', 'stagnation', 'carelessness'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['bored and stagnant', 'lazy approach', 'careless work'],
+      actionQualities: ['lazy', 'bored', 'stagnating', 'careless', 'unmotivated'],
+      naturalPhrases: [
+        'the laziness',
+        'bored stagnation',
+        'careless effort',
+        'motivation missing'
+      ]
+    }
+  },
+
+  'pentacles-queen': {
+    id: 'pentacles-queen',
+    name: 'Queen of Pentacles',
+    upright: {
+      coreThemes: ['nurturing', 'practical', 'abundance', 'down-to-earth', 'resourceful'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['practical nurturing', 'grounded abundance', 'resourceful care'],
+      actionQualities: ['nurturing practically', 'creating abundance', 'being resourceful', 'grounded care', 'providing'],
+      naturalPhrases: [
+        'practical nurturing',
+        'grounded abundance',
+        'resourceful care',
+        'the provider',
+        'down-to-earth wisdom'
+      ]
+    },
+    reversed: {
+      coreThemes: ['materialism', 'self-care neglect', 'smothering', 'jealousy'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['overly materialistic', 'neglecting self', 'smothering with care'],
+      actionQualities: ['materialistic', 'neglecting self', 'smothering', 'jealous', 'controlling through care'],
+      naturalPhrases: [
+        'the materialism',
+        'neglecting yourself',
+        'smothering care',
+        'jealousy showing'
+      ]
+    }
+  },
+
+  'pentacles-king': {
+    id: 'pentacles-king',
+    name: 'King of Pentacles',
+    upright: {
+      coreThemes: ['wealth', 'business', 'security', 'discipline', 'abundance'],
+      emotionalTone: 'expansive',
+      psychologicalFocus: ['mastery of material', 'disciplined abundance', 'secure success'],
+      actionQualities: ['building wealth', 'leading business', 'creating security', 'disciplined', 'abundant'],
+      naturalPhrases: [
+        'material mastery',
+        'the wealth you\'re building',
+        'disciplined success',
+        'security created',
+        'abundant leadership'
+      ]
+    },
+    reversed: {
+      coreThemes: ['greed', 'materialism', 'stubbornness', 'corruption'],
+      emotionalTone: 'challenging',
+      psychologicalFocus: ['greedy accumulation', 'materialistic focus', 'corrupted by wealth'],
+      actionQualities: ['greedy', 'materialistic', 'stubborn', 'corrupt', 'hoarding'],
+      naturalPhrases: [
+        'the greed',
+        'materialistic obsession',
+        'stubborn control',
+        'corrupted by wealth'
       ]
     }
   }
