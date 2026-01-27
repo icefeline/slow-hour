@@ -6,7 +6,6 @@ import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/ca
 import { getCardIcon } from './card-icons';
 import { ActiveInsight } from './ActiveInsight';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
-import { mockTransits } from '@/lib/data/mock-transits';
 import type { ActiveTransit } from '@/lib/types/astrology';
 
 interface TarotCardProps {
@@ -56,17 +55,66 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
     if (isRevealed && !generatedInsight) {
       setIsGenerating(true);
 
-      // Use a random transit from mock data (in production, this would be user's actual transit)
-      const transits = Object.values(mockTransits);
-      const randomTransit = transits[Math.floor(Math.random() * transits.length)];
-      const transitData = convertToTransitData(randomTransit);
+      // Calculate real astrology transits based on user's birth data
+      const calculateRealTransit = async () => {
+        try {
+          // Get user's birth data from localStorage
+          const birthDateStr = localStorage.getItem('userBirthdate');
+          const birthTime = localStorage.getItem('userBirthTime');
+          const birthLocation = localStorage.getItem('userBirthLocation');
 
-      // Simulate thinking delay for better UX
+          if (!birthDateStr) {
+            throw new Error('No birth date found');
+          }
+
+          // Call API to calculate transits (Swiss Ephemeris runs server-side)
+          const response = await fetch('/api/calculate-transit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              birthDate: birthDateStr,
+              birthTime: birthTime || null,
+              birthLocation: birthLocation || null
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch transit data');
+          }
+
+          const data = await response.json();
+          const dominantTransit: ActiveTransit = data.dominantTransit;
+
+          // Convert to TransitData format
+          const transitData = convertToTransitData(dominantTransit);
+
+          // Generate insight
+          const insight = generateInsight(card.id, transitData, isReversed);
+          setGeneratedInsight(insight);
+        } catch (error) {
+          console.error('Failed to calculate real transit:', error);
+          // Fall back to a default transit if calculation fails
+          const defaultTransitData: TransitData = {
+            transitingPlanet: 'Saturn',
+            natalPlanet: 'Sun',
+            aspectType: 'square',
+            phase: 'approaching',
+            house: 10,
+            daysRemaining: 14
+          };
+          const insight = generateInsight(card.id, defaultTransitData, isReversed);
+          setGeneratedInsight(insight);
+        } finally {
+          setIsGenerating(false);
+        }
+      };
+
+      // Add slight delay for better UX
       setTimeout(() => {
-        const insight = generateInsight(card.id, transitData, isReversed);
-        setGeneratedInsight(insight);
-        setIsGenerating(false);
-      }, 1500);
+        calculateRealTransit();
+      }, 800);
     }
   }, [isRevealed, card.id, isReversed, generatedInsight]);
 
