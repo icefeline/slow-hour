@@ -125,8 +125,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
           {/* Active Insight - Personalized Context */}
           <ActiveInsight
-            keyPhrase="time to name what's crumbling"
-            insight="Pluto square Moon is almost exact. The Tower is here to help you name what you're feeling before it names you. The Tower in your 4th house, foundations and family. What's crumbling isn't your enemy. It's making space for what's true."
+            keyPhrase="the foundation is asking for truth"
+            insight="Pluto square Moon is closing in, and The Tower landed in your 4th house. That's home territory - the foundation, the family dynamics, the stuff you thought was solid. Here's the thing: what's falling apart was probably held together with hope and effort for too long. The breakdown isn't the enemy. It's the truth finally getting loud enough to hear."
             transitInfo="Pluto square Moon • approaching • 58 days remaining"
             userName={userName}
             transitExplanation={{
