@@ -50,6 +50,11 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
   const [generatedInsight, setGeneratedInsight] = useState<GeneratedInsight | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Reset insight when card changes
+  useEffect(() => {
+    setGeneratedInsight(null);
+  }, [card.id]);
+
   // Generate insight when card is revealed
   useEffect(() => {
     if (isRevealed && !generatedInsight) {
