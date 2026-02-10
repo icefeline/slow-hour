@@ -221,7 +221,97 @@ export const aspectDescriptions: Record<string, string[]> = {
  * This is about the archetype's ESSENCE that gets combined with the chart
  */
 export const cardArchetypeSynthesis = {
-  // Major Arcana examples
+  // Major Arcana
+  'major-0': { // The Fool
+    archetype: 'The Fool is the leap into unknown, trusting the path will appear',
+    synthesis: [
+      '{transiting_planet} activating your {natal_planet} in {house_theme} - the Fool is showing you where you need to leap without knowing where you\'ll land',
+      'the beginning energy in {house_theme} is what {transiting_planet} meeting your {natal_planet} is creating. The Fool says trust it even when you can\'t see the whole path',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about starting before you\'re ready'
+    ]
+  },
+
+  'major-1': { // The Magician
+    archetype: 'The Magician is manifestation - you have the tools, use them',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Magician is showing you that you already have what you need',
+      'the creative power in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Magician says the tools are in your hands',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about recognizing your own agency'
+    ]
+  },
+
+  'major-2': { // The High Priestess
+    archetype: 'The High Priestess is intuition, the unseen, what you know without knowing how',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the High Priestess is asking you to trust what you sense beneath the surface',
+      'the intuitive knowing in {house_theme} is what {transiting_planet} activating your {natal_planet} is awakening. Logic won\'t solve this one',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the High Priestess is showing you the hidden patterns'
+    ]
+  },
+
+  'major-5': { // The Hierophant
+    archetype: 'The Hierophant is tradition, structure, the established way',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hierophant is asking whether you\'re following tradition because it\'s wise or because it\'s familiar',
+      'the structures in {house_theme} that {transiting_planet} is activating through your {natal_planet} - the Hierophant shows you what\'s worth keeping',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Hierophant is revealing which rules serve you and which don\'t'
+    ]
+  },
+
+  'major-6': { // The Lovers
+    archetype: 'The Lovers is choice, union, what you commit to',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Lovers is showing you this choice matters more than you think',
+      'the union or decision in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Lovers say you can\'t have both',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about choosing what you actually want, not what you should want'
+    ]
+  },
+
+  'major-8': { // Strength
+    archetype: 'Strength is gentle power, taming what\'s wild through softness',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Strength is showing you that force isn\'t the answer here',
+      'the power you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. Strength says gentle persistence wins',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Strength is asking you to work with the wild part, not against it'
+    ]
+  },
+
+  'major-9': { // The Hermit
+    archetype: 'The Hermit is withdrawal, solitude, finding answers within',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hermit is telling you the answer isn\'t out there, it\'s in the solitude',
+      'the withdrawal you\'re feeling in {house_theme} isn\'t isolation - it\'s {transiting_planet} asking your {natal_planet} to go inward before moving forward',
+      '{transiting_planet} activating your {natal_planet} in {house_theme} means the Hermit\'s lantern lights the path, but only you can walk it alone'
+    ]
+  },
+
+  'major-10': { // Wheel of Fortune
+    archetype: 'The Wheel is cycles, fate, what\'s beyond your control',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Wheel is showing you this turn was always coming',
+      'the cycle shifting in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Wheel says you can\'t stop it, only respond',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Wheel is turning - luck or fate, you didn\'t cause this'
+    ]
+  },
+
+  'major-12': { // The Hanged Man
+    archetype: 'The Hanged Man is suspension, seeing differently, the pause that shifts perspective',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hanged Man is showing you why struggling makes it worse',
+      'the suspension in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The Hanged Man says surrender opens the view',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Hanged Man is asking you to stop fighting and see it upside down'
+    ]
+  },
+
+  'major-13': { // Death
+    archetype: 'Death is transformation, the ending that must happen for the beginning',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Death is showing you that what\'s ending needed to end',
+      'the transformation in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. Death says you can\'t grow without letting go',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Death is clearing the ground so something new can actually root'
+    ]
+  },
+
   'major-16': { // The Tower
     archetype: 'The Tower is collapse and breakthrough - structures coming down',
     synthesis: [
