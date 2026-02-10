@@ -186,7 +186,15 @@ function buildInsight(
   // House number and theme
   const houseContext = houseContexts[transit.house];
   const houseTheme = houseContext ? houseContext.coreThemes[0] : 'life';
-  insight = insight.replace(/{house_number}/g, `${transit.house}th house`);
+
+  // Proper ordinal formatting (1st, 2nd, 3rd, 4th, etc.)
+  const getOrdinal = (n: number) => {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
+
+  insight = insight.replace(/{house_number}/g, `${getOrdinal(transit.house)} house`);
   insight = insight.replace(/{house_theme}/g, houseTheme);
 
   // Card archetype and synthesis

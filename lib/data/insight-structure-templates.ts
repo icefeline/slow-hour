@@ -44,7 +44,7 @@ export const insightStructureTemplates: InsightStructureTemplate[] = [
 
   {
     id: 'why-this-card',
-    structure: '{transiting_planet} {aspect_description} your {natal_planet} in your {house_number} of {house_theme} - which is exactly why {card_archetype}. {synthesis}. {closing}.',
+    structure: '{transiting_planet} is {aspect_description} your {natal_planet} ({natal_planet_meaning}) in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
     bestFor: {
       transitTone: ['challenging', 'neutral', 'expansive'],
       cardTone: ['challenging', 'neutral', 'expansive']
@@ -244,9 +244,9 @@ export const cardArchetypeSynthesis = {
   swords: {
     archetype: 'Swords are the mind, clarity, cutting through',
     synthesis: [
-      'the mental clarity you need in {house_theme} is what {transiting_planet} meeting your {natal_planet} is demanding',
-      'Swords cut through illusion - {transiting_planet} is bringing sharp truth to your {natal_planet} in {house_theme}',
-      'the sword in {house_theme} means {transiting_planet} is asking your {natal_planet} to think clearly, not just feel'
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Swords are showing you where mental clarity cuts through what emotion can\'t solve',
+      'Swords cut through illusion - {transiting_planet} activating your {natal_planet} is demanding you think clearly about {house_theme}, not just feel your way through',
+      'the sword moment in {house_theme} means {transiting_planet} is asking your {natal_planet} to see the truth, even if it hurts to look directly at it'
     ]
   },
 
