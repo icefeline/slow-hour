@@ -303,12 +303,66 @@ export const cardArchetypeSynthesis = {
     ]
   },
 
+  'major-3': { // The Empress
+    archetype: 'The Empress is abundance, fertility, creation flowing naturally',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Empress is showing you where abundance wants to grow if you let it',
+      'the creative fertility in {house_theme} is what {transiting_planet} activating your {natal_planet} is nurturing. The Empress says stop forcing and start receiving',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Empress is asking you to trust what wants to be born'
+    ]
+  },
+
+  'major-4': { // The Emperor
+    archetype: 'The Emperor is structure, authority, the order you create',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Emperor is asking you to build the structure that holds everything together',
+      'the authority you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Emperor says create the boundaries',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Emperor is showing you where you need to take control'
+    ]
+  },
+
+  'major-7': { // The Chariot
+    archetype: 'The Chariot is will, direction, moving forward through opposing forces',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Chariot is showing you how to harness opposing forces to move forward',
+      'the willpower you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Chariot says hold the reins and direct it',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Chariot is asking you to choose a direction and commit'
+    ]
+  },
+
+  'major-11': { // Justice
+    archetype: 'Justice is balance, cause and effect, what\'s fair',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Justice is showing you the scales need to balance',
+      'the accountability in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. Justice says the consequences are fair',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Justice is asking what you owe and what\'s owed to you'
+    ]
+  },
+
   'major-13': { // Death
     archetype: 'Death is transformation, the ending that must happen for the beginning',
     synthesis: [
       '{transiting_planet} meeting your {natal_planet} in {house_theme} - Death is showing you that what\'s ending needed to end',
       'the transformation in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. Death says you can\'t grow without letting go',
       '{transiting_planet} meeting your {natal_planet} in {house_theme} means Death is clearing the ground so something new can actually root'
+    ]
+  },
+
+  'major-14': { // Temperance
+    archetype: 'Temperance is alchemy, balance, mixing opposites into something new',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Temperance is showing you how to blend what seemed incompatible',
+      'the balance you\'re seeking in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. Temperance says patience transforms',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Temperance is asking you to find the middle path'
+    ]
+  },
+
+  'major-15': { // The Devil
+    archetype: 'The Devil is bondage, addiction, what you think you can\'t leave',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Devil is showing you where you\'re chained by choice, not force',
+      'the attachment in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Devil says the chains are unlocked',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Devil is asking what you\'re getting from staying stuck'
     ]
   },
 
@@ -327,6 +381,42 @@ export const cardArchetypeSynthesis = {
       '{transiting_planet} bringing flow to your {natal_planet} in {house_theme} - this is hope based on what survived',
       'after whatever broke in {house_theme}, {transiting_planet} with your {natal_planet} is why healing feels possible now',
       'the Star isn\'t naive optimism - it\'s {transiting_planet} helping your {natal_planet} rebuild trust in {house_theme}'
+    ]
+  },
+
+  'major-18': { // The Moon
+    archetype: 'The Moon is illusion, the subconscious, what you can\'t see clearly',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Moon is showing you that things aren\'t as they appear',
+      'the confusion in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The Moon says trust instinct over logic',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Moon is revealing what\'s been hidden in shadow'
+    ]
+  },
+
+  'major-19': { // The Sun
+    archetype: 'The Sun is clarity, joy, what\'s obvious in daylight',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Sun is making everything visible and simple',
+      'the clarity in {house_theme} is what {transiting_planet} activating your {natal_planet} is bringing. The Sun says it\'s exactly what it looks like',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Sun is lighting up what you couldn\'t see before'
+    ]
+  },
+
+  'major-20': { // Judgment
+    archetype: 'Judgment is awakening, resurrection, seeing yourself clearly',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Judgment is calling you to wake up to who you actually are',
+      'the reckoning in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. Judgment says face what you\'ve been avoiding',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Judgment is asking you to shed the old identity'
+    ]
+  },
+
+  'major-21': { // The World
+    archetype: 'The World is completion, integration, the cycle fulfilled',
+    synthesis: [
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the World is showing you this chapter is complete',
+      'the integration in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The World says you\'ve arrived',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the World is closing this cycle so the next can begin'
     ]
   },
 
