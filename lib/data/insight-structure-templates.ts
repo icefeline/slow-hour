@@ -1,233 +1,337 @@
 /**
- * Insight Structure Templates - Revised for Emotional Intelligence
+ * Insight Structure Templates - Synthesis-Focused
  *
- * These templates explicitly connect:
- * 1. The card as your friend telling you what to pay attention to
- * 2. The transit as the cosmic weather creating the conditions
- * 3. The house as the specific area of life where this is playing out
+ * These templates synthesize three elements into ONE coherent message:
+ * 1. What the transit means IN YOUR CHART (transiting planet + natal planet)
+ * 2. What house/life area is being activated
+ * 3. What the card archetype/suit adds to this specific moment
+ *
+ * The goal: NO repetition. Just connection and synthesis.
  *
  * Variables:
- * {transit_opener} - Natural opening about the transit
- * {card_phrase} - Natural way to reference the card
- * {card_wisdom} - What the card is specifically telling you to notice
- * {house_context} - What area of life (house) is affected
- * {house_emotional_context} - The emotional weight of this house area
- * {emotional_reality} - What it feels like
- * {perspective} - The reframe or wisdom
- * {closing} - Truth or invitation to end with
+ * {transiting_planet} - The planet currently moving (Saturn, Jupiter, etc)
+ * {natal_planet} - Your natal planet being activated (Sun, Moon, etc)
+ * {natal_planet_meaning} - What this natal planet represents in YOUR chart
+ * {transiting_planet_action} - What the transiting planet is doing
+ * {aspect_description} - What the aspect means (square = tension, trine = flow, etc)
+ * {house_number} - The house number (1-12)
+ * {house_theme} - What this house represents
+ * {card_archetype} - What the card/suit fundamentally represents
+ * {synthesis} - The combined message: why these three together create THIS specific insight
+ * {closing} - Final wisdom
  */
 
 export interface InsightStructureTemplate {
   id: string;
-  structure: string; // The narrative flow with placeholders
+  structure: string;
   bestFor: {
     transitTone: ('challenging' | 'neutral' | 'expansive')[];
     cardTone: ('challenging' | 'neutral' | 'expansive')[];
   };
-  description: string; // What makes this structure work
+  description: string;
 }
 
 export const insightStructureTemplates: InsightStructureTemplate[] = [
   {
-    id: 'card-as-messenger',
-    structure: '{transit_opener} in {house_context}. {card_phrase} isn\'t random - it\'s telling you {card_wisdom}. {emotional_reality}. {perspective}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging'],
-      cardTone: ['challenging', 'neutral']
-    },
-    description: 'Card as direct messenger - tells you what to notice'
-  },
-
-  {
-    id: 'house-first-emphasis',
-    structure: '{transit_opener} is hitting your {house_context} - {house_emotional_context}. That\'s why {card_phrase} showed up. {card_wisdom}. {perspective}. {closing}.',
+    id: 'synthesis-direct',
+    structure: '{transiting_planet} is {aspect_description} your {natal_planet} - {natal_planet_meaning}. This is happening in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
     bestFor: {
       transitTone: ['challenging', 'neutral'],
       cardTone: ['challenging', 'neutral']
     },
-    description: 'Emphasizes which life area is active, then explains the card'
+    description: 'Direct synthesis: transit meaning + house + card archetype = combined message'
   },
 
   {
-    id: 'wisdom-delivery',
-    structure: '{card_phrase} in {house_context} while {transit_opener}. The card isn\'t just naming the feeling - {card_wisdom}. {perspective}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging', 'neutral'],
-      cardTone: ['challenging', 'neutral', 'expansive']
-    },
-    description: 'Distinguishes between feeling and the card\'s actual message'
-  },
-
-  {
-    id: 'direct-connection',
-    structure: '{transit_opener} and {card_phrase} landed in {house_context}. {card_wisdom}. {emotional_reality}, but {perspective}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging'],
-      cardTone: ['challenging']
-    },
-    description: 'For intense combos - direct about what\'s happening and why it matters'
-  },
-
-  {
-    id: 'expansive-invitation',
-    structure: '{card_phrase} with {transit_opener} in {house_context}. {card_wisdom}. {perspective}. {closing}.',
-    bestFor: {
-      transitTone: ['expansive'],
-      cardTone: ['expansive', 'neutral']
-    },
-    description: 'Card-first for opening energy, focuses on opportunity'
-  },
-
-  {
-    id: 'triple-link',
-    structure: '{transit_opener} in {house_context} is why {card_phrase} matters right now. {card_wisdom}. {emotional_reality}. {perspective}. {closing}.',
+    id: 'why-this-card',
+    structure: '{transiting_planet} {aspect_description} your {natal_planet} in your {house_number} of {house_theme} - which is exactly why {card_archetype}. {synthesis}. {closing}.',
     bestFor: {
       transitTone: ['challenging', 'neutral', 'expansive'],
       cardTone: ['challenging', 'neutral', 'expansive']
     },
-    description: 'Explicitly links all three: transit + house + card message'
+    description: 'Emphasizes WHY this specific card appeared with this transit + house combo'
   },
 
   {
-    id: 'question-to-wisdom',
-    structure: '{transit_opener} while {card_phrase} shows up in {house_context}. {emotional_reality}. But here\'s what the card is actually saying: {card_wisdom}. {perspective}. {closing}?',
+    id: 'chart-reading',
+    structure: 'Your chart right now: {transiting_planet} meeting your {natal_planet} ({natal_planet_meaning}) in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
+    bestFor: {
+      transitTone: ['neutral', 'expansive'],
+      cardTone: ['neutral', 'expansive']
+    },
+    description: 'Reads like an astrologer explaining your chart with the card'
+  },
+
+  {
+    id: 'intense-synthesis',
+    structure: '{transiting_planet} is {aspect_description} your {natal_planet} in your {house_number} of {house_theme}. {natal_planet_meaning}. {card_archetype}. These three together: {synthesis}. {closing}.',
+    bestFor: {
+      transitTone: ['challenging'],
+      cardTone: ['challenging']
+    },
+    description: 'For heavy transits - breaks down each piece then synthesizes'
+  },
+
+  {
+    id: 'opening-flow',
+    structure: '{transiting_planet} is {aspect_description} your {natal_planet} - {natal_planet_meaning} - in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
+    bestFor: {
+      transitTone: ['expansive'],
+      cardTone: ['expansive', 'neutral']
+    },
+    description: 'Flowing synthesis for positive transits'
+  },
+
+  {
+    id: 'house-emphasis',
+    structure: 'Your {house_number} of {house_theme} is where {transiting_planet} is {aspect_description} your {natal_planet} ({natal_planet_meaning}). {card_archetype}. {synthesis}. {closing}.',
     bestFor: {
       transitTone: ['challenging', 'neutral'],
       cardTone: ['challenging', 'neutral']
     },
-    description: 'Moves from confusion to card\'s actual wisdom, ends reflectively'
+    description: 'Starts with the life area being activated'
   }
 ];
 
 /**
- * Card Wisdom Templates
+ * Natal Planet Meanings
  *
- * These are NEW - they explicitly state what the card is telling you to notice.
- * This replaces vague card mentions with specific guidance.
+ * What each planet represents IN YOUR CHART specifically
  */
-
-export const cardWisdomTemplates = {
-  challenging: [
-    'this breakdown is necessary information',
-    'what you\'ve been accepting isn\'t enough, and your heart knows it',
-    'the pain is showing you exactly where the foundation was weak',
-    'what\'s shattering needed to shatter',
-    'the ending you\'re avoiding is the one that sets you free',
-    'this grief is the tax on caring about something real',
-    'the truth you\'re facing was always there - you\'re just finally ready to see it'
+export const natalPlanetMeanings: Record<string, string[]> = {
+  sun: [
+    'your core identity, who you actually are',
+    'your life force, how you shine',
+    'your sense of self, what makes you you',
+    'your ego and vitality'
   ],
-
-  neutral: [
-    'you need to pause before you know which way to move',
-    'solitude is where you remember who you actually are',
-    'the answer isn\'t out there - it\'s in the stillness',
-    'transition means you\'re already changing, even if it doesn\'t feel like it yet',
-    'what you\'re learning in the quiet will guide you through what comes next'
+  moon: [
+    'your emotional world, how you feel and need',
+    'your inner life, what makes you feel safe',
+    'your instincts and emotional responses',
+    'how you process feelings and memories'
   ],
-
-  expansive: [
-    'the opportunity is real, and it\'s asking you to trust it',
-    'this connection wants to be built',
-    'the hope you\'re feeling isn\'t naive - it\'s information',
-    'something is trying to grow, and it needs your permission',
-    'the ease you\'re feeling is real. you\'re allowed to believe it',
-    'your instinct is right - this is the beginning of something'
+  mercury: [
+    'your mind, how you think and communicate',
+    'how you process information and learn',
+    'your voice, how you express ideas',
+    'the way your brain works'
+  ],
+  venus: [
+    'what you love, what you value',
+    'how you relate and connect',
+    'what brings you pleasure and beauty',
+    'your relationship patterns and desires'
+  ],
+  mars: [
+    'your drive, how you take action',
+    'your will and assertion',
+    'how you go after what you want',
+    'your anger and passion'
+  ],
+  jupiter: [
+    'your optimism and growth',
+    'where you expand and seek meaning',
+    'your faith and philosophy',
+    'how you see possibility'
   ]
 };
 
 /**
- * Perspective/Reframe Templates
+ * Transiting Planet Actions
  *
- * These are the "wisdom" parts - reframes, perspective shifts,
- * acknowledgments that help make sense of the experience.
+ * What each transiting planet DOES when it activates your chart
  */
-
-export const perspectiveTemplates = {
-  challenging: [
-    'what\'s breaking was probably held together with hope and effort for too long',
-    'the discomfort isn\'t random - it\'s pointing you toward what needs to change',
-    'sometimes clarity requires destruction first',
-    'the pain is how you learn what you actually need',
-    'you can\'t fix something that was never yours to carry',
-    'the confusion is dissolving what you thought was fixed so something real can form'
+export const transitingPlanetActions: Record<string, string[]> = {
+  saturn: [
+    'bringing structure and testing what\'s real',
+    'asking you to build something that lasts',
+    'showing you where the foundation needs work',
+    'demanding maturity and responsibility'
   ],
-
-  neutral: [
-    'not knowing is its own kind of wisdom',
-    'the pause is doing more than you realize',
-    'what you learn when nothing is happening shapes what you build when things move again',
-    'stillness isn\'t emptiness - it\'s preparation',
-    'the quiet is teaching you to hear yourself'
+  jupiter: [
+    'opening doors and expanding possibility',
+    'asking you to grow beyond your current limits',
+    'bringing opportunity and optimism',
+    'showing you what\'s possible'
   ],
-
-  expansive: [
-    'the timing is real, even if it feels sudden',
-    'when was the last time you let yourself actually want something without waiting for it to be taken away?',
-    'opportunities show up, but only if you\'re willing to reach',
-    'the ease isn\'t a trick - it\'s what happens when things align',
-    'your future is announcing itself'
+  uranus: [
+    'breaking patterns and demanding change',
+    'bringing sudden insight and awakening',
+    'disrupting what felt stable',
+    'pushing you toward authenticity'
+  ],
+  neptune: [
+    'dissolving boundaries and illusions',
+    'asking what\'s real beyond the story',
+    'bringing spiritual sensitivity',
+    'blurring what felt certain'
+  ],
+  pluto: [
+    'transforming at the root',
+    'bringing what\'s hidden to the surface',
+    'demanding you face what\'s been avoided',
+    'breaking down to rebuild from nothing'
+  ],
+  mars: [
+    'activating your will and drive',
+    'bringing energy and urgency',
+    'pushing you to act',
+    'stirring up conflict or courage'
   ]
+};
+
+/**
+ * Aspect Descriptions
+ *
+ * What each aspect means in plain language
+ */
+export const aspectDescriptions: Record<string, string[]> = {
+  square: [
+    'squaring',
+    'creating friction with',
+    'challenging'
+  ],
+  opposition: [
+    'opposing',
+    'pulling against',
+    'in tension with'
+  ],
+  conjunction: [
+    'conjunct with',
+    'merging with',
+    'sitting right on top of'
+  ],
+  trine: [
+    'trining',
+    'flowing with',
+    'supporting'
+  ],
+  sextile: [
+    'sextiling',
+    'offering opportunity to',
+    'opening pathways with'
+  ]
+};
+
+/**
+ * Card Archetype Meanings
+ *
+ * What the CARD or SUIT fundamentally represents (not what it means - that's elsewhere)
+ * This is about the archetype's ESSENCE that gets combined with the chart
+ */
+export const cardArchetypeSynthesis = {
+  // Major Arcana examples
+  'major-16': { // The Tower
+    archetype: 'The Tower is collapse and breakthrough - structures coming down',
+    synthesis: [
+      'the structure that\'s breaking in {house_theme} needed to break. {transiting_planet} is showing you the cracks were always there',
+      'what\'s collapsing in {house_theme} was built on something unstable. {transiting_planet} meeting your {natal_planet} is why it can\'t hold anymore',
+      'the tower moment in {house_theme} isn\'t random - {transiting_planet} is forcing what your {natal_planet} knew wasn\'t working'
+    ]
+  },
+
+  'major-17': { // The Star
+    archetype: 'The Star is hope returning after devastation',
+    synthesis: [
+      '{transiting_planet} bringing flow to your {natal_planet} in {house_theme} - this is hope based on what survived',
+      'after whatever broke in {house_theme}, {transiting_planet} with your {natal_planet} is why healing feels possible now',
+      'the Star isn\'t naive optimism - it\'s {transiting_planet} helping your {natal_planet} rebuild trust in {house_theme}'
+    ]
+  },
+
+  // Suit archetypes
+  swords: {
+    archetype: 'Swords are the mind, clarity, cutting through',
+    synthesis: [
+      'the mental clarity you need in {house_theme} is what {transiting_planet} meeting your {natal_planet} is demanding',
+      'Swords cut through illusion - {transiting_planet} is bringing sharp truth to your {natal_planet} in {house_theme}',
+      'the sword in {house_theme} means {transiting_planet} is asking your {natal_planet} to think clearly, not just feel'
+    ]
+  },
+
+  cups: {
+    archetype: 'Cups are emotion, connection, the heart',
+    synthesis: [
+      'the emotional truth in {house_theme} is what {transiting_planet} meeting your {natal_planet} is revealing',
+      'Cups are about what you feel - {transiting_planet} is bringing emotional awareness to your {natal_planet} in {house_theme}',
+      'the heart knows before the head - {transiting_planet} is asking your {natal_planet} to feel what\'s real in {house_theme}'
+    ]
+  },
+
+  wands: {
+    archetype: 'Wands are fire, will, creative action',
+    synthesis: [
+      'the creative energy in {house_theme} is what {transiting_planet} meeting your {natal_planet} is activating',
+      'Wands are about will and vision - {transiting_planet} is igniting your {natal_planet}\'s drive in {house_theme}',
+      'the fire you need in {house_theme} comes from {transiting_planet} meeting your {natal_planet} - this is about taking action'
+    ]
+  },
+
+  pentacles: {
+    archetype: 'Pentacles are earth, material reality, what you build',
+    synthesis: [
+      'the tangible work in {house_theme} is what {transiting_planet} meeting your {natal_planet} is grounding into reality',
+      'Pentacles are about the material world - {transiting_planet} is asking your {natal_planet} to build something real in {house_theme}',
+      'what you create with your hands in {house_theme} matters - {transiting_planet} meeting your {natal_planet} is making it solid'
+    ]
+  }
 };
 
 /**
  * Closing Templates
  *
- * How to end the insight - truth statements or invitations
+ * Final wisdom statements
  */
-
 export const closingTemplates = {
   challenging: [
-    'the breakdown isn\'t your enemy - it\'s making space for what\'s true',
-    'what you\'re losing was never the real thing',
-    'you\'re more free than you think, you just can\'t see it yet',
-    'the ending you\'re in is how you get to what\'s next',
-    'this is how you learn what matters'
+    'this is how clarity comes',
+    'the breakdown is the breakthrough',
+    'what you\'re losing wasn\'t the real thing',
+    'you\'re freer than you think',
+    'the truth is harder but it\'s yours'
   ],
 
   neutral: [
-    'trust what you\'re learning in the solitude',
-    'the answer will show up when you stop forcing it',
-    'what you discover when nothing is happening becomes your compass',
-    'the pause is part of the process'
+    'trust what you\'re learning in the quiet',
+    'the pause is preparation',
+    'what you discover now becomes your foundation',
+    'stillness has its own wisdom'
   ],
 
   expansive: [
-    'your people are closer than you think',
+    'the window is open',
     'you\'re allowed to trust this',
-    'the window is open right now',
-    'this is your moment - what are you going to do with it',
-    'the lightning strike has a direction'
+    'the opportunity is real',
+    'this is your moment',
+    'the lightning has a direction'
   ]
 };
 
 /**
  * Key Phrase Templates
- *
- * Short, punchy headers that capture the essence
  */
-
 export const keyPhraseTemplates = {
   challenging: [
-    'the breakdown is necessary',
+    'clarity through breakdown',
     'truth over comfort',
-    'what\'s shattering needed to shatter',
-    'the ending that sets you free',
-    'sometimes loss is information'
+    'the necessary ending',
+    'what needed to break',
+    'the hard truth'
   ],
 
   neutral: [
-    'the pause is preparation',
-    'solitude knows what to do',
-    'stillness before motion',
-    'not knowing is knowing something',
-    'the quiet is teaching you'
+    'the pause before motion',
+    'stillness teaches',
+    'between what was and what\'s next',
+    'listening in the quiet'
   ],
 
   expansive: [
+    'the door opening',
+    'hope based on truth',
+    'trust what\'s emerging',
     'the opportunity is real',
-    'hope is information',
-    'trust the opening',
-    'your future is announcing itself',
-    'this is the beginning'
+    'lightning with direction'
   ]
 };

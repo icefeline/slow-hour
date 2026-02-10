@@ -11,7 +11,15 @@
 import { CardArchetype, getCardArchetype, getRandomCardPhrase } from '../data/card-archetypes';
 import { getRandomTransitOpener, getTimingPhrase, planetMeanings } from '../data/transit-templates';
 import { getRandomHousePhrase, getHouseEmotionalResonance, getRandomHouseQuestion, houseContexts } from '../data/house-contexts';
-import { insightStructureTemplates, perspectiveTemplates, closingTemplates, keyPhraseTemplates, cardWisdomTemplates } from '../data/insight-structure-templates';
+import {
+  insightStructureTemplates,
+  closingTemplates,
+  keyPhraseTemplates,
+  natalPlanetMeanings,
+  transitingPlanetActions,
+  aspectDescriptions,
+  cardArchetypeSynthesis
+} from '../data/insight-structure-templates';
 
 export interface TransitData {
   transitingPlanet: string;
@@ -145,7 +153,7 @@ function selectStructureTemplate(
 }
 
 /**
- * Build the full insight text
+ * Build the full insight text - SYNTHESIS-FOCUSED
  */
 function buildInsight(
   cardId: string,
@@ -157,37 +165,44 @@ function buildInsight(
 ): string {
   let insight = structureTemplate.structure;
 
-  // Replace placeholders
-  insight = insight.replace('{transit_opener}', getRandomTransitOpener(
-    transit.aspectType,
-    transit.transitingPlanet,
-    transit.natalPlanet
-  ));
+  // Transiting planet (capitalize first letter)
+  const transitingPlanet = transit.transitingPlanet.charAt(0).toUpperCase() + transit.transitingPlanet.slice(1);
+  insight = insight.replace(/{transiting_planet}/g, transitingPlanet);
 
-  insight = insight.replace('{card_phrase}', getRandomCardPhrase(cardId, isReversed));
+  // Natal planet
+  const natalPlanet = transit.natalPlanet.charAt(0).toUpperCase() + transit.natalPlanet.slice(1);
+  insight = insight.replace(/{natal_planet}/g, natalPlanet);
 
-  // Always use house phrase WITH number (first item in naturalPhrases array)
+  // Natal planet meaning IN YOUR CHART
+  const natalMeanings = natalPlanetMeanings[transit.natalPlanet.toLowerCase()] || ['your inner nature'];
+  const natalPlanetMeaning = selectRandomFromArray(natalMeanings);
+  insight = insight.replace(/{natal_planet_meaning}/g, natalPlanetMeaning);
+
+  // Aspect description
+  const aspectDescs = aspectDescriptions[transit.aspectType] || ['aspecting'];
+  const aspectDescription = selectRandomFromArray(aspectDescs);
+  insight = insight.replace(/{aspect_description}/g, aspectDescription);
+
+  // House number and theme
   const houseContext = houseContexts[transit.house];
-  const housePhraseWithNumber = houseContext ? houseContext.naturalPhrases[0] : getRandomHousePhrase(transit.house);
-  insight = insight.replace('{house_context}', housePhraseWithNumber);
+  const houseTheme = houseContext ? houseContext.coreThemes[0] : 'life';
+  insight = insight.replace(/{house_number}/g, `${transit.house}th house`);
+  insight = insight.replace(/{house_theme}/g, houseTheme);
 
-  insight = insight.replace('{house_emotional_context}', getHouseEmotionalResonance(transit.house));
+  // Card archetype and synthesis
+  const cardSynthesis = getCardSynthesis(cardId, cardArchetype);
+  insight = insight.replace(/{card_archetype}/g, cardSynthesis.archetype);
 
-  // Card wisdom - what the card is specifically telling you
-  const cardWisdom = selectRandomFromArray(cardWisdomTemplates[combinedTone]);
-  insight = insight.replace('{card_wisdom}', cardWisdom);
+  // Synthesis - the combined meaning
+  let synthesisText = selectRandomFromArray(cardSynthesis.synthesis);
+  synthesisText = synthesisText.replace(/{house_theme}/g, houseTheme);
+  synthesisText = synthesisText.replace(/{transiting_planet}/g, transitingPlanet);
+  synthesisText = synthesisText.replace(/{natal_planet}/g, natalPlanet);
+  insight = insight.replace(/{synthesis}/g, synthesisText);
 
-  // Emotional reality - describe what it feels like
-  const emotionalReality = buildEmotionalReality(cardArchetype, transit);
-  insight = insight.replace('{emotional_reality}', emotionalReality);
-
-  // Perspective - the wisdom/reframe
-  const perspective = selectRandomFromArray(perspectiveTemplates[combinedTone]);
-  insight = insight.replace('{perspective}', fillPerspective(perspective, cardArchetype));
-
-  // Closing - the final truth or invitation
+  // Closing
   const closing = selectRandomFromArray(closingTemplates[combinedTone]);
-  insight = insight.replace('{closing}', fillClosing(closing, cardArchetype));
+  insight = insight.replace(/{closing}/g, closing);
 
   return insight;
 }
@@ -360,6 +375,28 @@ function buildTransitExplanation(transit: TransitData) {
     aspectType: transit.aspectType,
     aspectMeaning: aspectMeanings[transit.aspectType],
     phaseMeaning: phaseMeanings[transit.phase]
+  };
+}
+
+/**
+ * Get card synthesis - archetype + synthesis messages
+ */
+function getCardSynthesis(cardId: string, cardArchetype: CardArchetype['upright']): { archetype: string; synthesis: string[] } {
+  // Check if specific card has synthesis
+  if (cardArchetypeSynthesis[cardId as keyof typeof cardArchetypeSynthesis]) {
+    return cardArchetypeSynthesis[cardId as keyof typeof cardArchetypeSynthesis] as { archetype: string; synthesis: string[] };
+  }
+
+  // Otherwise, use suit synthesis
+  const suit = cardId.split('-')[0]; // e.g., 'swords-3' -> 'swords'
+  if (cardArchetypeSynthesis[suit as keyof typeof cardArchetypeSynthesis]) {
+    return cardArchetypeSynthesis[suit as keyof typeof cardArchetypeSynthesis] as { archetype: string; synthesis: string[] };
+  }
+
+  // Fallback
+  return {
+    archetype: 'This card',
+    synthesis: ['is showing you what needs attention right now']
   };
 }
 
