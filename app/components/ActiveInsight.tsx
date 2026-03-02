@@ -149,7 +149,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
 
               {isExpanded && transitExplanation && (
                 <div
-                  className="mt-6 pt-4 px-6"
+                  className="mt-2 pt-2 px-6"
                   style={{
                     fontSize: 'clamp(13px, 1.8vw, 16px)',
                     fontFamily: 'var(--font-vt323), monospace',
