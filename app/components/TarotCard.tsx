@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
 import { getCardIcon } from './card-icons';
@@ -33,12 +33,14 @@ interface SlowHourMemory {
 }
 
 function todayKey(): string {
-  return new Date().toISOString().split('T')[0];
+  // Use local date so cache aligns with the user's calendar day, not UTC
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function loadCachedInsight(): GeneratedInsight | null {
+function loadCachedInsight(cardId: string): GeneratedInsight | null {
   try {
-    const raw = localStorage.getItem(`insight-${todayKey()}`);
+    const raw = localStorage.getItem(`insight-${cardId}-${todayKey()}`);
     if (!raw) return null;
     return JSON.parse(raw) as GeneratedInsight;
   } catch {
@@ -46,9 +48,9 @@ function loadCachedInsight(): GeneratedInsight | null {
   }
 }
 
-function saveCachedInsight(insight: GeneratedInsight): void {
+function saveCachedInsight(cardId: string, insight: GeneratedInsight): void {
   try {
-    localStorage.setItem(`insight-${todayKey()}`, JSON.stringify(insight));
+    localStorage.setItem(`insight-${cardId}-${todayKey()}`, JSON.stringify(insight));
   } catch {
     // ignore
   }
@@ -113,25 +115,26 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
 
-  // State for generated insight
-  const [generatedInsight, setGeneratedInsight] = useState<GeneratedInsight | null>(null);
+  // State for generated insight — load from cache immediately on mount
+  const [generatedInsight, setGeneratedInsight] = useState<GeneratedInsight | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return loadCachedInsight(card.id);
+  });
   const [isGenerating, setIsGenerating] = useState(false);
+  const isFirstMount = useRef(true);
 
-  // Reset insight when card changes
+  // Reset insight when card changes (skip initial mount — cache already loaded above)
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     setGeneratedInsight(null);
   }, [card.id]);
 
   // Generate insight when card is revealed
   useEffect(() => {
     if (isRevealed && !generatedInsight) {
-      // Check for a cached insight from earlier today
-      const cached = loadCachedInsight();
-      if (cached) {
-        setGeneratedInsight(cached);
-        return;
-      }
-
       setIsGenerating(true);
 
       // Calculate real astrology transits based on user's birth data
@@ -203,7 +206,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
               },
             };
             setGeneratedInsight(freshInsight);
-            saveCachedInsight(freshInsight);
+            saveCachedInsight(card.id, freshInsight);
 
             // Save this reading + memory note to localStorage
             const cardFullName = card.name || card.id;
@@ -224,7 +227,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           } else {
             const insight = generateInsight(card.id, transitData, isReversed);
             setGeneratedInsight(insight);
-            if (insight) saveCachedInsight(insight);
+            if (insight) saveCachedInsight(card.id, insight);
           }
         } catch (error) {
           console.error('Failed to calculate real transit:', error);
