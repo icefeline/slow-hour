@@ -15,6 +15,51 @@ interface TarotCardProps {
   userName?: string; // Optional: user's first name for personalization
 }
 
+// Memory types
+interface ReadingMemory {
+  date: string;
+  cardName: string;
+  isReversed: boolean;
+  transitingPlanet: string;
+  natalPlanet: string;
+  aspectType: string;
+  house: number;
+  keyPhrase: string;
+}
+
+interface SlowHourMemory {
+  readings: ReadingMemory[];
+  memoryNotes: string[];
+}
+
+function loadMemory(): SlowHourMemory {
+  try {
+    const raw = localStorage.getItem('slowHourMemory');
+    if (!raw) return { readings: [], memoryNotes: [] };
+    return JSON.parse(raw) as SlowHourMemory;
+  } catch {
+    return { readings: [], memoryNotes: [] };
+  }
+}
+
+function saveMemory(
+  memory: SlowHourMemory,
+  newReading: ReadingMemory,
+  memoryNote: string | undefined
+): void {
+  try {
+    const updated: SlowHourMemory = {
+      readings: [newReading, ...memory.readings].slice(0, 30),
+      memoryNotes: memoryNote
+        ? [memoryNote, ...memory.memoryNotes].slice(0, 10)
+        : memory.memoryNotes,
+    };
+    localStorage.setItem('slowHourMemory', JSON.stringify(updated));
+  } catch {
+    // localStorage write failed (private browsing, quota exceeded, etc.)
+  }
+}
+
 // Helper function to convert ActiveTransit to TransitData
 function convertToTransitData(transit: ActiveTransit): TransitData {
   // Map phase to generator's expected format
@@ -72,6 +117,16 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
             throw new Error('No birth date found');
           }
 
+          // Generate seed from card ID to consistently select same transit for same card
+          const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
+
+          // Load memory to send as context
+          const memory = loadMemory();
+          const memoryNotes = memory.memoryNotes;
+          const recentCards = memory.readings.slice(0, 7).map(r =>
+            `${r.cardName}${r.isReversed ? ' (reversed)' : ''}`
+          );
+
           // Call API to calculate transits (Swiss Ephemeris runs server-side)
           const response = await fetch('/api/calculate-transit', {
             method: 'POST',
@@ -81,7 +136,12 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
             body: JSON.stringify({
               birthDate: birthDateStr,
               birthTime: birthTime || null,
-              birthLocation: birthLocation || null
+              birthLocation: birthLocation || null,
+              seed: cardSeed,
+              cardId: card.id,
+              isReversed,
+              memoryNotes,
+              recentCards
             })
           });
 
@@ -95,9 +155,45 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           // Convert to TransitData format
           const transitData = convertToTransitData(dominantTransit);
 
-          // Generate insight
-          const insight = generateInsight(card.id, transitData, isReversed);
-          setGeneratedInsight(insight);
+          // Use Claude-generated insight if available, fall back to template
+          if (data.claudeInsight) {
+            const templateInsight = generateInsight(card.id, transitData, isReversed);
+            setGeneratedInsight({
+              keyPhrase: data.claudeInsight.keyPhrase,
+              insight: data.claudeInsight.insight,
+              action: data.claudeInsight.action,
+              transitInfo: templateInsight?.transitInfo || '',
+              transitExplanation: templateInsight?.transitExplanation || {
+                transitingPlanet: dominantTransit.transitingPlanet,
+                transitingPlanetMeaning: '',
+                natalPlanet: dominantTransit.natalPlanet,
+                natalPlanetMeaning: '',
+                aspectType: dominantTransit.aspect,
+                aspectMeaning: '',
+                phaseMeaning: '',
+              },
+            });
+
+            // Save this reading + memory note to localStorage
+            const cardFullName = card.name || card.id;
+            saveMemory(
+              memory,
+              {
+                date: new Date().toISOString().split('T')[0],
+                cardName: cardFullName,
+                isReversed,
+                transitingPlanet: dominantTransit.transitingPlanet,
+                natalPlanet: dominantTransit.natalPlanet,
+                aspectType: dominantTransit.aspect,
+                house: dominantTransit.house,
+                keyPhrase: data.claudeInsight.keyPhrase,
+              },
+              data.claudeInsight.memoryNote
+            );
+          } else {
+            const insight = generateInsight(card.id, transitData, isReversed);
+            setGeneratedInsight(insight);
+          }
         } catch (error) {
           console.error('Failed to calculate real transit:', error);
           // Fall back to a default transit if calculation fails
@@ -179,7 +275,6 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
                 whiteSpace: 'nowrap',
                 overflow: 'visible',
                 WebkitTextStroke: '1px #172211',
-                textStroke: '1px #172211',
                 transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
                 transformOrigin: 'center center',
                 letterSpacing: '-0.05em'
@@ -233,6 +328,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           <ActiveInsight
             keyPhrase={generatedInsight?.keyPhrase || ""}
             insight={generatedInsight?.insight || ""}
+            action={generatedInsight?.action || ""}
             transitInfo={generatedInsight?.transitInfo || ""}
             userName={userName}
             transitExplanation={generatedInsight?.transitExplanation || {

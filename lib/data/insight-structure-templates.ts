@@ -1,24 +1,5 @@
 /**
  * Insight Structure Templates - Synthesis-Focused
- *
- * These templates synthesize three elements into ONE coherent message:
- * 1. What the transit means IN YOUR CHART (transiting planet + natal planet)
- * 2. What house/life area is being activated
- * 3. What the card archetype/suit adds to this specific moment
- *
- * The goal: NO repetition. Just connection and synthesis.
- *
- * Variables:
- * {transiting_planet} - The planet currently moving (Saturn, Jupiter, etc)
- * {natal_planet} - Your natal planet being activated (Sun, Moon, etc)
- * {natal_planet_meaning} - What this natal planet represents in YOUR chart
- * {transiting_planet_action} - What the transiting planet is doing
- * {aspect_description} - What the aspect means (square = tension, trine = flow, etc)
- * {house_number} - The house number (1-12)
- * {house_theme} - What this house represents
- * {card_archetype} - What the card/suit fundamentally represents
- * {synthesis} - The combined message: why these three together create THIS specific insight
- * {closing} - Final wisdom
  */
 
 export interface InsightStructureTemplate {
@@ -33,485 +14,930 @@ export interface InsightStructureTemplate {
 
 export const insightStructureTemplates: InsightStructureTemplate[] = [
   {
-    id: 'synthesis-direct',
-    structure: '{transiting_planet} is {aspect_description} your {natal_planet} - {natal_planet_meaning}. This is happening in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging', 'neutral'],
-      cardTone: ['challenging', 'neutral']
-    },
-    description: 'Direct synthesis: transit meaning + house + card archetype = combined message'
-  },
-
-  {
-    id: 'why-this-card',
-    structure: '{transiting_planet} is {aspect_description} your {natal_planet} ({natal_planet_meaning}) in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
+    id: 'direct',
+    structure: '{synthesis}',
     bestFor: {
       transitTone: ['challenging', 'neutral', 'expansive'],
       cardTone: ['challenging', 'neutral', 'expansive']
     },
-    description: 'Emphasizes WHY this specific card appeared with this transit + house combo'
-  },
-
-  {
-    id: 'chart-reading',
-    structure: 'Your chart right now: {transiting_planet} meeting your {natal_planet} ({natal_planet_meaning}) in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
-    bestFor: {
-      transitTone: ['neutral', 'expansive'],
-      cardTone: ['neutral', 'expansive']
-    },
-    description: 'Reads like an astrologer explaining your chart with the card'
-  },
-
-  {
-    id: 'intense-synthesis',
-    structure: '{transiting_planet} is {aspect_description} your {natal_planet} in your {house_number} of {house_theme}. {natal_planet_meaning}. {card_archetype}. These three together: {synthesis}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging'],
-      cardTone: ['challenging']
-    },
-    description: 'For heavy transits - breaks down each piece then synthesizes'
-  },
-
-  {
-    id: 'opening-flow',
-    structure: '{transiting_planet} is {aspect_description} your {natal_planet} - {natal_planet_meaning} - in your {house_number} of {house_theme}. {card_archetype}. {synthesis}. {closing}.',
-    bestFor: {
-      transitTone: ['expansive'],
-      cardTone: ['expansive', 'neutral']
-    },
-    description: 'Flowing synthesis for positive transits'
-  },
-
-  {
-    id: 'house-emphasis',
-    structure: 'Your {house_number} of {house_theme} is where {transiting_planet} is {aspect_description} your {natal_planet} ({natal_planet_meaning}). {card_archetype}. {synthesis}. {closing}.',
-    bestFor: {
-      transitTone: ['challenging', 'neutral'],
-      cardTone: ['challenging', 'neutral']
-    },
-    description: 'Starts with the life area being activated'
+    description: 'Just the synthesis, nothing else'
   }
 ];
 
-/**
- * Natal Planet Meanings
- *
- * What each planet represents IN YOUR CHART specifically
- */
 export const natalPlanetMeanings: Record<string, string[]> = {
-  sun: [
-    'your core identity, who you actually are',
-    'your life force, how you shine',
-    'your sense of self, what makes you you',
-    'your ego and vitality'
-  ],
-  moon: [
-    'your emotional world, how you feel and need',
-    'your inner life, what makes you feel safe',
-    'your instincts and emotional responses',
-    'how you process feelings and memories'
-  ],
-  mercury: [
-    'your mind, how you think and communicate',
-    'how you process information and learn',
-    'your voice, how you express ideas',
-    'the way your brain works'
-  ],
-  venus: [
-    'what you love, what you value',
-    'how you relate and connect',
-    'what brings you pleasure and beauty',
-    'your relationship patterns and desires'
-  ],
-  mars: [
-    'your drive, how you take action',
-    'your will and assertion',
-    'how you go after what you want',
-    'your anger and passion'
-  ],
-  jupiter: [
-    'your optimism and growth',
-    'where you expand and seek meaning',
-    'your faith and philosophy',
-    'how you see possibility'
-  ]
+  sun: ['your core identity', 'your life force', 'your sense of self', 'your ego and vitality'],
+  moon: ['your emotional world', 'your inner life', 'your instincts', 'how you process feelings'],
+  mercury: ['your mind', 'how you think', 'your voice', 'the way your brain works'],
+  venus: ['what you love', 'how you relate', 'your relationship patterns', 'what you value'],
+  mars: ['your drive', 'your will', 'how you go after what you want', 'your anger and passion'],
+  jupiter: ['your optimism', 'where you seek meaning', 'your faith', 'how you see possibility']
 };
 
-/**
- * Transiting Planet Actions
- *
- * What each transiting planet DOES when it activates your chart
- */
 export const transitingPlanetActions: Record<string, string[]> = {
-  saturn: [
-    'bringing structure and testing what\'s real',
-    'asking you to build something that lasts',
-    'showing you where the foundation needs work',
-    'demanding maturity and responsibility'
-  ],
-  jupiter: [
-    'opening doors and expanding possibility',
-    'asking you to grow beyond your current limits',
-    'bringing opportunity and optimism',
-    'showing you what\'s possible'
-  ],
-  uranus: [
-    'breaking patterns and demanding change',
-    'bringing sudden insight and awakening',
-    'disrupting what felt stable',
-    'pushing you toward authenticity'
-  ],
-  neptune: [
-    'dissolving boundaries and illusions',
-    'asking what\'s real beyond the story',
-    'bringing spiritual sensitivity',
-    'blurring what felt certain'
-  ],
-  pluto: [
-    'transforming at the root',
-    'bringing what\'s hidden to the surface',
-    'demanding you face what\'s been avoided',
-    'breaking down to rebuild from nothing'
-  ],
-  mars: [
-    'activating your will and drive',
-    'bringing energy and urgency',
-    'pushing you to act',
-    'stirring up conflict or courage'
-  ]
+  saturn: ['bringing structure and testing what\'s real', 'asking you to build something that lasts', 'showing you where the foundation needs work', 'demanding maturity'],
+  jupiter: ['opening doors', 'asking you to grow beyond your current limits', 'bringing opportunity', 'showing you what\'s possible'],
+  uranus: ['breaking patterns', 'bringing sudden insight', 'disrupting what felt stable', 'pushing you toward authenticity'],
+  neptune: ['dissolving boundaries and illusions', 'asking what\'s real beyond the story', 'bringing spiritual sensitivity', 'blurring what felt certain'],
+  pluto: ['transforming at the root', 'bringing what\'s hidden to the surface', 'demanding you face what\'s been avoided', 'breaking down to rebuild'],
+  mars: ['activating your will', 'bringing energy and urgency', 'pushing you to act', 'stirring up conflict or courage']
 };
 
-/**
- * Aspect Descriptions
- *
- * What each aspect means in plain language
- */
 export const aspectDescriptions: Record<string, string[]> = {
-  square: [
-    'squaring',
-    'creating friction with',
-    'challenging'
-  ],
-  opposition: [
-    'opposing',
-    'pulling against',
-    'in tension with'
-  ],
-  conjunction: [
-    'conjunct with',
-    'merging with',
-    'sitting right on top of'
-  ],
-  trine: [
-    'trining',
-    'flowing with',
-    'supporting'
-  ],
-  sextile: [
-    'sextiling',
-    'offering opportunity to',
-    'opening pathways with'
-  ]
+  square: ['squaring', 'creating friction with', 'challenging'],
+  opposition: ['opposing', 'pulling against', 'in tension with'],
+  conjunction: ['conjunct with', 'merging with', 'sitting right on top of'],
+  trine: ['trining', 'flowing with', 'supporting'],
+  sextile: ['opening pathways with', 'offering opportunity to', 'connecting with']
 };
 
-/**
- * Card Archetype Meanings
- *
- * What the CARD or SUIT fundamentally represents (not what it means - that's elsewhere)
- * This is about the archetype's ESSENCE that gets combined with the chart
- */
-export const cardArchetypeSynthesis = {
-  // Major Arcana
-  'major-0': { // The Fool
-    archetype: 'The Fool is the leap into unknown, trusting the path will appear',
+export const cardArchetypeSynthesis: Record<string, { synthesis: string[]; action: string }> = {
+
+  // ── MAJOR ARCANA ──────────────────────────────────────────────────────────
+
+  'major-0': {
     synthesis: [
-      '{transiting_planet} activating your {natal_planet} in {house_theme} - the Fool is showing you where you need to leap without knowing where you\'ll land',
-      'the beginning energy in {house_theme} is what {transiting_planet} meeting your {natal_planet} is creating. The Fool says trust it even when you can\'t see the whole path',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about starting before you\'re ready'
-    ]
+      'You don\'t have all the information. {transiting_planet} on {natal_planet} in {house_theme} - jump anyway. The Fool never had it either',
+      'Safety isn\'t coming. The plan won\'t get clearer. {house_theme} is where {transiting_planet} and your {natal_planet} meet at the cliff edge',
+      'Start before you\'re ready or don\'t start. {transiting_planet} hitting your {natal_planet} around {house_theme} is the nudge off the edge'
+    ],
+    action: 'do the thing you\'ve been postponing until you feel ready'
   },
 
-  'major-1': { // The Magician
-    archetype: 'The Magician is manifestation - you have the tools, use them',
+  'major-1': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Magician is showing you that you already have what you need',
-      'the creative power in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Magician says the tools are in your hands',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about recognizing your own agency'
-    ]
+      'Stop circling. {transiting_planet} working your {natal_planet} in {house_theme} - the tools are already in your hands. You\'ve been treating this like a waiting room',
+      'That missing piece you keep searching for in {house_theme}? It\'s not missing. {transiting_planet} and your {natal_planet} already gave you everything you need',
+      'You keep asking for permission. {transiting_planet} hitting your {natal_planet} around {house_theme} - you\'re already authorized'
+    ],
+    action: 'list what you already have - tools, skills, connections - and use one today'
   },
 
-  'major-2': { // The High Priestess
-    archetype: 'The High Priestess is intuition, the unseen, what you know without knowing how',
+  'major-2': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the High Priestess is asking you to trust what you sense beneath the surface',
-      'the intuitive knowing in {house_theme} is what {transiting_planet} activating your {natal_planet} is awakening. Logic won\'t solve this one',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the High Priestess is showing you the hidden patterns'
-    ]
+      'Logic fails here. {transiting_planet} on your {natal_planet} in {house_theme} is waking something that doesn\'t speak in words and won\'t be argued with',
+      'You already sense it. {transiting_planet} meeting your {natal_planet} in {house_theme} - trust the knowing that came before the thinking',
+      'Something beneath {house_theme} is moving. {transiting_planet} lighting up your {natal_planet} - stop asking people who weren\'t in the room'
+    ],
+    action: 'sit quietly for ten minutes. no phone. notice what surfaces without prompting'
   },
 
-  'major-5': { // The Hierophant
-    archetype: 'The Hierophant is tradition, structure, the established way',
+  'major-3': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hierophant is asking whether you\'re following tradition because it\'s wise or because it\'s familiar',
-      'the structures in {house_theme} that {transiting_planet} is activating through your {natal_planet} - the Hierophant shows you what\'s worth keeping',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Hierophant is revealing which rules serve you and which don\'t'
-    ]
+      'Abundance wants to grow in {house_theme} but you keep forcing the timeline. {transiting_planet} on your {natal_planet} - receive, don\'t push',
+      'Stop straining. {transiting_planet} nurturing your {natal_planet} around {house_theme} - things that need to grow won\'t be rushed',
+      'What wants to be born in {house_theme} is already in motion. {transiting_planet} meeting your {natal_planet} - your job is to not strangle it'
+    ],
+    action: 'do something that genuinely nourishes you. not productive. nourishing'
   },
 
-  'major-6': { // The Lovers
-    archetype: 'The Lovers is choice, union, what you commit to',
+  'major-4': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Lovers is showing you this choice matters more than you think',
-      'the union or decision in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Lovers say you can\'t have both',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - this is about choosing what you actually want, not what you should want'
-    ]
+      '{transiting_planet} on your {natal_planet} in {house_theme} is asking who\'s actually in charge. If the answer is nobody, that\'s your answer',
+      'The drift in {house_theme} isn\'t circumstance. {transiting_planet} activating your {natal_planet} - someone decided not to decide, and it\'s been costing you',
+      'You\'ve been waiting for permission in {house_theme}. {transiting_planet} meeting your {natal_planet} - it\'s not coming from anywhere external'
+    ],
+    action: 'name one area needing more structure. make one rule about it today'
   },
 
-  'major-8': { // Strength
-    archetype: 'Strength is gentle power, taming what\'s wild through softness',
+  'major-5': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Strength is showing you that force isn\'t the answer here',
-      'the power you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. Strength says gentle persistence wins',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Strength is asking you to work with the wild part, not against it'
-    ]
+      'Are you following the rules in {house_theme} because they work or because you\'re afraid to question them? {transiting_planet} on your {natal_planet} is asking',
+      'Not every tradition earns its place. {transiting_planet} activating your {natal_planet} in {house_theme} - wisdom and habit aren\'t the same thing',
+      'Somewhere in {house_theme} you\'re doing things the way they\'re "supposed to be done" without knowing why. {transiting_planet} hitting your {natal_planet} - worth examining'
+    ],
+    action: 'question one thing you do automatically. ask where that rule actually came from'
   },
 
-  'major-9': { // The Hermit
-    archetype: 'The Hermit is withdrawal, solitude, finding answers within',
+  'major-6': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hermit is telling you the answer isn\'t out there, it\'s in the solitude',
-      'the withdrawal you\'re feeling in {house_theme} isn\'t isolation - it\'s {transiting_planet} asking your {natal_planet} to go inward before moving forward',
-      '{transiting_planet} activating your {natal_planet} in {house_theme} means the Hermit\'s lantern lights the path, but only you can walk it alone'
-    ]
+      'This choice in {house_theme} matters more than you\'ve admitted. {transiting_planet} and your {natal_planet} - you can\'t have both and you know it',
+      'What you actually want versus what you should want. {transiting_planet} hitting your {natal_planet} in {house_theme} - stop pretending those are the same thing',
+      'Which path is actually yours? {transiting_planet} working your {natal_planet} around {house_theme} makes it unavoidable'
+    ],
+    action: 'write down the choice you\'ve been avoiding. be honest about which one you actually want'
   },
 
-  'major-10': { // Wheel of Fortune
-    archetype: 'The Wheel is cycles, fate, what\'s beyond your control',
+  'major-7': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Wheel is showing you this turn was always coming',
-      'the cycle shifting in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Wheel says you can\'t stop it, only respond',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Wheel is turning - luck or fate, you didn\'t cause this'
-    ]
+      '{transiting_planet} pressing on your {natal_planet} in {house_theme} is what\'s creating the split. The contradiction isn\'t the problem - your refusal to move through it is',
+      'You\'re waiting for the internal conflict around {house_theme} to resolve before you act. {transiting_planet} on your {natal_planet} says: move while it\'s unresolved',
+      'The tension in {house_theme} under {transiting_planet} isn\'t a sign to wait. It\'s the condition you\'re working in. Navigate anyway'
+    ],
+    action: 'commit to one direction today. you can adjust as you go'
   },
 
-  'major-12': { // The Hanged Man
-    archetype: 'The Hanged Man is suspension, seeing differently, the pause that shifts perspective',
+  'major-8': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Hanged Man is showing you why struggling makes it worse',
-      'the suspension in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The Hanged Man says surrender opens the view',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Hanged Man is asking you to stop fighting and see it upside down'
-    ]
+      '{transiting_planet} is creating pressure around {house_theme} and you\'re matching it with more pressure. {natal_planet} - something else is being asked for here',
+      'The resistance in {house_theme} intensifies when you push. {transiting_planet} on your {natal_planet} - notice what changes when you stop trying to overpower it',
+      'You\'ve been treating {house_theme} like something to conquer. {transiting_planet} meeting your {natal_planet} - the thing you\'re fighting has been waiting for you to get quiet'
+    ],
+    action: 'notice where you\'re using force. try patience instead, just once'
   },
 
-  'major-3': { // The Empress
-    archetype: 'The Empress is abundance, fertility, creation flowing naturally',
+  'major-9': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Empress is showing you where abundance wants to grow if you let it',
-      'the creative fertility in {house_theme} is what {transiting_planet} activating your {natal_planet} is nurturing. The Empress says stop forcing and start receiving',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Empress is asking you to trust what wants to be born'
-    ]
+      'Other people\'s voices are drowning out your own in {house_theme}. {transiting_planet} on your {natal_planet} - the answer isn\'t in the group chat. Go alone',
+      'You\'re not depressed, you\'re recalibrating. {transiting_planet} working your {natal_planet} around {house_theme} needs the door closed and the lights off',
+      'The answer lives inside and you can\'t hear it while performing. {transiting_planet} hitting your {natal_planet} in {house_theme} - what do you actually think?'
+    ],
+    action: 'spend time alone today without filling it. no podcast, no scroll. just you'
   },
 
-  'major-4': { // The Emperor
-    archetype: 'The Emperor is structure, authority, the order you create',
+  'major-10': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Emperor is asking you to build the structure that holds everything together',
-      'the authority you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Emperor says create the boundaries',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Emperor is showing you where you need to take control'
-    ]
+      '{transiting_planet} moving through your {natal_planet} in {house_theme} isn\'t coincidence - it\'s timing. The moment is handing you something. Receive it or miss it',
+      'The shift in {house_theme} was in motion long before today. {transiting_planet} on your {natal_planet} is just the point where it becomes undeniable',
+      'You\'ve been trying to predict {house_theme}. {transiting_planet} meeting your {natal_planet} says this turn wasn\'t in your model - which means your model needs updating'
+    ],
+    action: 'let go of one thing you\'ve been trying to control. practice adapting instead'
   },
 
-  'major-7': { // The Chariot
-    archetype: 'The Chariot is will, direction, moving forward through opposing forces',
+  'major-11': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Chariot is showing you how to harness opposing forces to move forward',
-      'the willpower you need in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. The Chariot says hold the reins and direct it',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Chariot is asking you to choose a direction and commit'
-    ]
+      'The scales in {house_theme} are unbalanced and you already know which side. {transiting_planet} on your {natal_planet} - Justice doesn\'t negotiate',
+      'What you owe and what\'s owed to you. {transiting_planet} hitting your {natal_planet} in {house_theme} - no excuses, just what\'s actually true',
+      'The consequence in {house_theme} is fair, even if uncomfortable. {transiting_planet} activating your {natal_planet} - Justice doesn\'t apologize'
+    ],
+    action: 'name one area where you haven\'t been fair - to yourself or someone else'
   },
 
-  'major-11': { // Justice
-    archetype: 'Justice is balance, cause and effect, what\'s fair',
+  'major-12': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Justice is showing you the scales need to balance',
-      'the accountability in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. Justice says the consequences are fair',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Justice is asking what you owe and what\'s owed to you'
-    ]
+      'Struggling makes it worse. {transiting_planet} on your {natal_planet} in {house_theme} - stop thrashing. Surrender and the view changes',
+      'What if you saw {house_theme} from the other angle? {transiting_planet} working your {natal_planet} - the suspension is the lesson, not the obstacle to it',
+      'You\'re not stuck, you\'re paused for a reason. {transiting_planet} meeting your {natal_planet} around {house_theme} - something shifts when you stop forcing your way out'
+    ],
+    action: 'pause on the thing you\'ve been forcing. sit with not knowing for one day'
   },
 
-  'major-13': { // Death
-    archetype: 'Death is transformation, the ending that must happen for the beginning',
+  'major-13': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Death is showing you that what\'s ending needed to end',
-      'the transformation in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. Death says you can\'t grow without letting go',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Death is clearing the ground so something new can actually root'
-    ]
+      '{transiting_planet} has been building pressure in {house_theme} for a while. Your {natal_planet} finally got the message. The timing was the transit\'s doing - not yours',
+      'Whatever {transiting_planet} has been dismantling around your {natal_planet} in {house_theme} - you\'ve been feeling it coming. The card confirms it\'s not in your head',
+      'The loss in {house_theme} and {transiting_planet} on your {natal_planet} arriving at the same time isn\'t coincidence. This was always the mechanism. Now you work with what\'s cleared'
+    ],
+    action: 'name what you need to stop holding onto. say it out loud, even if nobody hears'
   },
 
-  'major-14': { // Temperance
-    archetype: 'Temperance is alchemy, balance, mixing opposites into something new',
+  'major-14': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Temperance is showing you how to blend what seemed incompatible',
-      'the balance you\'re seeking in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. Temperance says patience transforms',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Temperance is asking you to find the middle path'
-    ]
+      'The two things that seem incompatible in {house_theme} aren\'t. {transiting_planet} on your {natal_planet} - pour them together slowly',
+      'Not one extreme or the other. {transiting_planet} activating your {natal_planet} around {house_theme} - the middle path holds both truths without collapsing',
+      'Patience is doing the work. {transiting_planet} meeting your {natal_planet} in {house_theme} - the alchemy takes the time it takes'
+    ],
+    action: 'find the middle position between two things you\'ve been treating as opposites'
   },
 
-  'major-15': { // The Devil
-    archetype: 'The Devil is bondage, addiction, what you think you can\'t leave',
+  'major-15': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Devil is showing you where you\'re chained by choice, not force',
-      'the attachment in {house_theme} is what {transiting_planet} activating your {natal_planet} is revealing. The Devil says the chains are unlocked',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Devil is asking what you\'re getting from staying stuck'
-    ]
+      'Chained by choice, not force. {transiting_planet} on your {natal_planet} in {house_theme} - the chains are loose. You could leave. Why don\'t you?',
+      'What are you getting from staying stuck in {house_theme}? {transiting_planet} revealing this through your {natal_planet} - there\'s always a payoff for staying',
+      'The door in {house_theme} was never locked. {transiting_planet} meeting your {natal_planet} - the Devil doesn\'t trap, it tempts. You\'re here because some part of you chose it'
+    ],
+    action: 'ask honestly: what am i getting from this situation i claim i want to leave?'
   },
 
-  'major-16': { // The Tower
-    archetype: 'The Tower is collapse and breakthrough - structures coming down',
+  'major-16': {
     synthesis: [
-      'the structure that\'s breaking in {house_theme} needed to break. {transiting_planet} is showing you the cracks were always there',
-      'what\'s collapsing in {house_theme} was built on something unstable. {transiting_planet} meeting your {natal_planet} is why it can\'t hold anymore',
-      'the tower moment in {house_theme} isn\'t random - {transiting_planet} is forcing what your {natal_planet} knew wasn\'t working'
-    ]
+      'The crack was always there in {house_theme}. {transiting_planet} hitting your {natal_planet} just found it - the Tower reveals the weakness, doesn\'t create it',
+      'Whatever collapsed - it couldn\'t hold. {transiting_planet} meeting your {natal_planet} in {house_theme} - the Tower doesn\'t renovate, it levels',
+      'That 2am realization it was never going to work? {transiting_planet} on your {natal_planet} around {house_theme} - you knew. The Tower just made you stop pretending'
+    ],
+    action: 'stop rebuilding what just fell. sit in the rubble before you pick up the bricks'
   },
 
-  'major-17': { // The Star
-    archetype: 'The Star is hope returning after devastation',
+  'major-17': {
     synthesis: [
-      '{transiting_planet} bringing flow to your {natal_planet} in {house_theme} - this is hope based on what survived',
-      'after whatever broke in {house_theme}, {transiting_planet} with your {natal_planet} is why healing feels possible now',
-      'the Star isn\'t naive optimism - it\'s {transiting_planet} helping your {natal_planet} rebuild trust in {house_theme}'
-    ]
+      'After the break in {house_theme}, something small and real remains. {transiting_planet} flowing through your {natal_planet} - the Star sees what survived, not what didn\'t',
+      'This isn\'t naive optimism. {transiting_planet} helping your {natal_planet} rebuild trust around {house_theme} - the Star knows what was lost and hopes anyway, with eyes open',
+      'Healing in {house_theme} looks like this: quiet, slow, undramatic. {transiting_planet} meeting your {natal_planet} - the Star doesn\'t announce itself'
+    ],
+    action: 'notice one small thing that still feels okay. that\'s where you build from'
   },
 
-  'major-18': { // The Moon
-    archetype: 'The Moon is illusion, the subconscious, what you can\'t see clearly',
+  'major-18': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Moon is showing you that things aren\'t as they appear',
-      'the confusion in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The Moon says trust instinct over logic',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Moon is revealing what\'s been hidden in shadow'
-    ]
+      'Things aren\'t what they appear in {house_theme}. {transiting_planet} on your {natal_planet} - what you\'re afraid of and what\'s actually there aren\'t the same',
+      'Your instincts are activated and your logic is confused. {transiting_planet} working your {natal_planet} around {house_theme} - trust the body, not the story you\'re spinning',
+      'Something in {house_theme} is hidden even from you. {transiting_planet} meeting your {natal_planet} - what are you not letting yourself see?'
+    ],
+    action: 'write down what you\'re anxious about without trying to explain or justify it. just the fear'
   },
 
-  'major-19': { // The Sun
-    archetype: 'The Sun is clarity, joy, what\'s obvious in daylight',
+  'major-19': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Sun is making everything visible and simple',
-      'the clarity in {house_theme} is what {transiting_planet} activating your {natal_planet} is bringing. The Sun says it\'s exactly what it looks like',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the Sun is lighting up what you couldn\'t see before'
-    ]
+      '{transiting_planet} lighting up your {natal_planet} in {house_theme} is removing whatever was blocking the view. You weren\'t wrong - you just couldn\'t see all the way yet',
+      'The clarity coming into {house_theme} right now isn\'t naive. {transiting_planet} on your {natal_planet} has been working toward this - the good thing is actually happening',
+      'You keep waiting for the complication in {house_theme}. {transiting_planet} meeting your {natal_planet} - sometimes there isn\'t one. This is one of those times'
+    ],
+    action: 'do one thing purely because it makes you happy. no justification needed'
   },
 
-  'major-20': { // Judgment
-    archetype: 'Judgment is awakening, resurrection, seeing yourself clearly',
+  'major-20': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - Judgment is calling you to wake up to who you actually are',
-      'the reckoning in {house_theme} is what {transiting_planet} activating your {natal_planet} is demanding. Judgment says face what you\'ve been avoiding',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means Judgment is asking you to shed the old identity'
-    ]
+      'Wake up to who you actually are. {transiting_planet} on your {natal_planet} in {house_theme} - not the name you perform, the real one',
+      'What have you been avoiding facing about {house_theme}? {transiting_planet} demanding your {natal_planet} see it - Judgment doesn\'t whisper',
+      'The old version of you in {house_theme} is done. {transiting_planet} meeting your {natal_planet} - who you were always becoming, not who you\'ve been pretending to be'
+    ],
+    action: 'name one story about yourself that you\'ve outgrown but keep repeating'
   },
 
-  'major-21': { // The World
-    archetype: 'The World is completion, integration, the cycle fulfilled',
+  'major-21': {
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the World is showing you this chapter is complete',
-      'the integration in {house_theme} is what {transiting_planet} activating your {natal_planet} is creating. The World says you\'ve arrived',
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} means the World is closing this cycle so the next can begin'
-    ]
+      '{transiting_planet} completing its movement through your {natal_planet} in {house_theme} at the same time as this card - the cycle is genuinely closing. Don\'t manufacture a next chapter yet',
+      'The convergence in {house_theme}: {transiting_planet} finishing its work on your {natal_planet}, the thing that has been building finally landing. Both are saying the same thing',
+      'Something in {house_theme} has run its full arc under {transiting_planet}. Your {natal_planet} is different for it. Before you move on - know what you\'re carrying forward'
+    ],
+    action: 'acknowledge what you\'ve actually finished. let yourself feel done'
   },
 
-  // Suit archetypes
+  // ── CUPS ──────────────────────────────────────────────────────────────────
+
+  'cups-1': {
+    synthesis: [
+      'Something new is arriving emotionally in {house_theme}. {transiting_planet} on your {natal_planet} - this feeling is clean, hasn\'t been complicated yet. Pay attention before the mind starts editing',
+      'A fresh emotional current in {house_theme}. {transiting_planet} meeting your {natal_planet} - Ace of Cups doesn\'t repeat what came before. This is actually new',
+      'The overflowing cup in {house_theme} while {transiting_planet} hits your {natal_planet} - don\'t talk yourself out of this feeling before you\'ve fully felt it'
+    ],
+    action: 'let yourself feel the new thing without immediately analyzing it'
+  },
+
+  'cups-2': {
+    synthesis: [
+      'Someone in {house_theme} actually sees you. {transiting_planet} on your {natal_planet} - it goes both ways. This isn\'t you giving more',
+      'Mutual. Not you bending down or reaching up. {transiting_planet} hitting your {natal_planet} around {house_theme} - the rare thing: level',
+      'Partnership forming where {transiting_planet} meets your {natal_planet} in {house_theme}. Two people actually looking at each other'
+    ],
+    action: 'tell someone what they mean to you directly. no hints'
+  },
+
+  'cups-3': {
+    synthesis: [
+      'Call your friends. {transiting_planet} working your {natal_planet} in {house_theme} - this joy doesn\'t work alone',
+      'The group text that actually makes you laugh, the dinner that runs late - {transiting_planet} on your {natal_planet} around {house_theme}, community doing its actual job',
+      'Abundance in {house_theme} multiplies when shared. {transiting_planet} meeting your {natal_planet} - stop celebrating alone'
+    ],
+    action: 'reach out to people you actually like. make a plan, not a maybe'
+  },
+
+  'cups-4': {
+    synthesis: [
+      'You\'re sulking in {house_theme}. {transiting_planet} on your {natal_planet} - crossed arms, the gift being offered that you\'re ignoring because it\'s not the one you wanted',
+      'So fixated on what\'s missing in {house_theme} that you can\'t see what\'s right there. {transiting_planet} hitting your {natal_planet} - look up from your own disappointment',
+      'Someone is extending something in {house_theme} and you\'re not seeing it. {transiting_planet} meeting your {natal_planet} - what are you refusing to receive?'
+    ],
+    action: 'look for what\'s being offered that you\'ve been ignoring. say yes to something small'
+  },
+
+  'cups-5': {
+    synthesis: [
+      'Three cups spilled, two still standing. {transiting_planet} on your {natal_planet} in {house_theme} - staring at the loss and not turning to see what remains',
+      'The grief in {house_theme} is real. {transiting_planet} working your {natal_planet} - Five of Cups doesn\'t ask you to stop mourning, it asks you to eventually turn around',
+      'What you lost in {house_theme} matters. So does what survived. {transiting_planet} hitting your {natal_planet} - you\'re not left with nothing'
+    ],
+    action: 'write down what you\'re grieving. then on the other side, what remains'
+  },
+
+  'cups-6': {
+    synthesis: [
+      'Why you texted them at 1am, why that song wrecked you - {transiting_planet} hitting your {natal_planet} in {house_theme}, pulled back not because the past was better but because you were more yourself',
+      'The nostalgia in {house_theme} isn\'t about circumstances. {transiting_planet} working your {natal_planet} - about innocence, the version of you that didn\'t know yet what disappointment tastes like',
+      'Comparing now to then while {transiting_planet} meets your {natal_planet} around {house_theme} - do you want to go back or do you just miss feeling that way?'
+    ],
+    action: 'reconnect with something that used to bring joy before you learned to overthink it'
+  },
+
+  'cups-7': {
+    synthesis: [
+      'Seven options, none of them fully real yet. {transiting_planet} on your {natal_planet} in {house_theme} - you\'re not choosing because you\'re not ready to lose the other possibilities',
+      'The dream in {house_theme} is seductive while {transiting_planet} clouds your {natal_planet}. Which one would you actually choose if the magic wore off?',
+      'Too many visions, not enough commitment. {transiting_planet} hitting your {natal_planet} around {house_theme} - pick one and find out if it\'s real'
+    ],
+    action: 'choose one option. clarity comes from commitment, not more thinking'
+  },
+
+  'cups-8': {
+    synthesis: [
+      'Walking away from something that still exists in {house_theme}. {transiting_planet} on your {natal_planet} - leaving because staying would be a lie',
+      'It wasn\'t a failure. {transiting_planet} working your {natal_planet} around {house_theme} - the honest exit, the moment you admit this isn\'t what you need anymore',
+      'The eight cups are full and you\'re leaving them. {transiting_planet} meeting your {natal_planet} in {house_theme} - why? That\'s the question worth sitting with'
+    ],
+    action: 'ask yourself honestly: am i staying somewhere i\'ve already left emotionally?'
+  },
+
+  'cups-9': {
+    synthesis: [
+      'You got what you wanted in {house_theme}. {transiting_planet} on your {natal_planet} - let it land. Actually enjoy this instead of already scanning for the next thing',
+      'Satisfaction is available right now. {transiting_planet} activating your {natal_planet} in {house_theme} - the wish fulfilled. You\'re allowed to feel it',
+      'Stop moving the goalpost. {transiting_planet} meeting your {natal_planet} around {house_theme} - contentment is available if you let yourself be content'
+    ],
+    action: 'actually enjoy what you have today. don\'t plan the next thing. just this'
+  },
+
+  'cups-10': {
+    synthesis: [
+      'The emotional life you\'ve been building in {house_theme} - this is what it looks like. {transiting_planet} on your {natal_planet} - the life that actually works',
+      'The rainbow after the storms. {transiting_planet} activating your {natal_planet} around {house_theme} - the love that holds, the whole picture',
+      'Fulfilment, not perfection. {transiting_planet} meeting your {natal_planet} in {house_theme} - the good life and you\'re standing in it'
+    ],
+    action: 'call or message the person who makes you feel most at home'
+  },
+
+  'cups-page': {
+    synthesis: [
+      'A feeling arriving that you haven\'t felt before. {transiting_planet} on your {natal_planet} in {house_theme} - new, raw, unfiltered. Don\'t file it away yet',
+      'Emotional openness without knowing what to do with it. {transiting_planet} working your {natal_planet} around {house_theme} - the message that surprises you. Read it',
+      'Something is making itself known in {house_theme} through feeling. {transiting_planet} hitting your {natal_planet} - be curious about it, not clinical'
+    ],
+    action: 'let yourself feel something without immediately needing to understand it'
+  },
+
+  'cups-knight': {
+    synthesis: [
+      'Chasing the feeling in {house_theme}. {transiting_planet} on your {natal_planet} - romantic, idealistic, pursuing what moves you. Are you chasing the feeling or the person?',
+      'The invitation in {house_theme} while {transiting_planet} meets your {natal_planet} - the gesture, the poetry, the grand declaration. Is there substance underneath?',
+      'Following emotion into {house_theme} while {transiting_planet} activates your {natal_planet} - gorgeous and impractical. Useful for starting things'
+    ],
+    action: 'make the romantic or creative gesture you\'ve been overthinking. do it while the feeling is alive'
+  },
+
+  'cups-queen': {
+    synthesis: [
+      'You already know what\'s happening in {house_theme}. {transiting_planet} on your {natal_planet} - reads the room before anyone speaks. Trust your read',
+      'The empathy you\'re extending in {house_theme} while {transiting_planet} works your {natal_planet} - feels what others feel. Set a boundary before you absorb it all',
+      'Emotional intelligence in {house_theme}. {transiting_planet} meeting your {natal_planet} - she knows. She just knows. And acts from that, not from logic'
+    ],
+    action: 'trust your instinct about how someone is feeling. act on it'
+  },
+
+  'cups-king': {
+    synthesis: [
+      'Hold steady in {house_theme}. {transiting_planet} on your {natal_planet} - calm in the storm. Emotional mastery means feeling everything without letting it run you',
+      'Someone in {house_theme} needs your steadiness. {transiting_planet} working your {natal_planet} - leads from the heart without losing the head',
+      'The feelings in {house_theme} are big. {transiting_planet} meeting your {natal_planet} - you can hold all of it without being swept away'
+    ],
+    action: 'be the steady one for someone today. feel your feelings but don\'t perform them'
+  },
+
+  // ── SWORDS ────────────────────────────────────────────────────────────────
+
+  'swords-1': {
+    synthesis: [
+      'Clarity breaking through in {house_theme}. {transiting_planet} on your {natal_planet} - the truth arriving all at once, cutting through everything that was obscuring it',
+      'New mental clarity in {house_theme}. {transiting_planet} hitting your {natal_planet} - the breakthrough thought, the thing that suddenly makes everything make sense',
+      'The truth in {house_theme} cuts clean. {transiting_planet} meeting your {natal_planet} - sharp, not cruel. Use it'
+    ],
+    action: 'write down the truth you just realized. clearly. in one sentence'
+  },
+
+  'swords-2': {
+    synthesis: [
+      'Blindfold on, arms crossed. {transiting_planet} pressures your {natal_planet} in {house_theme} - you know both options. You just won\'t look',
+      'Neither choice feels safe so you made the standoff. {transiting_planet} on your {natal_planet} around {house_theme} - the pause costs more than choosing',
+      'How long can you hold this? {transiting_planet} hitting your {natal_planet} in {house_theme} - making no decision is also a decision'
+    ],
+    action: 'make the choice you\'ve been stalling on. imperfect action beats perfect paralysis'
+  },
+
+  'swords-3': {
+    synthesis: [
+      'That sentence they said. You keep replaying it in {house_theme} while {transiting_planet} hits your {natal_planet} - the specific wound, not the vague ache',
+      'Why you flinch at that tone, why you can\'t stop checking their profile. {transiting_planet} on your {natal_planet} around {house_theme} - the moment trust cracked and the sound it made',
+      'Grief in {house_theme} that lives in the chest, not the head. {transiting_planet} meeting your {natal_planet} - it doesn\'t respond to logic. It just has to be felt'
+    ],
+    action: 'let yourself grieve it properly instead of trying to rationalize it away'
+  },
+
+  'swords-4': {
+    synthesis: [
+      'Stop. {transiting_planet} on your {natal_planet} in {house_theme} - forced rest, mental recovery after too much fighting. Lay down',
+      'You can\'t think your way through this today. {transiting_planet} working your {natal_planet} around {house_theme} - recuperation is part of the process',
+      'The mind needs to stop in {house_theme}. {transiting_planet} hitting your {natal_planet} - you don\'t have to figure this out right now. That\'s not avoidance, that\'s wisdom'
+    ],
+    action: 'give yourself permission to not figure it out today. genuine rest'
+  },
+
+  'swords-5': {
+    synthesis: [
+      'You won but look at what it cost. {transiting_planet} on your {natal_planet} in {house_theme} - the hollow victory, the argument you technically won and emotionally lost',
+      'Is being right in {house_theme} worth more than the relationship? {transiting_planet} working your {natal_planet} - count the bodies after the battle',
+      'The conflict in {house_theme} has a winner and it might be you. {transiting_planet} meeting your {natal_planet} - at what cost?'
+    ],
+    action: 'ask honestly if winning this particular fight is worth what it\'s costing'
+  },
+
+  'swords-6': {
+    synthesis: [
+      'Moving away from troubled waters in {house_theme}. {transiting_planet} on your {natal_planet} - not escape, transition. Calmer ground',
+      'You\'re not running from {house_theme}. {transiting_planet} working your {natal_planet} - deliberate departure. Taking what you need, leaving what you don\'t',
+      'Grief and relief happening at the same time in {house_theme}. {transiting_planet} meeting your {natal_planet} - both are okay'
+    ],
+    action: 'pack what you need for the next phase. put down what doesn\'t belong where you\'re going'
+  },
+
+  'swords-7': {
+    synthesis: [
+      'Are you being honest in {house_theme}? {transiting_planet} on your {natal_planet} - knows the shortcuts you\'re taking and who\'s not watching',
+      'That loophole, that half-truth, that thing you\'re getting away with in {house_theme}. {transiting_planet} working your {natal_planet} - works until it doesn\'t',
+      'Strategy or deception? {transiting_planet} hitting your {natal_planet} around {house_theme} - which one and could you defend it out loud?'
+    ],
+    action: 'audit yourself. is there something you\'re being less than honest about?'
+  },
+
+  'swords-8': {
+    synthesis: [
+      'You built this cage in {house_theme}. {transiting_planet} on your {natal_planet} - blindfolded in restraints that are barely tied. You could move. Why aren\'t you?',
+      'The prison in {house_theme} is mental. {transiting_planet} working your {natal_planet} - the belief that you\'re stuck is doing more work than any actual obstacle',
+      'What\'s the story you tell yourself about why you can\'t change {house_theme}? {transiting_planet} hitting your {natal_planet} - test it'
+    ],
+    action: 'identify one constraint you\'ve accepted as fixed. challenge whether it actually is'
+  },
+
+  'swords-9': {
+    synthesis: [
+      '3am and the mind won\'t stop. {transiting_planet} on your {natal_planet} in {house_theme} - catastrophizing, worst case on repeat, anxiety that\'s outrun any actual evidence',
+      'Write the fear down. {transiting_planet} working your {natal_planet} around {house_theme} - none of those scenarios are happening right now',
+      'The suffering in {house_theme} is real but the story generating it isn\'t. {transiting_planet} hitting your {natal_planet} - is this actually happening?'
+    ],
+    action: 'write down your worst fear. then ask: is this actually happening right now?'
+  },
+
+  'swords-10': {
+    synthesis: [
+      'Rock bottom in {house_theme}. {transiting_planet} on your {natal_planet} - the most dramatic ending possible. And it\'s over. The only direction from here is up',
+      'Total collapse in {house_theme} while {transiting_planet} meets your {natal_planet} - don\'t add more swords. This is already the end',
+      'The darkest moment in {house_theme} is also the clearest. {transiting_planet} hitting your {natal_planet} - this particular story is done. Let it be'
+    ],
+    action: 'let it be over. stop narrating the collapse. it happened. what\'s next?'
+  },
+
+  'swords-page': {
+    synthesis: [
+      'A new idea cutting through in {house_theme}. {transiting_planet} on your {natal_planet} - sharp, curious, asking questions that make people uncomfortable',
+      'Mental alertness in {house_theme} while {transiting_planet} works your {natal_planet} - watching carefully, testing the edges of things',
+      'Ask the question nobody\'s asking in {house_theme}. {transiting_planet} hitting your {natal_planet} - say what everyone else was thinking'
+    ],
+    action: 'ask the uncomfortable question you\'ve been holding back'
+  },
+
+  'swords-knight': {
+    synthesis: [
+      'Moving fast and cutting straight in {house_theme}. {transiting_planet} on your {natal_planet} - no diplomacy, no waiting for permission',
+      'Directness in {house_theme} while {transiting_planet} meets your {natal_planet} - says what needs to be said and moves before doubt catches up',
+      'Charge. {transiting_planet} hitting your {natal_planet} around {house_theme} - decisive action, sometimes reckless. Know where you\'re pointing'
+    ],
+    action: 'say the direct thing. no softening. watch what changes'
+  },
+
+  'swords-queen': {
+    synthesis: [
+      'You see exactly what\'s happening in {house_theme}. {transiting_planet} on your {natal_planet} - cuts through the story, the politeness, the performance. Names what\'s actually there',
+      'Perceptive and unsentimental. {transiting_planet} working your {natal_planet} around {house_theme} - pain made her precise, not soft',
+      'Name it. {transiting_planet} meeting your {natal_planet} in {house_theme} - what do you actually see here, without the comfortable gloss?'
+    ],
+    action: 'strip the story back to facts. what is actually happening, with no interpretation?'
+  },
+
+  'swords-king': {
+    synthesis: [
+      'The decision needs to be made in {house_theme}. {transiting_planet} on your {natal_planet} - clarity, not cruelty. You\'ve been circling long enough',
+      'Intellectual authority in {house_theme}. {transiting_planet} working your {natal_planet} - sees the full picture, makes the call, lives with it',
+      'Lead with the mind, not the mood. {transiting_planet} hitting your {natal_planet} around {house_theme} - what do you actually know to be true?'
+    ],
+    action: 'make the decision you\'ve been circling. then stop revisiting it'
+  },
+
+  // ── WANDS ─────────────────────────────────────────────────────────────────
+
+  'wands-1': {
+    synthesis: [
+      'A new spark in {house_theme}. {transiting_planet} on your {natal_planet} - raw creative impulse before anyone\'s had a chance to complicate it. It won\'t feel this clear for long',
+      'Creative beginning in {house_theme} while {transiting_planet} hits your {natal_planet} - the yes before the how. Start',
+      'Something is igniting in {house_theme}. {transiting_planet} meeting your {natal_planet} - all fire, no plan yet. That\'s appropriate'
+    ],
+    action: 'start the creative thing today. ten minutes. just to begin'
+  },
+
+  'wands-2': {
+    synthesis: [
+      'You see it but haven\'t moved yet. {transiting_planet} showing your {natal_planet} the bigger picture in {house_theme} - the map spread out before the journey begins',
+      'Vision needs action eventually. Two of Wands in {house_theme} while {transiting_planet} works your {natal_planet} - the plan is half-formed, the commitment not made. How long before you ship?',
+      '{transiting_planet} on your {natal_planet} around {house_theme} - standing at the crossroads with the world in your hands. What are you waiting for?'
+    ],
+    action: 'write down the plan, even roughly. putting it on paper makes it real'
+  },
+
+  'wands-3': {
+    synthesis: [
+      'The ships you sent out are coming in. {transiting_planet} on your {natal_planet} in {house_theme} - waiting after the doing, watching the horizon for return',
+      'You already made the move in {house_theme}. {transiting_planet} working your {natal_planet} - the expansion phase, the thing you set in motion arriving',
+      'Already thinking about the next thing while the first thing succeeds. {transiting_planet} hitting your {natal_planet} around {house_theme} - check on what you started'
+    ],
+    action: 'check on the thing you put out into the world. follow up on what you started'
+  },
+
+  'wands-4': {
+    synthesis: [
+      'Celebration is earned in {house_theme}. {transiting_planet} on your {natal_planet} - homecoming, the completion worth marking. Acknowledge it',
+      'The foundation is built in {house_theme}. {transiting_planet} activating your {natal_planet} - stability after striving, the threshold crossed',
+      'Stop rushing past the win in {house_theme}. {transiting_planet} meeting your {natal_planet} - pause and recognize what you\'ve actually created'
+    ],
+    action: 'acknowledge what you\'ve built. tell someone about it. let yourself feel proud'
+  },
+
+  'wands-5': {
+    synthesis: [
+      'Chaos and competition in {house_theme}. {transiting_planet} on your {natal_planet} - everyone going in different directions, the messy energy before clarity',
+      'The conflict in {house_theme} while {transiting_planet} works your {natal_planet} - are you actually fighting or is this just friction that precedes something coalescing?',
+      'Too many cooks in {house_theme}. {transiting_planet} hitting your {natal_planet} - the struggle, the testing, the friction that reveals what\'s actually strong'
+    ],
+    action: 'decide if this conflict is worth your energy. if yes, fight clearly. if no, step back'
+  },
+
+  'wands-6': {
+    synthesis: [
+      'Recognition in {house_theme}. {transiting_planet} on your {natal_planet} - the public win, the acknowledgment you earned. The moment people see what you\'ve done',
+      'Let yourself receive it. {transiting_planet} activating your {natal_planet} in {house_theme} - shrinking it doesn\'t make you humble, it makes you dishonest',
+      'You won in {house_theme}. {transiting_planet} meeting your {natal_planet} - the crowd is watching. Lead'
+    ],
+    action: 'accept the acknowledgment without deflecting it. you earned it'
+  },
+
+  'wands-7': {
+    synthesis: [
+      'Holding your ground in {house_theme}. {transiting_planet} on your {natal_planet} - outnumbered but not outmatched. What are you actually defending?',
+      'Everyone has an opinion about {house_theme}. {transiting_planet} working your {natal_planet} - the position you won\'t abandon, the hill you\'ve chosen. Make sure it\'s worth it',
+      'You got here, you can defend it. {transiting_planet} hitting your {natal_planet} in {house_theme} - but pick your battles'
+    ],
+    action: 'name what you\'re actually defending. your position, your values, or your ego?'
+  },
+
+  'wands-8': {
+    synthesis: [
+      'Messages flying, things moving faster than expected. {transiting_planet} on your {natal_planet} in {house_theme} - catch up',
+      'The pace just changed overnight. {transiting_planet} hitting your {natal_planet} - Eight of Wands is rapid-fire movement. Things that were slow are now immediate',
+      'Momentum in {house_theme} you can\'t slow down. {transiting_planet} meeting your {natal_planet} - keep up or get left behind'
+    ],
+    action: 'respond to the thing that needs a response. move while the energy is live'
+  },
+
+  'wands-9': {
+    synthesis: [
+      'Nearly there and completely exhausted in {house_theme}. {transiting_planet} on your {natal_planet} - battle-worn but still holding the staff. Too far to stop',
+      'Waiting for the next hit because there\'s always been a next hit. {transiting_planet} working your {natal_planet} - resilience that\'s become hypervigilance. Rest between battles',
+      'The wounds are showing and the stance is still held in {house_theme}. {transiting_planet} hitting your {natal_planet} - you don\'t have to be fine. Just continue'
+    ],
+    action: 'take stock of how far you\'ve come. you\'re closer than you think'
+  },
+
+  'wands-10': {
+    synthesis: [
+      'Carrying too much in {house_theme}. {transiting_planet} on your {natal_planet} - hunched under an impossible load, still trying to carry it all alone',
+      'What can you put down? {transiting_planet} working your {natal_planet} in {house_theme} - you took on everything because you could, not because you should',
+      'The exhaustion in {house_theme} is self-imposed. {transiting_planet} hitting your {natal_planet} - you don\'t get a prize for suffering through things you could delegate or drop'
+    ],
+    action: 'put one thing down today. delegate, cancel, or just stop'
+  },
+
+  'wands-page': {
+    synthesis: [
+      'The spark of something new in {house_theme}. {transiting_planet} on your {natal_planet} - pure enthusiasm before doubt arrives. Protect this',
+      'Curiosity and fire in {house_theme}. {transiting_planet} working your {natal_planet} - the idea, the vision, the impractical impossible thing that might become real',
+      'Something is exciting you in {house_theme}. {transiting_planet} hitting your {natal_planet} - explore it before you explain it'
+    ],
+    action: 'share the idea with someone who gets excited about things, not someone who\'ll audit it'
+  },
+
+  'wands-knight': {
+    synthesis: [
+      'Charging in {house_theme} before the plan is finished. {transiting_planet} on your {natal_planet} - the energy that starts things and sometimes burns them down. Channel it',
+      'The urgency in {house_theme} while {transiting_planet} works your {natal_planet} - moves before thinking. Useful fire. Know where you\'re pointing it',
+      'Action without strategy in {house_theme}. {transiting_planet} hitting your {natal_planet} - the leap is thrilling. Make sure there\'s somewhere to land'
+    ],
+    action: 'channel the energy into something specific. directed action beats raw momentum'
+  },
+
+  'wands-queen': {
+    synthesis: [
+      'Confidence and warmth in {house_theme}. {transiting_planet} on your {natal_planet} - walks in and the room shifts. Doesn\'t ask permission to take up space',
+      'What are you genuinely excited about in {house_theme}? {transiting_planet} working your {natal_planet} - builds from passion, not obligation',
+      'Do the thing you\'re on fire about in {house_theme}, not the thing that looks responsible. {transiting_planet} meeting your {natal_planet} - the warmth is the authority'
+    ],
+    action: 'lead with your enthusiasm today. the warmth is magnetic, don\'t suppress it'
+  },
+
+  'wands-king': {
+    synthesis: [
+      'The bold call in {house_theme}. {transiting_planet} on your {natal_planet} - the visionary who makes the decision before the consensus forms',
+      'Leadership through vision in {house_theme}. {transiting_planet} working your {natal_planet} - doesn\'t manage the fire, directs it. Already knows where this is going',
+      'The moment to lead in {house_theme}. {transiting_planet} hitting your {natal_planet} - decisive, charismatic, five steps ahead. Make the call'
+    ],
+    action: 'make the bold decision you\'ve been waiting for consensus on. leaders decide'
+  },
+
+  // ── PENTACLES ─────────────────────────────────────────────────────────────
+
+  'pentacles-1': {
+    synthesis: [
+      'Something material is beginning in {house_theme}. {transiting_planet} on your {natal_planet} - the seed, the offer, the first real money, the tangible foundation',
+      'A new practical beginning in {house_theme}. {transiting_planet} hitting your {natal_planet} - opportunity in the physical world. Plant it',
+      'The tangible thing is available in {house_theme}. {transiting_planet} meeting your {natal_planet} - take the first step, the physical one, not just the mental one'
+    ],
+    action: 'take one concrete financial or practical step today. something you can actually see'
+  },
+
+  'pentacles-2': {
+    synthesis: [
+      'Not juggling well, just moving fast enough that nothing has dropped yet. {transiting_planet} disrupting your {natal_planet} in {house_theme} - the pretense of balance',
+      'Maintaining six things but mastering none. You keep saying you\'ll stabilize once X is done. There\'s always another X. {transiting_planet} on your {natal_planet} around {house_theme} - the juggling IS the problem',
+      'Saying yes to everything in {house_theme} because you\'re afraid to admit you can\'t hold it all. {transiting_planet} hitting your {natal_planet} - something drops or you choose what to put down'
+    ],
+    action: 'list everything you\'re juggling. cross out two things that don\'t actually need you'
+  },
+
+  'pentacles-3': {
+    synthesis: [
+      'Your skill meets other people\'s skill in {house_theme}. {transiting_planet} on your {natal_planet} - the work needs all of you, not just you',
+      'Can\'t build this alone. {transiting_planet} bringing your {natal_planet} into collaboration around {house_theme} - not a weakness, the design',
+      'Expertise recognized and used in {house_theme}. {transiting_planet} meeting your {natal_planet} - what you know meets what they know and the thing actually gets built'
+    ],
+    action: 'ask for help or bring in someone with the skill you\'re missing'
+  },
+
+  'pentacles-4': {
+    synthesis: [
+      'Holding on too tight in {house_theme}. {transiting_planet} on your {natal_planet} - the grip that comes from fear of loss, not actual abundance',
+      'Security through control. {transiting_planet} working your {natal_planet} in {house_theme} - what are you really afraid will happen if you loosen your grip?',
+      'Hoarding in {house_theme}. {transiting_planet} hitting your {natal_planet} - the miser sitting on the gold. The protection is real. So is the prison'
+    ],
+    action: 'ask: what am i holding onto out of fear? what would happen if i let it flow?'
+  },
+
+  'pentacles-5': {
+    synthesis: [
+      'Left out in the cold in {house_theme}. {transiting_planet} on your {natal_planet} - the hardship, the shortage, the warm light through the window that isn\'t for you',
+      'Financial or material struggle in {house_theme}. {transiting_planet} working your {natal_planet} - the help exists. The question is whether you\'ll ask for it',
+      'The lack in {house_theme} while {transiting_planet} hits your {natal_planet} - struggling alone when there is a door. Find it'
+    ],
+    action: 'ask for help. specifically, from someone who can actually provide it'
+  },
+
+  'pentacles-6': {
+    synthesis: [
+      'The give and take in {house_theme}. {transiting_planet} on your {natal_planet} - the flow of resources, the balance of generosity and receiving',
+      'Are you giving or receiving in {house_theme} right now? {transiting_planet} working your {natal_planet} - is the exchange fair and are you playing your actual role?',
+      'Resources flowing in {house_theme}. {transiting_planet} meeting your {natal_planet} - generosity and gratitude in balance. Where\'s the flow blocked?'
+    ],
+    action: 'give something freely today, or ask for what you need without guilt'
+  },
+
+  'pentacles-7': {
+    synthesis: [
+      'Waiting for the harvest in {house_theme}. {transiting_planet} on your {natal_planet} - patient assessment mid-growth. Is this still worth the investment?',
+      'Building in {house_theme} and {transiting_planet} working your {natal_planet} says step back and honestly assess. Not everything worth planting is worth finishing',
+      'Progress slower than expected in {house_theme}. {transiting_planet} hitting your {natal_planet} - the long game. Are you still in?'
+    ],
+    action: 'assess what you\'ve been building. is it growing? is it still worth the work?'
+  },
+
+  'pentacles-8': {
+    synthesis: [
+      'Redoing it for the fifth time because it\'s not right yet. {transiting_planet} meeting your {natal_planet} in {house_theme} - the repetition nobody sees, the revision that makes the difference',
+      'The boring middle part of {house_theme}. {transiting_planet} activating your {natal_planet} - practice, refinement, the draft you throw out. This is where skill actually forms',
+      'Stop trying to skip steps in {house_theme}. {transiting_planet} hitting your {natal_planet} - the mastery you want lives in the repetition you keep resisting'
+    ],
+    action: 'put in the hours on the thing that needs work. the unsexy part. do it anyway'
+  },
+
+  'pentacles-9': {
+    synthesis: [
+      'You built this. {transiting_planet} on your {natal_planet} in {house_theme} - self-sufficiency earned, the garden tended, the independence that came from doing the work',
+      'Abundance in {house_theme} from your own effort. {transiting_planet} activating your {natal_planet} - you don\'t need to justify enjoying what you created',
+      'The independence in {house_theme} while {transiting_planet} meets your {natal_planet} - luxury that\'s yours because you made it. Receive it'
+    ],
+    action: 'do something that celebrates what you\'ve built. spend on yourself without guilt'
+  },
+
+  'pentacles-10': {
+    synthesis: [
+      'Legacy and long-term thinking in {house_theme}. {transiting_planet} on your {natal_planet} - what you\'re building that outlasts you',
+      'The whole picture in {house_theme}. {transiting_planet} working your {natal_planet} - family, wealth, tradition, the foundation that holds across generations',
+      'Security that goes beyond just you in {house_theme}. {transiting_planet} hitting your {natal_planet} - what are you building that your future self will benefit from?'
+    ],
+    action: 'think about one decision you could make today that your future self will thank you for'
+  },
+
+  'pentacles-page': {
+    synthesis: [
+      'Learning how things actually work in {house_theme}. {transiting_planet} on your {natal_planet} - the student, the apprentice, building skills one careful step at a time',
+      'New practical knowledge in {house_theme}. {transiting_planet} working your {natal_planet} - methodical, curious, turning the coin over to understand it fully',
+      'Beginning of a material skill in {house_theme}. {transiting_planet} hitting your {natal_planet} - don\'t rush. Study it properly'
+    ],
+    action: 'dedicate time to actually learning the practical skill. books, course, hands-on'
+  },
+
+  'pentacles-knight': {
+    synthesis: [
+      'Slow, steady, reliable. {transiting_planet} on your {natal_planet} in {house_theme} - shows up every day, finishes things. The methodical one',
+      'The necessary but unglamorous work in {house_theme}. {transiting_planet} working your {natal_planet} - not the exciting choice but the effective one',
+      'Head down, keeps going in {house_theme}. {transiting_planet} meeting your {natal_planet} - someone needs to be the one who finishes. That\'s the job right now'
+    ],
+    action: 'do the boring necessary thing you\'ve been postponing. the one with no glory'
+  },
+
+  'pentacles-queen': {
+    synthesis: [
+      'Practical abundance in {house_theme}. {transiting_planet} on your {natal_planet} - tends what she has, nurtures what grows, makes the material world beautiful through care',
+      'The home, the body, the resources. {transiting_planet} working your {natal_planet} around {house_theme} - practical magic: things flourish when you pay attention',
+      'Grounded generosity in {house_theme}. {transiting_planet} meeting your {natal_planet} - feeds everyone and keeps the books balanced. Take care of your physical reality'
+    ],
+    action: 'tend to your physical environment. clean something, buy fresh food, care for the body'
+  },
+
+  'pentacles-king': {
+    synthesis: [
+      'Material authority in {house_theme}. {transiting_planet} on your {natal_planet} - built something solid, manages it wisely, knows the difference between wealth and success',
+      'The financial decision in {house_theme} while {transiting_planet} works your {natal_planet} - make it from strength, not fear. What do you actually know to be true?',
+      'Long-term thinking in {house_theme}. {transiting_planet} hitting your {natal_planet} - built slowly, kept what worked, let go of what didn\'t. One decision toward that today'
+    ],
+    action: 'make the financial or material decision you\'ve been avoiding'
+  },
+
+  // ── SUIT FALLBACKS ────────────────────────────────────────────────────────
+
   swords: {
-    archetype: 'Swords are the mind, clarity, cutting through',
     synthesis: [
-      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the Swords are showing you where mental clarity cuts through what emotion can\'t solve',
-      'Swords cut through illusion - {transiting_planet} activating your {natal_planet} is demanding you think clearly about {house_theme}, not just feel your way through',
-      'the sword moment in {house_theme} means {transiting_planet} is asking your {natal_planet} to see the truth, even if it hurts to look directly at it'
-    ]
+      '{transiting_planet} hitting your {natal_planet} in {house_theme} - the conversation you rehearse in the shower. You already know what needs to be said. You\'re just negotiating with yourself about when',
+      'Whatever {transiting_planet} is doing to your {natal_planet} around {house_theme} - cut the story. Not the one about why it\'s complicated, the actual facts. Write them down',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - overthinking this to paralysis. Clarity comes from cutting, not more analysis. Decide'
+    ],
+    action: 'write down the hard truth. then decide what to do with it'
   },
 
   cups: {
-    archetype: 'Cups are emotion, connection, the heart',
     synthesis: [
-      'the emotional truth in {house_theme} is what {transiting_planet} meeting your {natal_planet} is revealing',
-      'Cups are about what you feel - {transiting_planet} is bringing emotional awareness to your {natal_planet} in {house_theme}',
-      'the heart knows before the head - {transiting_planet} is asking your {natal_planet} to feel what\'s real in {house_theme}'
-    ]
+      '{transiting_planet} working on your {natal_planet} in {house_theme} - chest getting tight, throat closing, suddenly needing to leave the room. The feeling came first. The reason comes later',
+      'Whatever {transiting_planet} is doing to your {natal_planet} around {house_theme} - trying to logic through something that lives in your ribcage. You can explain why you should feel differently. You don\'t. That\'s the information',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - the friend whose text you answer first, the person whose opinion matters more than it should. You already know what this means'
+    ],
+    action: 'stop explaining the feeling. just feel it for five minutes'
   },
 
   wands: {
-    archetype: 'Wands are fire, will, creative action',
     synthesis: [
-      'the creative energy in {house_theme} is what {transiting_planet} meeting your {natal_planet} is activating',
-      'Wands are about will and vision - {transiting_planet} is igniting your {natal_planet}\'s drive in {house_theme}',
-      'the fire you need in {house_theme} comes from {transiting_planet} meeting your {natal_planet} - this is about taking action'
-    ]
+      '{transiting_planet} hitting your {natal_planet} in {house_theme} - can\'t stop talking about this idea. Whether you act or not, the vision is forming',
+      'Whatever {transiting_planet} is doing to your {natal_planet} around {house_theme} - that project file you keep opening. Send the email. Make the call. Start',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - doesn\'t wait for perfect conditions. The creative urge is burning. Move while it\'s alive'
+    ],
+    action: 'start. ten minutes on the thing you keep saying you\'ll do when you have more time'
   },
 
   pentacles: {
-    archetype: 'Pentacles are earth, material reality, what you build',
     synthesis: [
-      'the tangible work in {house_theme} is what {transiting_planet} meeting your {natal_planet} is grounding into reality',
-      'Pentacles are about the material world - {transiting_planet} is asking your {natal_planet} to build something real in {house_theme}',
-      'what you create with your hands in {house_theme} matters - {transiting_planet} meeting your {natal_planet} is making it solid'
-    ]
+      '{transiting_planet} working on your {natal_planet} in {house_theme} - what\'s actually in your account, not what you wish was there. Check the numbers',
+      'Whatever {transiting_planet} is activating in your {natal_planet} around {house_theme} - the thing you can hold. Finish the draft. Build the thing. Make it real',
+      '{transiting_planet} meeting your {natal_planet} in {house_theme} - is there something physical to show for all this effort? Do the tangible thing'
+    ],
+    action: 'do the concrete physical thing. not the planning of it. the thing itself'
   }
 };
 
-/**
- * Closing Templates
- *
- * Final wisdom statements
- */
-export const closingTemplates = {
-  challenging: [
-    'this is how clarity comes',
-    'the breakdown is the breakthrough',
-    'what you\'re losing wasn\'t the real thing',
-    'you\'re freer than you think',
-    'the truth is harder but it\'s yours'
-  ],
-
-  neutral: [
-    'trust what you\'re learning in the quiet',
-    'the pause is preparation',
-    'what you discover now becomes your foundation',
-    'stillness has its own wisdom'
-  ],
-
-  expansive: [
-    'the window is open',
-    'you\'re allowed to trust this',
-    'the opportunity is real',
-    'this is your moment',
-    'the lightning has a direction'
-  ]
+export const keyPhraseTemplates = {
+  challenging: ['the hard truth', 'what needed to break', 'clarity through breakdown', 'truth over comfort', 'the necessary ending'],
+  neutral: ['the pause before motion', 'stillness teaches', 'between what was and what\'s next', 'listening in the quiet'],
+  expansive: ['the door opening', 'hope based on truth', 'trust what\'s emerging', 'the moment opening', 'momentum building']
 };
 
 /**
- * Key Phrase Templates
+ * Which transiting planets and aspects are most resonant for each card.
+ * Used to weight transit selection toward the most thematically relevant transit.
+ * planets: ordered by relevance (index 0 = strongest affinity)
+ * aspects: aspect types that align with this card's energy
  */
-export const keyPhraseTemplates = {
-  challenging: [
-    'clarity through breakdown',
-    'truth over comfort',
-    'the necessary ending',
-    'what needed to break',
-    'the hard truth'
-  ],
+export const cardPlanetAffinity: Record<string, { planets: string[]; aspects: string[] }> = {
+  // Major Arcana
+  'major-0':  { planets: ['uranus', 'jupiter'],           aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-1':  { planets: ['mercury', 'sun'],              aspects: ['conjunction', 'trine', 'sextile'] },
+  'major-2':  { planets: ['moon', 'neptune'],             aspects: ['conjunction', 'trine', 'sextile'] },
+  'major-3':  { planets: ['venus', 'moon'],               aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-4':  { planets: ['saturn', 'mars'],              aspects: ['conjunction', 'square', 'trine'] },
+  'major-5':  { planets: ['saturn', 'jupiter'],           aspects: ['conjunction', 'square', 'opposition'] },
+  'major-6':  { planets: ['venus', 'mercury'],            aspects: ['conjunction', 'trine', 'sextile'] },
+  'major-7':  { planets: ['mars', 'sun'],                 aspects: ['conjunction', 'square', 'trine'] },
+  'major-8':  { planets: ['sun', 'venus'],                aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-9':  { planets: ['saturn', 'mercury'],           aspects: ['conjunction', 'square', 'opposition'] },
+  'major-10': { planets: ['jupiter', 'uranus'],           aspects: ['conjunction', 'trine', 'square', 'opposition', 'sextile'] },
+  'major-11': { planets: ['saturn', 'venus'],             aspects: ['conjunction', 'square', 'opposition'] },
+  'major-12': { planets: ['neptune', 'saturn'],           aspects: ['square', 'opposition', 'conjunction'] },
+  'major-13': { planets: ['pluto', 'saturn'],             aspects: ['square', 'opposition', 'conjunction'] },
+  'major-14': { planets: ['jupiter', 'moon'],             aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-15': { planets: ['pluto', 'saturn'],             aspects: ['square', 'opposition', 'conjunction'] },
+  'major-16': { planets: ['uranus', 'pluto'],             aspects: ['square', 'opposition', 'conjunction'] },
+  'major-17': { planets: ['neptune', 'venus'],            aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-18': { planets: ['neptune', 'moon'],             aspects: ['square', 'opposition', 'conjunction'] },
+  'major-19': { planets: ['sun', 'jupiter'],              aspects: ['trine', 'sextile', 'conjunction'] },
+  'major-20': { planets: ['pluto', 'uranus'],             aspects: ['conjunction', 'square', 'trine'] },
+  'major-21': { planets: ['jupiter', 'saturn'],           aspects: ['trine', 'conjunction', 'sextile'] },
 
-  neutral: [
-    'the pause before motion',
-    'stillness teaches',
-    'between what was and what\'s next',
-    'listening in the quiet'
-  ],
+  // Cups (Moon / Venus / Neptune)
+  'cups-1':      { planets: ['moon', 'neptune'],          aspects: ['conjunction', 'trine', 'sextile'] },
+  'cups-2':      { planets: ['venus', 'moon'],            aspects: ['conjunction', 'trine', 'sextile'] },
+  'cups-3':      { planets: ['venus', 'jupiter'],         aspects: ['trine', 'sextile', 'conjunction'] },
+  'cups-4':      { planets: ['moon', 'neptune'],          aspects: ['square', 'opposition', 'conjunction'] },
+  'cups-5':      { planets: ['moon', 'saturn'],           aspects: ['square', 'opposition', 'conjunction'] },
+  'cups-6':      { planets: ['moon', 'venus'],            aspects: ['trine', 'sextile', 'conjunction'] },
+  'cups-7':      { planets: ['neptune', 'moon'],          aspects: ['square', 'opposition', 'conjunction'] },
+  'cups-8':      { planets: ['saturn', 'moon'],           aspects: ['square', 'opposition', 'conjunction'] },
+  'cups-9':      { planets: ['venus', 'jupiter'],         aspects: ['trine', 'sextile', 'conjunction'] },
+  'cups-10':     { planets: ['moon', 'venus'],            aspects: ['trine', 'sextile', 'conjunction'] },
+  'cups-page':   { planets: ['moon', 'mercury'],          aspects: ['conjunction', 'trine', 'sextile'] },
+  'cups-knight': { planets: ['venus', 'mars'],            aspects: ['trine', 'conjunction', 'sextile'] },
+  'cups-queen':  { planets: ['moon', 'neptune'],          aspects: ['trine', 'conjunction', 'sextile'] },
+  'cups-king':   { planets: ['moon', 'saturn'],           aspects: ['trine', 'conjunction', 'sextile'] },
 
-  expansive: [
-    'the door opening',
-    'hope based on truth',
-    'trust what\'s emerging',
-    'the opportunity is real',
-    'lightning with direction'
-  ]
+  // Swords (Mercury / Saturn / Mars)
+  'swords-1':      { planets: ['mercury', 'uranus'],      aspects: ['conjunction', 'trine', 'sextile'] },
+  'swords-2':      { planets: ['mercury', 'saturn'],      aspects: ['square', 'opposition', 'conjunction'] },
+  'swords-3':      { planets: ['saturn', 'mars'],         aspects: ['square', 'opposition', 'conjunction'] },
+  'swords-4':      { planets: ['saturn', 'mercury'],      aspects: ['square', 'conjunction', 'opposition'] },
+  'swords-5':      { planets: ['mars', 'saturn'],         aspects: ['square', 'opposition', 'conjunction'] },
+  'swords-6':      { planets: ['mercury', 'saturn'],      aspects: ['trine', 'sextile', 'conjunction'] },
+  'swords-7':      { planets: ['mercury', 'uranus'],      aspects: ['conjunction', 'square', 'trine', 'sextile', 'opposition'] },
+  'swords-8':      { planets: ['saturn', 'mercury'],      aspects: ['square', 'opposition', 'conjunction'] },
+  'swords-9':      { planets: ['saturn', 'mars'],         aspects: ['square', 'opposition', 'conjunction'] },
+  'swords-10':     { planets: ['pluto', 'saturn'],        aspects: ['conjunction', 'square', 'opposition'] },
+  'swords-page':   { planets: ['mercury', 'uranus'],      aspects: ['conjunction', 'trine', 'sextile'] },
+  'swords-knight': { planets: ['mars', 'mercury'],        aspects: ['conjunction', 'square', 'trine'] },
+  'swords-queen':  { planets: ['saturn', 'mercury'],      aspects: ['conjunction', 'square', 'trine'] },
+  'swords-king':   { planets: ['saturn', 'mercury'],      aspects: ['conjunction', 'trine', 'sextile'] },
+
+  // Wands (Mars / Jupiter / Sun)
+  'wands-1':      { planets: ['mars', 'sun'],             aspects: ['conjunction', 'trine', 'sextile'] },
+  'wands-2':      { planets: ['jupiter', 'mars'],         aspects: ['conjunction', 'trine', 'sextile'] },
+  'wands-3':      { planets: ['jupiter', 'sun'],          aspects: ['trine', 'sextile', 'conjunction'] },
+  'wands-4':      { planets: ['jupiter', 'venus'],        aspects: ['trine', 'sextile', 'conjunction'] },
+  'wands-5':      { planets: ['mars', 'uranus'],          aspects: ['square', 'opposition', 'conjunction'] },
+  'wands-6':      { planets: ['sun', 'jupiter'],          aspects: ['trine', 'conjunction', 'sextile'] },
+  'wands-7':      { planets: ['mars', 'saturn'],          aspects: ['square', 'opposition', 'conjunction'] },
+  'wands-8':      { planets: ['mars', 'mercury'],         aspects: ['conjunction', 'trine', 'sextile'] },
+  'wands-9':      { planets: ['mars', 'saturn'],          aspects: ['square', 'opposition', 'conjunction'] },
+  'wands-10':     { planets: ['saturn', 'mars'],          aspects: ['square', 'conjunction', 'opposition'] },
+  'wands-page':   { planets: ['mars', 'mercury'],         aspects: ['conjunction', 'trine', 'sextile'] },
+  'wands-knight': { planets: ['mars', 'uranus'],          aspects: ['conjunction', 'square', 'trine'] },
+  'wands-queen':  { planets: ['sun', 'mars'],             aspects: ['trine', 'conjunction', 'sextile'] },
+  'wands-king':   { planets: ['sun', 'jupiter'],          aspects: ['conjunction', 'trine', 'sextile'] },
+
+  // Pentacles (Saturn / Venus / Jupiter)
+  'pentacles-1':      { planets: ['saturn', 'venus'],     aspects: ['conjunction', 'trine', 'sextile'] },
+  'pentacles-2':      { planets: ['saturn', 'mercury'],   aspects: ['square', 'conjunction', 'opposition'] },
+  'pentacles-3':      { planets: ['saturn', 'jupiter'],   aspects: ['trine', 'conjunction', 'sextile'] },
+  'pentacles-4':      { planets: ['saturn', 'venus'],     aspects: ['square', 'conjunction', 'opposition'] },
+  'pentacles-5':      { planets: ['saturn', 'mars'],      aspects: ['square', 'opposition', 'conjunction'] },
+  'pentacles-6':      { planets: ['venus', 'jupiter'],    aspects: ['trine', 'sextile', 'conjunction'] },
+  'pentacles-7':      { planets: ['saturn', 'jupiter'],   aspects: ['square', 'conjunction', 'trine'] },
+  'pentacles-8':      { planets: ['saturn', 'mercury'],   aspects: ['conjunction', 'trine', 'square'] },
+  'pentacles-9':      { planets: ['venus', 'jupiter'],    aspects: ['trine', 'sextile', 'conjunction'] },
+  'pentacles-10':     { planets: ['saturn', 'jupiter'],   aspects: ['trine', 'conjunction', 'sextile'] },
+  'pentacles-page':   { planets: ['saturn', 'mercury'],   aspects: ['conjunction', 'trine', 'sextile'] },
+  'pentacles-knight': { planets: ['saturn', 'mars'],      aspects: ['conjunction', 'trine', 'square'] },
+  'pentacles-queen':  { planets: ['venus', 'saturn'],     aspects: ['trine', 'conjunction', 'sextile'] },
+  'pentacles-king':   { planets: ['saturn', 'jupiter'],   aspects: ['trine', 'conjunction', 'sextile'] },
+};
+
+/**
+ * Transit action modifiers — appended to the card's action to ground it in the transit's energy.
+ * Keyed by transiting planet → aspect tone.
+ */
+export const transitActionModifiers: Record<string, { challenging: string; neutral: string; expansive: string }> = {
+  saturn: {
+    challenging: 'write it down and put a date on it. saturn wants the commitment real',
+    neutral:     'make it concrete. one step you can actually do today',
+    expansive:   'build the structure around this so it lasts'
+  },
+  jupiter: {
+    challenging: 'check where you\'re overextending. generosity without limits isn\'t generosity',
+    neutral:     'say yes to the bigger version of this',
+    expansive:   'act on the expansion. the opening is genuine'
+  },
+  uranus: {
+    challenging: 'break the pattern deliberately. do it differently than you normally would',
+    neutral:     'try something you wouldn\'t normally do here',
+    expansive:   'follow the unexpected impulse. that disruption is the message'
+  },
+  neptune: {
+    challenging: 'check what\'s real vs what you\'re projecting before you act',
+    neutral:     'spend time near water or in quiet. let the answer surface',
+    expansive:   'trust the intuition completely. logic won\'t get you there'
+  },
+  pluto: {
+    challenging: 'go to the root, not the surface. the real thing is underneath',
+    neutral:     'go one layer deeper than you\'d normally let yourself',
+    expansive:   'let the transformation happen instead of managing it'
+  },
+  mars: {
+    challenging: 'channel it into one clear action instead of scattering the energy',
+    neutral:     'move your body first. the clarity will follow',
+    expansive:   'act while the energy is live. it won\'t wait'
+  }
 };

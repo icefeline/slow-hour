@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 
 interface ActiveInsightProps {
   insight: string;
-  keyPhrase: string; // Short, punchy header insight for the user
-  transitInfo?: string; // Optional: "Saturn opposite Sun • peak phase • 42 days remaining"
-  userName?: string; // Optional: user's first name
+  keyPhrase: string;
+  action?: string;
+  transitInfo?: string;
+  userName?: string;
+  isLoading?: boolean;
   transitExplanation?: {
     transitingPlanet: string;
     transitingPlanetMeaning: string;
@@ -18,10 +20,12 @@ interface ActiveInsightProps {
   };
 }
 
-export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, transitExplanation }: ActiveInsightProps) {
+export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userName, isLoading: externalLoading, transitExplanation }: ActiveInsightProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [internalLoading, setInternalLoading] = useState(true);
   const [dots, setDots] = useState('');
+
+  const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
   useEffect(() => {
     // Animate the dots
@@ -29,9 +33,9 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
       setDots(prev => prev.length >= 3 ? '' : prev + '.');
     }, 400);
 
-    // Show content after 2 seconds
+    // Show content after 2 seconds (only used when no external loading control)
     const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
+      setInternalLoading(false);
     }, 2000);
 
     return () => {
@@ -80,6 +84,34 @@ export function ActiveInsight({ insight, keyPhrase, transitInfo, userName, trans
           >
             {insight.toLowerCase()}
           </p>
+
+          {action && (
+            <div className="mt-5 pt-4 border-t border-[#172211]/20">
+              <p
+                className="text-[#172211]/60"
+                style={{
+                  fontSize: 'clamp(13px, 1.8vw, 15px)',
+                  fontFamily: 'var(--font-vt323), monospace',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  fontWeight: 400
+                }}
+              >
+                try this
+              </p>
+              <p
+                className="text-[#172211] mt-1"
+                style={{
+                  fontSize: 'clamp(18px, 2.5vw, 21px)',
+                  fontFamily: 'var(--font-vt323), monospace',
+                  lineHeight: '1.4',
+                  fontWeight: 400
+                }}
+              >
+                {action.toLowerCase()}
+              </p>
+            </div>
+          )}
 
           {transitInfo && (
             <div className="mt-6 -mx-6">

@@ -13,12 +13,12 @@ import { getRandomTransitOpener, getTimingPhrase, planetMeanings } from '../data
 import { getRandomHousePhrase, getHouseEmotionalResonance, getRandomHouseQuestion, houseContexts } from '../data/house-contexts';
 import {
   insightStructureTemplates,
-  closingTemplates,
   keyPhraseTemplates,
   natalPlanetMeanings,
   transitingPlanetActions,
   aspectDescriptions,
-  cardArchetypeSynthesis
+  cardArchetypeSynthesis,
+  transitActionModifiers
 } from '../data/insight-structure-templates';
 
 export interface TransitData {
@@ -33,6 +33,7 @@ export interface TransitData {
 export interface GeneratedInsight {
   keyPhrase: string;
   insight: string;
+  action: string;
   transitInfo: string;
   transitExplanation: {
     transitingPlanet: string;
@@ -68,6 +69,10 @@ export function generateInsight(
   // Build the insight
   const insight = buildInsight(cardId, cardArchetype, transit, structureTemplate, combinedTone, isReversed);
 
+  // Build a transit-aware action by blending the card's base action with the planet's modifier
+  const cardSynthesisData = getCardSynthesis(cardId, cardArchetype);
+  const action = buildTransitAwareAction(cardSynthesisData.action, transit, combinedTone);
+
   // Build the key phrase
   const keyPhrase = buildKeyPhrase(cardArchetype, transit, combinedTone);
 
@@ -80,6 +85,7 @@ export function generateInsight(
   return {
     keyPhrase,
     insight,
+    action,
     transitInfo,
     transitExplanation
   };
@@ -197,20 +203,13 @@ function buildInsight(
   insight = insight.replace(/{house_number}/g, `${getOrdinal(transit.house)} house`);
   insight = insight.replace(/{house_theme}/g, houseTheme);
 
-  // Card archetype and synthesis
-  const cardSynthesis = getCardSynthesis(cardId, cardArchetype);
-  insight = insight.replace(/{card_archetype}/g, cardSynthesis.archetype);
-
   // Synthesis - the combined meaning
+  const cardSynthesis = getCardSynthesis(cardId, cardArchetype);
   let synthesisText = selectRandomFromArray(cardSynthesis.synthesis);
   synthesisText = synthesisText.replace(/{house_theme}/g, houseTheme);
   synthesisText = synthesisText.replace(/{transiting_planet}/g, transitingPlanet);
   synthesisText = synthesisText.replace(/{natal_planet}/g, natalPlanet);
   insight = insight.replace(/{synthesis}/g, synthesisText);
-
-  // Closing
-  const closing = selectRandomFromArray(closingTemplates[combinedTone]);
-  insight = insight.replace(/{closing}/g, closing);
 
   return insight;
 }
@@ -389,23 +388,47 @@ function buildTransitExplanation(transit: TransitData) {
 /**
  * Get card synthesis - archetype + synthesis messages
  */
-function getCardSynthesis(cardId: string, cardArchetype: CardArchetype['upright']): { archetype: string; synthesis: string[] } {
+function getCardSynthesis(cardId: string, cardArchetype: CardArchetype['upright']): { synthesis: string[]; action: string } {
   // Check if specific card has synthesis
-  if (cardArchetypeSynthesis[cardId as keyof typeof cardArchetypeSynthesis]) {
-    return cardArchetypeSynthesis[cardId as keyof typeof cardArchetypeSynthesis] as { archetype: string; synthesis: string[] };
+  if (cardArchetypeSynthesis[cardId]) {
+    return cardArchetypeSynthesis[cardId];
   }
 
-  // Otherwise, use suit synthesis
-  const suit = cardId.split('-')[0]; // e.g., 'swords-3' -> 'swords'
-  if (cardArchetypeSynthesis[suit as keyof typeof cardArchetypeSynthesis]) {
-    return cardArchetypeSynthesis[suit as keyof typeof cardArchetypeSynthesis] as { archetype: string; synthesis: string[] };
+  // Otherwise, use suit synthesis (e.g., 'swords-3' -> 'swords')
+  const suit = cardId.split('-')[0];
+  if (cardArchetypeSynthesis[suit]) {
+    return cardArchetypeSynthesis[suit];
   }
 
   // Fallback
   return {
-    archetype: 'This card',
-    synthesis: ['is showing you what needs attention right now']
+    synthesis: ['something is surfacing right now that needs your attention'],
+    action: 'sit with what came up today'
   };
+}
+
+/**
+ * Build a transit-aware action by appending the transiting planet's modifier
+ * to the card's specific base action.
+ */
+function buildTransitAwareAction(
+  cardAction: string,
+  transit: TransitData,
+  tone: 'challenging' | 'neutral' | 'expansive'
+): string {
+  const planet = transit.transitingPlanet.toLowerCase();
+  const modifier = transitActionModifiers[planet];
+  if (!modifier) return cardAction;
+
+  const addendum = modifier[tone];
+  if (!addendum) return cardAction;
+
+  // Avoid redundancy: skip addendum if the card action already covers the same ground
+  const cardActionLower = cardAction.toLowerCase();
+  const addendumFirstWord = addendum.split(' ')[0];
+  if (cardActionLower.includes(addendumFirstWord)) return cardAction;
+
+  return `${cardAction}. ${addendum}`;
 }
 
 /**

@@ -92,7 +92,7 @@ export const INSIGHT_TEMPLATES = {
   // Short phrases that can be appended when supporting transits add nuance
   supporting_transit: {
     mercury_retrograde: [
-      "With Mercury retrograde, notice what's being said—and what's finally being heard.",
+      "With Mercury retrograde, notice what's being said, and what's finally being heard.",
       "Mercury retrograde adds a layer: the answers might come backwards, through what you've already lived.",
       "Mercury retrograde in the mix means this isn't about moving forward yet. It's about reviewing, revising, remembering."
     ],
@@ -104,7 +104,7 @@ export const INSIGHT_TEMPLATES = {
     ],
 
     mars_transit: [
-      "Mars is also active—anger might be information, not a problem to solve.",
+      "Mars is also active, anger might be information, not a problem to solve.",
       "With Mars in play, the urge to act is strong. But {CardName} asks: what if stillness is the bravest choice right now?",
       "Mars energy is here too. Sometimes the fight is staying present, not charging forward."
     ]

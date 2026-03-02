@@ -7,6 +7,7 @@
 
 import * as Astronomy from 'astronomy-engine';
 import type { ActiveTransit, UserChart, House, Planet, AspectType, TransitPhase } from '../types/astrology';
+import { cardPlanetAffinity } from '../data/insight-structure-templates';
 
 // Planet bodies in Astronomy Engine
 const PLANET_BODIES = {
@@ -181,29 +182,41 @@ function getZodiacSign(degrees: number): any {
 }
 
 /**
- * Geocode location to latitude/longitude (simplified)
+ * Geocode location to latitude/longitude using Nominatim (OpenStreetMap)
+ * Free, no API key required. Used server-side only.
  */
 async function geocodeLocation(location: string): Promise<{ latitude: number; longitude: number; timezone: string }> {
-  // TODO: In production, use a geocoding API like Google Geocoding or OpenCage
-  // For now, use simple city lookups
-  const cityCoordinates: Record<string, { latitude: number; longitude: number; timezone: string }> = {
-    'new york': { latitude: 40.7128, longitude: -74.0060, timezone: 'America/New_York' },
-    'los angeles': { latitude: 34.0522, longitude: -118.2437, timezone: 'America/Los_Angeles' },
-    'london': { latitude: 51.5074, longitude: -0.1278, timezone: 'Europe/London' },
-    'paris': { latitude: 48.8566, longitude: 2.3522, timezone: 'Europe/Paris' },
-    'tokyo': { latitude: 35.6762, longitude: 139.6503, timezone: 'Asia/Tokyo' },
-    'sydney': { latitude: -33.8688, longitude: 151.2093, timezone: 'Australia/Sydney' },
-  };
+  try {
+    const encoded = encodeURIComponent(location);
+    const url = `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1`;
 
-  const normalized = location.toLowerCase().split(',')[0].trim();
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'SlowHourTarotApp/1.0 (daily tarot readings)',
+        'Accept-Language': 'en'
+      }
+    });
 
-  if (cityCoordinates[normalized]) {
-    return cityCoordinates[normalized];
+    if (!response.ok) {
+      throw new Error(`Nominatim returned ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      return {
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon),
+        timezone: 'UTC'
+      };
+    }
+
+    console.warn(`Could not geocode "${location}" via Nominatim. Using equatorial default.`);
+    return { latitude: 0, longitude: 0, timezone: 'UTC' };
+  } catch (error) {
+    console.error('Geocoding failed:', error);
+    return { latitude: 0, longitude: 0, timezone: 'UTC' };
   }
-
-  // Default to New York if not found
-  console.warn(`Location "${location}" not found. Using default (New York).`);
-  return cityCoordinates['new york'];
 }
 
 /**
@@ -359,14 +372,9 @@ export async function calculateActiveTransits(
       }
     }
 
-    // Sort by intensity and orb (closest aspects first)
-    transits.sort((a, b) => {
-      const intensityOrder = { high: 0, medium: 1, low: 2 };
-      if (intensityOrder[a.intensity] !== intensityOrder[b.intensity]) {
-        return intensityOrder[a.intensity] - intensityOrder[b.intensity];
-      }
-      return a.orb - b.orb;
-    });
+    // Sort by orb only (closest aspects first) - removed intensity sorting
+    // This ensures all planets are available for selection, not just outer planets
+    transits.sort((a, b) => a.orb - b.orb);
 
     return transits;
   } catch (error) {
@@ -376,11 +384,51 @@ export async function calculateActiveTransits(
 }
 
 /**
- * Get the most relevant transit for card drawing
+ * Get the most relevant transit for the drawn card.
+ * Uses card-planet affinity to weight toward thematically resonant transits.
+ * Falls back to tightest orb if no affinity match is active.
  */
-export function getDominantTransit(transits: ActiveTransit[]): ActiveTransit | null {
+export function getDominantTransit(
+  transits: ActiveTransit[],
+  seed: number = Math.random(),
+  cardId?: string
+): ActiveTransit | null {
   if (transits.length === 0) return null;
 
-  // Return the first (highest intensity, closest orb) transit
+  const affinity = cardId ? cardPlanetAffinity[cardId] : null;
+
+  const weights = transits.map((t, i) => {
+    // Base weight: tighter orb = stronger signal
+    let weight = Math.max(1, 10 - t.orb);
+
+    if (affinity) {
+      // Planet affinity: first in list gets highest boost
+      const planetRank = affinity.planets.indexOf(t.transitingPlanet);
+      if (planetRank !== -1) {
+        weight += (affinity.planets.length - planetRank) * 6;
+      }
+
+      // Aspect affinity: matching aspect types get a bump
+      if (affinity.aspects.includes(t.aspect)) {
+        weight += 3;
+      }
+    }
+
+    // Small deterministic noise so the same card doesn't always pick
+    // the exact same transit when multiple affinity matches exist
+    const noise = Math.sin(seed * 1000 + i) * 1.5;
+    return Math.max(0.5, weight + noise);
+  });
+
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+  let random = (seed * totalWeight) % totalWeight;
+
+  for (let i = 0; i < transits.length; i++) {
+    random -= weights[i];
+    if (random <= 0) {
+      return transits[i];
+    }
+  }
+
   return transits[0];
 }
