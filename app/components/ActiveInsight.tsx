@@ -45,7 +45,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
   }, []);
 
   return (
-    <div className={`rounded-lg border border-[#CEF17B] bg-[#CEF17B] p-6 flex flex-col ${isLoading ? '' : 'min-h-[200px]'}`}>
+    <div className={`rounded-lg border border-[#CEF17B] bg-[#CEF17B] p-4 md:p-6 flex flex-col ${isLoading ? '' : 'min-h-[160px] md:min-h-[200px]'}`}>
       {isLoading ? (
         <div className="flex items-start">
           {/* Thinking text */}
@@ -76,9 +76,9 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           <p
             className="text-[#172211]"
             style={{
-              fontSize: 'clamp(22px, 3.5vw, 26px)',
+              fontSize: 'clamp(18px, 3.5vw, 26px)',
               fontFamily: 'var(--font-vt323), monospace',
-              lineHeight: '1.5',
+              lineHeight: '1.4',
               fontWeight: 400
             }}
           >
@@ -86,11 +86,11 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           </p>
 
           {action && (
-            <div className="mt-5 pt-4 border-t border-[#172211]/20">
+            <div className="mt-4 md:mt-5 pt-3 md:pt-4 border-t border-[#172211]/20">
               <p
                 className="text-[#172211]/60"
                 style={{
-                  fontSize: 'clamp(13px, 1.8vw, 15px)',
+                  fontSize: 'clamp(12px, 1.8vw, 15px)',
                   fontFamily: 'var(--font-vt323), monospace',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
@@ -102,7 +102,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
               <p
                 className="text-[#172211] mt-1"
                 style={{
-                  fontSize: 'clamp(18px, 2.5vw, 21px)',
+                  fontSize: 'clamp(16px, 2.5vw, 21px)',
                   fontFamily: 'var(--font-vt323), monospace',
                   lineHeight: '1.4',
                   fontWeight: 400

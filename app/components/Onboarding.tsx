@@ -158,6 +158,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     pisces: "you dissolve into the emotions around you and feel everything like it's yours. but sometimes you need permission to put it down, to remember that not all of it belongs to you."
   };
 
+  // Short mobile-only insights (1 sentence each)
+  const sunInsightsMobile: { [key: string]: string } = {
+    aries: "you move with quiet fire, and people miss how much you hold back.",
+    taurus: "you hold it together for everyone, but sometimes you just want permission to be soft.",
+    gemini: "people think you're light, but there's a depth you carry that no one sees.",
+    cancer: "you feel everything, even when you don't show it.",
+    leo: "the spotlight feels like a weight you didn't ask for sometimes.",
+    virgo: "you notice everything others miss, but the analyzing never stops.",
+    libra: "you make it look easy, but inside you're always weighing what you gave.",
+    scorpio: "you hold things close because you've learned intensity scares people.",
+    sagittarius: "the optimism is armor, keeping you moving so you don't have to sit still.",
+    capricorn: "people see composure, but they miss the weight of it.",
+    aquarius: "you think in ways that feel different from everyone around you.",
+    pisces: "you feel everything like it's yours, even when it isn't."
+  };
+
   const moonInsights: { [key: string]: string } = {
     aries: "emotionally, you can't sit still with what hurts. you need to move through it, do something, anything. processing while static feels like drowning.",
     taurus: "your emotional world craves the familiar, the solid ground. when things shift unexpectedly, it shakes you more than anyone sees.",
@@ -512,25 +528,25 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 3:
         return (
-          <div className="flex flex-col items-center justify-between h-full py-10 gap-8">
-            <div className="flex-1 flex items-start justify-center overflow-y-auto">
+          <div className="flex flex-col items-center justify-between h-full py-4 gap-3">
+            <div className="flex-1 flex items-center justify-center overflow-y-auto">
               <p
-                className="text-2xl md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line leading-relaxed"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                className="text-[20px] md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.15' }}
               >
                 {displayedText}
               </p>
             </div>
 
             {isTypingComplete && !isDragging && (
-              <div className="flex flex-col items-center gap-3 pb-4">
+              <div className="flex flex-col items-center gap-1.5 pb-1 shrink-0">
                 <img
                   src="/card-back.png"
                   alt="Card back"
                   className="rounded-2xl shadow-xl select-none"
                   style={{
-                    width: '110px',
-                    height: '165px',
+                    width: '80px',
+                    height: '120px',
                     objectFit: 'cover',
                     cursor: 'grab',
                     userSelect: 'none',
@@ -542,7 +558,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   draggable="false"
                 />
                 <p
-                  className="text-xl text-[#E1EEFC]/60 animate-bounce"
+                  className="text-base text-[#E1EEFC]/60 animate-bounce"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   drag me to begin

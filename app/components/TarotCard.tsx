@@ -268,8 +268,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
   return (
     <div className="w-full mx-auto">
       {/* Card Back/Front */}
-      <div className="relative mb-8">
-        <div className="aspect-[2/3] w-96 mx-auto rounded-2xl overflow-visible relative">
+      <div className="relative mb-16 md:mb-8">
+        <div className="aspect-[2/3] w-72 md:w-96 mx-auto rounded-2xl overflow-visible relative">
           {isRevealed ? (
             // Card Front - Actual card image
             <div className={`relative w-full h-full rounded-2xl overflow-hidden transition-all duration-1000 transform-gpu ${
@@ -299,20 +299,28 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
         {/* Title sprawled below the card */}
         {isRevealed && (
-          <div className="absolute left-0 right-0 flex items-end justify-center pointer-events-none" style={{ bottom: '-100px' }}>
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              bottom: 'clamp(-50px, -6vw, -100px)',
+              left: '50%',
+              width: '100vw',
+              transform: 'translateX(-50%)',
+            }}
+          >
             <h3
-              className="text-center px-2"
+              className="text-center"
               style={{
-                fontSize: '200px',
+                fontSize: 'clamp(80px, 28vw, 200px)',
                 fontFamily: 'var(--font-reenie-beanie), cursive',
-                lineHeight: '1',
+                lineHeight: '0.72',
                 color: '#CEF17B',
-                whiteSpace: 'nowrap',
                 overflow: 'visible',
                 WebkitTextStroke: '1px #172211',
                 transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
                 transformOrigin: 'center center',
-                letterSpacing: '-0.05em'
+                letterSpacing: '-0.05em',
+                padding: '0',
               }}
             >
               {card.name.toLowerCase()}
@@ -323,21 +331,23 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
       {/* Card Name and Info (only shown when revealed) */}
       {isRevealed && (
-        <div className="w-full space-y-12 animate-fade-in">
+        <div className="w-full space-y-8 md:space-y-12 animate-fade-in">
 
           {/* Keywords - Circular Marquee */}
-          <div className="relative w-64 h-64 mx-auto mt-24">
+          <div className="relative w-24 h-24 md:w-64 md:h-64 mx-auto mt-8 mb-4 md:mt-24 md:mb-0">
             {activeKeywords.slice(0, 5).map((keyword, index) => {
               const totalKeywords = Math.min(activeKeywords.length, 5);
               const startAngle = (index / totalKeywords) * 360;
               const animationDelay = -(index / totalKeywords) * 20; // Stagger start positions
+              // Scale font down when 5 keywords to avoid crowding on mobile
+              const mobileFontSize = totalKeywords >= 5 ? 'clamp(14px, 3vw, 32px)' : 'clamp(18px, 3.5vw, 32px)';
 
               return (
                 <span
                   key={index}
                   className="absolute text-[#CEF17B]"
                   style={{
-                    fontSize: 'clamp(22px, 3.5vw, 32px)',
+                    fontSize: mobileFontSize,
                     fontFamily: 'var(--font-reenie-beanie), cursive',
                     left: '50%',
                     top: '50%',
@@ -355,8 +365,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
           {/* Meaning */}
           <div>
-            <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '48px' }}>{activeMeaning.toLowerCase()}</p>
+            <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
+            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
           {/* Active Insight - Personalized Context */}
@@ -380,8 +390,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
           {/* Description */}
           <div>
-            <h4 className="text-[#CEF17B] mb-4" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: '40px', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '48px' }}>{card.description.toLowerCase()}</p>
+            <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
+            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}

@@ -120,9 +120,20 @@ button, input, textarea, select {
 /* Circular marquee animation for keywords */
 @keyframes circular-revolve {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg) translateX(55px) rotate(0deg);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg);
+    transform: translate(-50%, -50%) rotate(360deg) translateX(55px) rotate(-360deg);
+  }
+}
+
+@media (min-width: 768px) {
+  @keyframes circular-revolve {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg);
+    }
   }
 }

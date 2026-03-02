@@ -82,6 +82,8 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [touchedDate, setTouchedDate] = useState<string | null>(null);
+  const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const currentMonthRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -147,6 +149,22 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     });
   }, []);
 
+  // Dismiss touch tooltip when tapping elsewhere
+  useEffect(() => {
+    const handleTouchOutside = () => {
+      if (touchedDate) setTouchedDate(null);
+    };
+    document.addEventListener('touchstart', handleTouchOutside, { passive: true });
+    return () => document.removeEventListener('touchstart', handleTouchOutside);
+  }, [touchedDate]);
+
+  // Clean up touch timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (touchTimeoutRef.current) clearTimeout(touchTimeoutRef.current);
+    };
+  }, []);
+
   // Detect scrolling to show/hide glass effect
   useEffect(() => {
     const handleScroll = () => {
@@ -194,23 +212,23 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   }, [selectedDate, selectedEntry]);
 
   return (
-    <div className="relative min-h-screen bg-[#172211] pt-12">
+    <div className="relative min-h-screen bg-[#172211] pt-6 md:pt-12">
       {/* Sticky header with gradient fade background */}
-      <div className="sticky top-16 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-6 md:pb-8">
-        <div className="text-center pt-6 md:pt-4 px-6 md:px-8">
-          <h1 className="text-4xl md:text-5xl text-[#CEF17B] mb-2" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+      <div className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
+        <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
+          <h1 className="text-2xl md:text-5xl text-[#CEF17B] mb-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             {year}
           </h1>
-          <p className="text-[#E1EEFC] text-base md:text-lg opacity-70" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+          <p className="text-[#E1EEFC] text-sm md:text-lg opacity-70" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
         </div>
       </div>
 
-      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 pb-8">
+      <div className="w-full max-w-[1600px] mx-auto px-3 md:px-12 lg:px-16 pb-8">
 
         {/* Compact grid of all days - vertical lines and mini cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(22px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(28px,1fr))] gap-1 gap-y-6 md:gap-5 md:gap-y-8 justify-items-center items-end">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(18px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(28px,1fr))] gap-0.5 gap-y-3 md:gap-5 md:gap-y-8 justify-items-center items-end">
           {allDaysInYear.map((dayData, idx) => {
             const { date, month, monthIndex } = dayData;
             const entry = cardMap.get(date);
@@ -235,12 +253,12 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 ref={monthIndex === currentMonth && isMonthStart ? currentMonthRef : null}
                 style={{
                   animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
-                  height: 'clamp(36px, 7vw, 48px)'
+                  height: 'clamp(28px, 5vw, 48px)'
                 }}
               >
                 {/* Month label */}
                 {isMonthStart && (
-                  <div className="absolute -top-4 md:-top-5 left-0 text-sm md:text-base text-[#CEF17B] whitespace-nowrap pointer-events-none" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  <div className="absolute -top-3 md:-top-5 left-0 text-xs md:text-base text-[#CEF17B] whitespace-nowrap pointer-events-none" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                     {month.slice(0, 3).toLowerCase()}
                   </div>
                 )}
@@ -265,6 +283,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                   }}
                   onMouseEnter={() => setHoveredDate(date)}
                   onMouseLeave={() => setHoveredDate(null)}
+                  onTouchStart={(e) => {
+                    // Show tooltip on touch — stop propagation so the document listener doesn't immediately dismiss
+                    e.stopPropagation();
+                    setTouchedDate(date);
+                    // Auto-dismiss after 2 seconds
+                    if (touchTimeoutRef.current) clearTimeout(touchTimeoutRef.current);
+                    touchTimeoutRef.current = setTimeout(() => setTouchedDate(null), 2000);
+                  }}
                   className={`
                     relative transition-all duration-200
                     ${hasCard ? 'hover:scale-125 hover:z-30' : 'hover:scale-110'}
@@ -272,8 +298,8 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                     ${hasCard && animating ? 'card-flip-enter' : ''}
                   `}
                   style={{
-                    width: hasCard ? 'clamp(24px, 5vw, 32px)' : '2.5px',
-                    height: hasCard ? '100%' : 'clamp(28px, 6vw, 36px)',
+                    width: hasCard ? 'clamp(18px, 4vw, 32px)' : '2px',
+                    height: hasCard ? '100%' : 'clamp(20px, 4.5vw, 36px)',
                     animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
                     animationFillMode: 'backwards',
                   }}
@@ -315,9 +341,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                     <VerticalLine isToday={isToday} />
                   )}
 
-                  {/* Hover tooltip */}
-                  {hoveredDate === date && (
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-[#172211]/95 text-[#CEF17B] px-3 py-2 rounded-lg text-xl whitespace-nowrap z-50 shadow-lg border border-[#CEF17B]/30" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  {/* Hover / touch tooltip */}
+                  {(hoveredDate === date || touchedDate === date) && (
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-[#172211]/95 text-[#CEF17B] px-2 py-1 md:px-3 md:py-2 rounded-lg text-sm md:text-xl whitespace-nowrap z-50 shadow-lg border border-[#CEF17B]/30" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                       <div>
                         {new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
                           month: 'short',
@@ -325,7 +351,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                         }).toLowerCase()}
                       </div>
                       {hasCard && entry && (
-                        <div className="text-xl">
+                        <div className="text-sm md:text-xl">
                           {isReversed ? '↻ reversed' : 'upright'}
                         </div>
                       )}
@@ -355,10 +381,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             </div>
 
             {/* Content */}
-            <div className="px-6 pb-8 pt-6">
+            <div className="px-4 pb-6 pt-4">
               {/* Date */}
-              <div className="text-center mb-8">
-                <p className="text-[#CEF17B] text-2xl tracking-wider" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+              <div className="text-center mb-4">
+                <p className="text-[#CEF17B] text-xl tracking-wider" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long',
                     month: 'long',
@@ -369,7 +395,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               </div>
 
               {/* Card Display */}
-              <div className="max-w-sm mx-auto mb-6">
+              <div className="max-w-[280px] mx-auto mb-4">
                 <TarotCard
                   card={selectedCard}
                   isReversed={selectedEntry.isReversed || false}

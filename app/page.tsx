@@ -262,12 +262,12 @@ export default function Home() {
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(206, 241, 123, 0.2)'
       }}>
-        <div className="max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-4 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <span
               className="text-[#E1EEFC]"
-              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
+              style={{ fontSize: 'clamp(22px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
             >
               slow hour
             </span>
@@ -275,7 +275,7 @@ export default function Home() {
               src="/spiral-logo.png"
               alt=""
               style={{
-                height: 'clamp(40px, 6vw, 56px)',
+                height: 'clamp(28px, 6vw, 56px)',
                 filter: 'brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(346%) hue-rotate(183deg) brightness(103%) contrast(97%)',
                 width: 'auto'
               }}
@@ -283,13 +283,13 @@ export default function Home() {
           </div>
 
           {/* View Toggle Buttons */}
-          <div className="flex gap-3 items-center ml-12">
+          <div className="flex gap-2 md:gap-3 items-center ml-4 md:ml-12">
             <button
               onClick={() => {
                 setViewingPastCard(false);
                 setCurrentView('card');
               }}
-              className={`px-6 py-2 rounded-full transition-all text-2xl ${
+              className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'card'
                   ? 'bg-[#CEF17B] text-[#172211]'
                   : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
@@ -300,7 +300,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setCurrentView('year')}
-              className={`px-6 py-2 rounded-full transition-all text-2xl ${
+              className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'year'
                   ? 'bg-[#CEF17B] text-[#172211]'
                   : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
@@ -312,7 +312,7 @@ export default function Home() {
 
             {/* Development Reset Buttons */}
             {process.env.NODE_ENV === 'development' && (
-              <>
+              <div className="hidden md:flex gap-3">
                 <button
                   onClick={handleReset}
                   className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
@@ -337,18 +337,18 @@ export default function Home() {
                 >
                   🔄
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="pt-20">
+      <div className="pt-14 md:pt-20">
         {currentView === 'card' && card && (
-          <div className="max-w-4xl mx-auto px-6 md:px-8 py-12">
+          <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12">
             {/* Date */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-4 md:mb-8">
               <p
                 className="text-[#CEF17B]"
                 style={{ fontSize: 'clamp(26px, 3.5vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
@@ -399,19 +399,19 @@ export default function Home() {
 
               return (
                 <div className="mt-12 w-full">
-                  <h3 className="text-[#CEF17B] mb-6" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  <h3 className="text-[#CEF17B] mb-4 md:mb-6" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                     talk about it
                   </h3>
                   {isToday ? (
                     <textarea
-                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#CEF17B]/30 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] rounded-xl p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
+                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#CEF17B]/30 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
                       placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
-                      style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                      style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
                     />
                   ) : (
-                    <div className="bg-[#172211] border border-[#CEF17B]/20 rounded-xl p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                    <div className="bg-[#172211] border border-[#CEF17B]/20 rounded-xl p-4 md:p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>
                       {reflection}
                     </div>
                   )}
