@@ -32,6 +32,28 @@ interface SlowHourMemory {
   memoryNotes: string[];
 }
 
+function todayKey(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+function loadCachedInsight(): GeneratedInsight | null {
+  try {
+    const raw = localStorage.getItem(`insight-${todayKey()}`);
+    if (!raw) return null;
+    return JSON.parse(raw) as GeneratedInsight;
+  } catch {
+    return null;
+  }
+}
+
+function saveCachedInsight(insight: GeneratedInsight): void {
+  try {
+    localStorage.setItem(`insight-${todayKey()}`, JSON.stringify(insight));
+  } catch {
+    // ignore
+  }
+}
+
 function loadMemory(): SlowHourMemory {
   try {
     const raw = localStorage.getItem('slowHourMemory');
@@ -103,6 +125,13 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
   // Generate insight when card is revealed
   useEffect(() => {
     if (isRevealed && !generatedInsight) {
+      // Check for a cached insight from earlier today
+      const cached = loadCachedInsight();
+      if (cached) {
+        setGeneratedInsight(cached);
+        return;
+      }
+
       setIsGenerating(true);
 
       // Calculate real astrology transits based on user's birth data
@@ -158,7 +187,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           // Use Claude-generated insight if available, fall back to template
           if (data.claudeInsight) {
             const templateInsight = generateInsight(card.id, transitData, isReversed);
-            setGeneratedInsight({
+            const freshInsight: GeneratedInsight = {
               keyPhrase: data.claudeInsight.keyPhrase,
               insight: data.claudeInsight.insight,
               action: data.claudeInsight.action,
@@ -172,7 +201,9 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
                 aspectMeaning: '',
                 phaseMeaning: '',
               },
-            });
+            };
+            setGeneratedInsight(freshInsight);
+            saveCachedInsight(freshInsight);
 
             // Save this reading + memory note to localStorage
             const cardFullName = card.name || card.id;
@@ -193,6 +224,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           } else {
             const insight = generateInsight(card.id, transitData, isReversed);
             setGeneratedInsight(insight);
+            if (insight) saveCachedInsight(insight);
           }
         } catch (error) {
           console.error('Failed to calculate real transit:', error);
