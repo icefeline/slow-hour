@@ -90,7 +90,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
               <p
                 className="text-[#172211]/60"
                 style={{
-                  fontSize: 'clamp(16px, 2.5vw, 21px)',
+                  fontSize: 'clamp(12px, 1.8vw, 15px)',
                   fontFamily: 'var(--font-vt323), monospace',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
@@ -151,7 +151,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                 <div
                   className="mt-4 pt-4 px-6"
                   style={{
-                    fontSize: 'clamp(16px, 2.5vw, 21px)',
+                    fontSize: 'clamp(13px, 1.8vw, 16px)',
                     fontFamily: 'var(--font-vt323), monospace',
                     lineHeight: '1.5',
                     color: '#172211',
