@@ -114,7 +114,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           )}
 
           {transitInfo && (
-            <div className="mt-6 -mx-6">
+            <div className="mt-3 -mx-6">
               <div
                 className="overflow-hidden cursor-pointer pb-2 transition-all"
                 onClick={() => setIsExpanded(!isExpanded)}
