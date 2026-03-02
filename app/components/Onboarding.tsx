@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -37,7 +37,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Save user data and mark onboarding as complete
       localStorage.setItem('userName', name);
       localStorage.setItem('userBirthdate', birthDate);
       if (birthTime && !noKnowBirthTime) {
@@ -52,133 +51,60 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const canContinueFromName = name.trim().length > 0;
-  const canContinueFromBirthdate = birthDate.length === 10 && !dateError; // MM/DD/YYYY format and no errors
+  const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
 
-  // Format date input with auto-slashes (allow backspace to remove all)
   const handleDateChange = (value: string) => {
-    // Remove all non-digits
     const digitsOnly = value.replace(/\D/g, '');
-
-    // Allow clearing completely
-    if (digitsOnly === '') {
-      setBirthDate('');
-      setDateError('');
-      return;
-    }
-
-    // Format with slashes
+    if (digitsOnly === '') { setBirthDate(''); setDateError(''); return; }
     let formatted = digitsOnly;
-    if (digitsOnly.length >= 2) {
-      formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2);
-    }
-    if (digitsOnly.length >= 4) {
-      formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2, 4) + '/' + digitsOnly.slice(4, 8);
-    }
-
+    if (digitsOnly.length >= 2) formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2);
+    if (digitsOnly.length >= 4) formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2, 4) + '/' + digitsOnly.slice(4, 8);
     setBirthDate(formatted);
-
-    // Validate date when complete
     if (digitsOnly.length === 8) {
       const month = parseInt(digitsOnly.slice(0, 2));
       const day = parseInt(digitsOnly.slice(2, 4));
       const year = parseInt(digitsOnly.slice(4, 8));
-
       const date = new Date(year, month - 1, day);
       const today = new Date();
-
-      // Check if date is valid
       if (date.getMonth() + 1 !== month || date.getDate() !== day || date.getFullYear() !== year) {
         setDateError('please enter a valid date');
       } else if (date > today) {
         setDateError('birthdate cannot be in the future');
-      } else {
-        setDateError('');
-      }
-    } else {
-      setDateError('');
-    }
+      } else { setDateError(''); }
+    } else { setDateError(''); }
   };
 
-  // Format time input with validation (allow backspace to remove all)
   const handleTimeChange = (value: string) => {
-    // Remove all non-digits
     const digitsOnly = value.replace(/\D/g, '');
-
-    // Allow clearing completely
-    if (digitsOnly === '') {
-      setBirthTime('');
-      setTimeError('');
-      return;
-    }
-
-    // Format with colon
+    if (digitsOnly === '') { setBirthTime(''); setTimeError(''); return; }
     let formatted = digitsOnly;
-    if (digitsOnly.length >= 2) {
-      formatted = digitsOnly.slice(0, 2) + ':' + digitsOnly.slice(2, 4);
-    }
-
+    if (digitsOnly.length >= 2) formatted = digitsOnly.slice(0, 2) + ':' + digitsOnly.slice(2, 4);
     setBirthTime(formatted);
-
-    // Validate time when complete
     if (digitsOnly.length === 4) {
       const hours = parseInt(digitsOnly.slice(0, 2));
       const minutes = parseInt(digitsOnly.slice(2, 4));
-
-      if (hours > 23 || minutes > 59) {
-        setTimeError('please enter a valid time (00:00-23:59)');
-      } else {
-        setTimeError('');
-      }
-    } else {
-      setTimeError('');
-    }
+      if (hours > 23 || minutes > 59) { setTimeError('please enter a valid time (00:00-23:59)'); }
+      else { setTimeError(''); }
+    } else { setTimeError(''); }
   };
 
-  // Validate location (basic check for now - can be enhanced with API)
   const handleLocationChange = (value: string) => {
     setBirthLocation(value);
-
-    if (value.length === 0) {
-      setLocationError('');
-      return;
-    }
-
-    // If it contains a comma, validate as city, country format
+    if (value.length === 0) { setLocationError(''); return; }
     if (value.includes(',')) {
       const parts = value.split(',').map(p => p.trim());
-      const city = parts[0];
-      const country = parts[1];
-
-      // If country part is empty or too short, show error
-      if (country && country.length > 0 && country.length < 2) {
-        setLocationError('please enter a valid location');
-        return;
-      }
-
-      // If city is too short, show error
-      if (city.length < 2) {
-        setLocationError('please enter a valid location');
-        return;
-      }
-
-      // Both parts look good
+      if (parts[1] && parts[1].length > 0 && parts[1].length < 2) { setLocationError('please enter a valid location'); return; }
+      if (parts[0].length < 2) { setLocationError('please enter a valid location'); return; }
       setLocationError('');
     } else {
-      // No comma - treat as city-state (Singapore, Monaco, etc)
-      if (value.trim().length < 2) {
-        setLocationError('please enter a valid location');
-        return;
-      }
+      if (value.trim().length < 2) { setLocationError('please enter a valid location'); return; }
       setLocationError('');
     }
   };
 
-  // Calculate sun sign from birthdate (MM/DD/YYYY)
   const getSunSign = (dateStr: string): string => {
     const [month, day] = dateStr.split('/').map(num => parseInt(num));
-    const m = month;
-    const d = day;
-
+    const m = month; const d = day;
     if ((m === 3 && d >= 21) || (m === 4 && d <= 19)) return 'aries';
     if ((m === 4 && d >= 20) || (m === 5 && d <= 20)) return 'taurus';
     if ((m === 5 && d >= 21) || (m === 6 && d <= 20)) return 'gemini';
@@ -193,33 +119,23 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return 'pisces';
   };
 
-  // Helper: Calculate life path number from birthdate (MM/DD/YYYY)
   const getLifePathNumber = (dateStr: string): number => {
     const digits = dateStr.replace(/\//g, '').split('').map(Number);
     let sum = digits.reduce((acc, digit) => acc + digit, 0);
-
-    // Reduce to single digit (except master numbers 11, 22, 33)
     while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
       sum = sum.toString().split('').map(Number).reduce((acc, digit) => acc + digit, 0);
     }
-
     return sum;
   };
 
-  // Helper: Get moon sign (simplified - needs full ephemeris for accuracy)
-  // This is a placeholder that returns a moon sign based on day of month
-  // In production, you'd use an astronomy library like astronomy-engine
   const getMoonSign = (dateStr: string, timeStr: string): string => {
     const [month, day, year] = dateStr.split('/').map(Number);
-    // Simplified: moon changes signs approximately every 2.5 days
     const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 0).getTime()) / 86400000);
     const moonIndex = Math.floor((dayOfYear * 12) / 365) % 12;
     const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
     return signs[moonIndex];
   };
 
-  // Helper: Get rising sign (simplified - needs exact time and location)
-  // This is a placeholder that uses birth hour
   const getRisingSign = (dateStr: string, timeStr: string): string => {
     const [hours] = timeStr.split(':').map(Number);
     const risingIndex = Math.floor(hours / 2) % 12;
@@ -227,7 +143,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return signs[risingIndex];
   };
 
-  // Modular message building blocks
   const sunInsights: { [key: string]: string } = {
     aries: "you move through the world with this quiet fire, and people see the action but miss how much you're holding back. there's a part of you that second-guesses before the leap, even when everyone assumes you're certain.",
     taurus: "you show up steady and people lean on that, but underneath there's this exhaustion from always being the one who holds it together. sometimes you just want permission to be soft without the world needing something from you.",
@@ -290,45 +205,32 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const getWelcomeMessage = (): string => {
     if (!birthDate) return '';
-
     const sunSign = getSunSign(birthDate);
     const hasBirthTime = birthTime && !noKnowBirthTime;
     const hasLocation = birthLocation && birthLocation.trim().length >= 2;
-
-    // TIER 1: has birthdate + time + location (Sun/Moon/Rising)
     if (hasBirthTime && hasLocation) {
       const moonSign = getMoonSign(birthDate, birthTime);
       const risingSign = getRisingSign(birthDate, birthTime);
-
       return `${name}, hey.\n\n${sunInsights[sunSign]} ${moonInsights[moonSign]} ${risingInsights[risingSign]}\n\nthe cards see all of it. take your time here.`;
     }
-
-    // TIER 2A: has birthdate + time (Sun/Moon)
     if (hasBirthTime) {
       const moonSign = getMoonSign(birthDate, birthTime);
-
       return `nice to meet you, ${name}.\n\n${sunInsights[sunSign]} ${moonInsights[moonSign]}\n\nthe cards get it. they're here when you need them.`;
     }
-
-    // TIER 2B: has birthdate + location (Sun only, simplified)
     if (hasLocation) {
       return `nice to meet you, ${name}.\n\n${sunInsights[sunSign]}\n\nthe cards get it. they're here when you need them.`;
     }
-
-    // TIER 3: birthdate only (Sun + Numerology)
     const lifePathNumber = getLifePathNumber(birthDate);
     return `${name}, welcome.\n\n${sunInsights[sunSign]} ${numerologyInsights[lifePathNumber]}\n\nthe cards won't ask you to explain yourself. draw whenever it feels right.`;
   };
 
-  // Typewriter effect - triggers when entering step 3
+  // Typewriter effect
   useEffect(() => {
     if (currentStep === 3) {
       setDisplayedText('');
       setIsTypingComplete(false);
-
       const fullText = getWelcomeMessage();
       let currentIndex = 0;
-
       const typingInterval = setInterval(() => {
         if (currentIndex < fullText.length) {
           setDisplayedText(fullText.slice(0, currentIndex + 1));
@@ -337,176 +239,173 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           setIsTypingComplete(true);
           clearInterval(typingInterval);
         }
-      }, 30); // 30ms per character for smooth typing
-
+      }, 30);
       return () => clearInterval(typingInterval);
     }
   }, [currentStep, name, birthDate]);
 
-  // Global mouse event listeners for smooth dragging
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      const newX = e.clientX;
-      const newY = e.clientY;
-      setCardPosition({ x: newX, y: newY });
-
-      // Create smooth cascade trail - only add card if moved enough distance
-      setCascadedCards(prev => {
-        const lastCard = prev[prev.length - 1];
-        if (lastCard) {
-          const distance = Math.sqrt(
-            Math.pow(newX - lastCard.x, 2) + Math.pow(newY - lastCard.y, 2)
-          );
-
-          // Only add new card if moved at least 15px from last card
-          if (distance > 15) {
-            const rotation = Math.random() * 30 - 15;
-            setCardIdCounter(prev => prev + 1);
-            return [...prev, { x: newX, y: newY, rotation, id: prev.length }];
-          }
-        }
-        return prev;
-      });
-    };
-
-    const handleGlobalMouseUp = () => {
-      handleMouseUp();
-    };
-
-    window.addEventListener('mousemove', handleGlobalMouseMove);
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleGlobalMouseMove);
-      window.removeEventListener('mouseup', handleGlobalMouseUp);
-    };
-  }, [isDragging]);
-
-  // Drag handlers for card cascade
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!isTypingComplete) return; // Only allow dragging after typing completes
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-    setCardPosition({ x: e.clientX, y: e.clientY });
-
-    // Add initial card at starting position
-    const rotation = Math.random() * 30 - 15;
-    setCascadedCards([{ x: e.clientX, y: e.clientY, rotation, id: cardIdCounter }]);
-    setCardIdCounter(prev => prev + 1);
+  // ── Drag helpers ─────────────────────────────────────────────────────────
+  const addCascadeCard = (x: number, y: number) => {
+    setCascadedCards(prev => {
+      const lastCard = prev[prev.length - 1];
+      if (lastCard) {
+        const distance = Math.sqrt(Math.pow(x - lastCard.x, 2) + Math.pow(y - lastCard.y, 2));
+        if (distance <= 15) return prev;
+      }
+      const rotation = Math.random() * 30 - 15;
+      setCardIdCounter(c => c + 1);
+      return [...prev, { x, y, rotation, id: prev.length }];
+    });
   };
 
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-
-    // User released the mouse - always trigger the completion
-    // No minimum drag requirement - any drag counts
+  const completeDrag = () => {
     setIsDragging(false);
     setShouldCrumble(true);
-
-    // After crumble animation, show loading screen
     setTimeout(() => {
       setShowLoading(true);
-
-      // Save user data
       localStorage.setItem('userName', name);
       localStorage.setItem('userBirthdate', birthDate);
-      if (birthTime && !noKnowBirthTime) {
-        localStorage.setItem('userBirthTime', birthTime);
-      }
-      if (birthLocation) {
-        localStorage.setItem('userBirthLocation', birthLocation);
-      }
+      if (birthTime && !noKnowBirthTime) localStorage.setItem('userBirthTime', birthTime);
+      if (birthLocation) localStorage.setItem('userBirthLocation', birthLocation);
       localStorage.setItem('onboardingComplete', 'true');
-
-      // After loading screen, transition to main app
-      setTimeout(() => {
-        onComplete();
-      }, 2000); // Show loading for 2 seconds
+      setTimeout(() => onComplete(), 2000);
     }, 1000);
   };
 
-  // Render content inside the blue screen area
-  const renderScreenContent = () => {
+  // Mouse drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isTypingComplete) return;
+    e.preventDefault();
+    setIsDragging(true);
+    setCardPosition({ x: e.clientX, y: e.clientY });
+    const rotation = Math.random() * 30 - 15;
+    setCascadedCards([{ x: e.clientX, y: e.clientY, rotation, id: cardIdCounter }]);
+    setCardIdCounter(c => c + 1);
+  };
+
+  // Touch drag
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isTypingComplete) return;
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setCardPosition({ x: touch.clientX, y: touch.clientY });
+    const rotation = Math.random() * 30 - 15;
+    setCascadedCards([{ x: touch.clientX, y: touch.clientY, rotation, id: cardIdCounter }]);
+    setCardIdCounter(c => c + 1);
+  };
+
+  // Global mouse listeners
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      setCardPosition({ x: e.clientX, y: e.clientY });
+      addCascadeCard(e.clientX, e.clientY);
+    };
+    const handleMouseUp = () => completeDrag();
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  // Global touch listeners
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      setCardPosition({ x: touch.clientX, y: touch.clientY });
+      addCascadeCard(touch.clientX, touch.clientY);
+    };
+    const handleTouchEnd = () => completeDrag();
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd);
+    return () => {
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging]);
+
+  // ── Shared input style ────────────────────────────────────────────────────
+  const inputStyle = {
+    fontFamily: 'var(--font-reenie-beanie), cursive',
+    background: 'rgba(255, 255, 255, 0.12)',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    color: '#E1EEFC',
+  } as const;
+
+  const inputErrorStyle = {
+    ...inputStyle,
+    border: '2px solid rgba(239, 68, 68, 0.6)',
+  } as const;
+
+  // ── Step content ──────────────────────────────────────────────────────────
+  const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        // Welcome screen with logo
         return (
-          <div className="flex flex-col items-center justify-center h-full px-12">
-            <div className="flex-1 flex flex-col items-center justify-center max-w-2xl w-full">
-              {/* "slow hour" logo image */}
-              <div className="relative mb-16 w-full px-8">
-                <img
-                  src="/slow-hour-logo.png"
-                  alt="slow hour"
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'contain',
-                    maxWidth: '900px',
-                    margin: '0 auto',
-                    display: 'block'
-                  }}
-                />
-              </div>
-
-              <button
-                onClick={handleNext}
-                className="px-12 py-4 bg-black text-white rounded-full transition-all duration-200 hover:bg-black/80 text-3xl"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-              >
-                continue →
-              </button>
-            </div>
+          <div className="flex flex-col items-center justify-center h-full gap-12 py-12">
+            <img
+              src="/slow-hour-logo.png"
+              alt="slow hour"
+              className="w-full max-w-xs md:max-w-md"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
+            <button
+              onClick={handleNext}
+              className="px-10 py-3 rounded-full text-3xl transition-all duration-200"
+              style={{
+                fontFamily: 'var(--font-reenie-beanie), cursive',
+                background: '#CEF17B',
+                color: '#172211',
+              }}
+            >
+              continue →
+            </button>
           </div>
         );
 
       case 1:
-        // Name input
         return (
-          <div className="flex flex-col items-center justify-center h-full px-12 relative">
-            <div className="flex flex-col items-center max-w-lg w-full">
+          <div className="flex flex-col items-center gap-8 py-12 w-full">
+            <div className="text-center">
               <h2
-                className="text-5xl text-center text-black"
+                className="text-5xl md:text-6xl text-[#E1EEFC]"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 what's your name?
               </h2>
-
               <p
-                className="text-2xl text-center text-black/60 mt-1"
+                className="text-2xl text-[#E1EEFC]/60 mt-2"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 the one that feels most like you
               </p>
-
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && canContinueFromName) {
-                    handleNext();
-                  }
-                }}
-                className="w-full max-w-md px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl mt-8"
-                style={{
-                  fontFamily: 'var(--font-reenie-beanie), cursive',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)'
-                }}
-                autoFocus
-              />
             </div>
+
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+              placeholder="your name"
+              className="w-full px-6 py-5 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+              style={inputStyle}
+              autoFocus
+            />
 
             {canContinueFromName && (
               <button
                 onClick={handleNext}
-                className="absolute bottom-16 px-8 py-3 bg-black text-white rounded-full transition-all duration-200 hover:bg-black/80 text-xl"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                className="px-10 py-3 rounded-full text-2xl transition-all duration-200 mt-2"
+                style={{
+                  fontFamily: 'var(--font-reenie-beanie), cursive',
+                  background: '#CEF17B',
+                  color: '#172211',
+                }}
               >
                 continue →
               </button>
@@ -515,110 +414,81 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         );
 
       case 2:
-        // Birthdate + Time + Location
         return (
-          <div className="flex flex-col items-center justify-center h-full px-12 relative">
-            <div className="flex flex-col items-center max-w-lg w-full">
+          <div className="flex flex-col items-center gap-6 py-10 w-full">
+            <div className="text-center">
               <h2
-                className="text-5xl text-center text-black"
+                className="text-5xl md:text-6xl text-[#E1EEFC]"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 when were you born?
               </h2>
-
               <p
-                className="text-2xl text-center text-black/60 mt-1"
+                className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-2"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 time moves differently depending on when you arrived
               </p>
+            </div>
 
-              <div className="w-full max-w-2xl space-y-4 mt-8">
-                {/* Date and Time inputs side by side */}
-                <div className="flex gap-3">
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      placeholder="mm/dd/yyyy"
-                      value={birthDate}
-                      onChange={(e) => handleDateChange(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && canContinueFromBirthdate) {
-                          handleNext();
-                        }
-                        if (e.key === 'Backspace' && birthDate.length > 0) {
-                          e.preventDefault();
-                          const digitsOnly = birthDate.replace(/\D/g, '');
-                          const newDigits = digitsOnly.slice(0, -1);
-                          handleDateChange(newDigits);
-                        }
-                      }}
-                      maxLength={10}
-                      className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                      style={{
-                        fontFamily: 'var(--font-reenie-beanie), cursive',
-                        background: 'rgba(255, 255, 255, 0.25)',
-                        backdropFilter: 'blur(10px)',
-                        border: dateError ? '2px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255, 255, 255, 0.3)'
-                      }}
-                    />
-                    {dateError && (
-                      <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                        {dateError}
-                      </p>
-                    )}
-                  </div>
+            <div className="w-full space-y-3">
+              {/* Date — full width on mobile */}
+              <div>
+                <input
+                  type="text"
+                  placeholder="mm/dd/yyyy"
+                  value={birthDate}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                    if (e.key === 'Backspace' && birthDate.length > 0) {
+                      e.preventDefault();
+                      handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1));
+                    }
+                  }}
+                  maxLength={10}
+                  className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                  style={dateError ? inputErrorStyle : inputStyle}
+                />
+                {dateError && (
+                  <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>
+                )}
+              </div>
 
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      placeholder="hh:mm"
-                      value={birthTime}
-                      onChange={(e) => handleTimeChange(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Backspace' && birthTime.length > 0) {
-                          e.preventDefault();
-                          const digitsOnly = birthTime.replace(/\D/g, '');
-                          const newDigits = digitsOnly.slice(0, -1);
-                          handleTimeChange(newDigits);
-                        }
-                      }}
-                      maxLength={5}
-                      className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                      style={{
-                        fontFamily: 'var(--font-reenie-beanie), cursive',
-                        background: 'rgba(255, 255, 255, 0.25)',
-                        backdropFilter: 'blur(10px)',
-                        border: timeError ? '2px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255, 255, 255, 0.3)'
-                      }}
-                    />
-                    {timeError && (
-                      <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                        {timeError}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Location input */}
-                <div className="relative">
+              {/* Time + Location — stacked on mobile, side by side on md+ */}
+              <div className="flex flex-col md:flex-row gap-3">
+                <div className="flex-1">
                   <input
                     type="text"
-                    placeholder="city, country"
+                    placeholder="hh:mm (optional)"
+                    value={birthTime}
+                    onChange={(e) => handleTimeChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Backspace' && birthTime.length > 0) {
+                        e.preventDefault();
+                        handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
+                      }
+                    }}
+                    maxLength={5}
+                    className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    style={timeError ? inputErrorStyle : inputStyle}
+                  />
+                  {timeError && (
+                    <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>
+                  )}
+                </div>
+
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="city, country (optional)"
                     value={birthLocation}
                     onChange={(e) => handleLocationChange(e.target.value)}
-                    className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                    style={{
-                      fontFamily: 'var(--font-reenie-beanie), cursive',
-                      background: 'rgba(255, 255, 255, 0.25)',
-                      backdropFilter: 'blur(10px)',
-                      border: locationError ? '2px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255, 255, 255, 0.3)'
-                    }}
+                    className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    style={locationError ? inputErrorStyle : inputStyle}
                   />
                   {locationError && (
-                    <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                      {locationError}
-                    </p>
+                    <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
                   )}
                 </div>
               </div>
@@ -627,8 +497,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             {canContinueFromBirthdate && (
               <button
                 onClick={handleNext}
-                className="absolute bottom-16 px-8 py-3 bg-black text-white rounded-full transition-all duration-200 hover:bg-black/80 text-xl"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                className="px-10 py-3 rounded-full text-2xl transition-all duration-200 mt-2"
+                style={{
+                  fontFamily: 'var(--font-reenie-beanie), cursive',
+                  background: '#CEF17B',
+                  color: '#172211',
+                }}
               >
                 continue →
               </button>
@@ -637,50 +511,41 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         );
 
       case 3:
-        // Welcome message with typewriter effect and draggable card
-        // Calculate if message is long (more than 400 characters means it needs more space)
-        const messageLength = getWelcomeMessage().length;
-        const isLongMessage = messageLength > 400;
-
         return (
-          <div className="flex flex-col items-center h-full px-12 py-16" style={{ justifyContent: 'space-between' }}>
-            <div
-              className="flex flex-col items-center max-w-2xl w-full"
-              style={{
-                marginTop: isLongMessage ? '1rem' : '3rem',
-                paddingBottom: isLongMessage ? '3rem' : '0'
-              }}
-            >
+          <div className="flex flex-col items-center justify-between h-full py-10 gap-8">
+            <div className="flex-1 flex items-start justify-center overflow-y-auto">
               <p
-                className="text-3xl text-center text-black whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}
+                className="text-2xl md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line leading-relaxed"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 {displayedText}
               </p>
             </div>
 
             {isTypingComplete && !isDragging && (
-              <div className="relative flex items-center gap-4 mb-8">
+              <div className="flex flex-col items-center gap-3 pb-4">
                 <img
                   src="/card-back.png"
                   alt="Card back"
                   className="rounded-2xl shadow-xl select-none"
                   style={{
-                    width: '140px',
-                    height: '210px',
+                    width: '110px',
+                    height: '165px',
                     objectFit: 'cover',
                     cursor: 'grab',
                     userSelect: 'none',
-                    WebkitUserSelect: 'none'
+                    WebkitUserSelect: 'none',
+                    touchAction: 'none',
                   }}
                   onMouseDown={handleMouseDown}
+                  onTouchStart={handleTouchStart}
                   draggable="false"
                 />
                 <p
-                  className="text-2xl text-black/70 animate-bounce"
+                  className="text-xl text-[#E1EEFC]/60 animate-bounce"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
-                  ← drag me
+                  drag me to begin
                 </p>
               </div>
             )}
@@ -692,16 +557,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   };
 
-  // Show loading screen after cascade
+  // ── Loading screen ────────────────────────────────────────────────────────
   if (showLoading) {
     return (
-      <div className="relative min-h-screen w-full overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
+      <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
-          <div className="w-12 h-12 border-4 border-[#CEF17B]/30 border-t-[#CEF17B] rounded-full animate-spin"></div>
-          <p
-            className="text-3xl text-[#CEF17B]"
-            style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-          >
+          <div className="w-12 h-12 border-4 border-[#CEF17B]/30 border-t-[#CEF17B] rounded-full animate-spin" />
+          <p className="text-3xl text-[#CEF17B]" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             preparing your reading...
           </p>
         </div>
@@ -709,30 +571,35 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     );
   }
 
+  // ── Main render ───────────────────────────────────────────────────────────
   return (
     <div
       className="relative min-h-screen w-full overflow-hidden"
       style={{
         opacity: shouldCrumble ? 0 : 1,
-        filter: shouldCrumble ? 'blur(20px)' : 'blur(0px)',
+        filter: shouldCrumble ? 'blur(20px)' : 'none',
         transition: shouldCrumble ? 'opacity 1s ease-out, filter 1s ease-out' : 'none',
       }}
     >
-      {/* Animated cosmic background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
+      {/* Background video */}
+      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
         <source src="/onboarding-bg.mp4" type="video/mp4" />
       </video>
 
-      {/* Container for device frame + screen */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+      {/* Dark overlay so text is readable over video */}
+      <div className="absolute inset-0 bg-[#172211]/60" />
+
+      {/* ── MOBILE layout — full screen, no device frame ── */}
+      <div className="md:hidden relative z-10 flex flex-col min-h-screen px-5 py-8 justify-center">
+        <div className="w-full max-w-sm mx-auto">
+          {renderStepContent()}
+        </div>
+      </div>
+
+      {/* ── DESKTOP layout — device frame ── */}
+      <div className="hidden md:flex relative z-10 items-center justify-center min-h-screen px-4">
         <div className="relative flex items-center justify-center">
-          {/* Device frame with deck fan - sits BEHIND the blue screen */}
+          {/* Device frame with deck fan */}
           <img
             src="/device-frame-deck.png"
             alt=""
@@ -748,12 +615,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               transform: 'translate(-50%, -50%)',
             }}
           />
-
-          {/* Blue screen area - this is where content appears and is interactive */}
-          {/* Sits ON TOP so users can click/interact with the content */}
-          {/* Positioned to fit within the device bezel of the top card in the deck fan */}
+          {/* Blue screen content area */}
           <div
-            className="bg-[#E1EEFC] overflow-hidden absolute z-20"
+            className="overflow-hidden absolute z-20"
             style={{
               width: '647px',
               height: '909px',
@@ -761,60 +625,133 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               maxHeight: '80vh',
               left: '50%',
               top: '50%',
-              transform: 'translate(-60.5%, -50%)', // Fine-tune position to sit within device bezel
+              transform: 'translate(-60.5%, -50%)',
+              background: '#E1EEFC',
             }}
           >
-            {renderScreenContent()}
+            {/* Desktop content uses original dark-on-light styling */}
+            <div className="h-full px-12 overflow-y-auto" style={{ color: '#172211' }}>
+              {currentStep === 0 && (
+                <div className="flex flex-col items-center justify-center h-full gap-12">
+                  <img src="/slow-hour-logo.png" alt="slow hour" style={{ width: '100%', maxWidth: '400px' }} />
+                  <button
+                    onClick={handleNext}
+                    className="px-12 py-4 bg-black text-white rounded-full text-3xl"
+                    style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  >
+                    continue →
+                  </button>
+                </div>
+              )}
+              {currentStep === 1 && (
+                <div className="flex flex-col items-center justify-center h-full gap-8">
+                  <div className="text-center">
+                    <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
+                    <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
+                  </div>
+                  <input
+                    type="text" value={name} onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                    className="w-full max-w-md px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                    style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
+                    autoFocus
+                  />
+                  {canContinueFromName && (
+                    <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-full text-xl" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>continue →</button>
+                  )}
+                </div>
+              )}
+              {currentStep === 2 && (
+                <div className="flex flex-col items-center justify-center h-full gap-6">
+                  <div className="text-center">
+                    <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
+                    <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>time moves differently depending on when you arrived</p>
+                  </div>
+                  <div className="w-full max-w-2xl space-y-4">
+                    <div className="flex gap-3">
+                      <div className="flex-1">
+                        <input type="text" placeholder="mm/dd/yyyy" value={birthDate}
+                          onChange={(e) => handleDateChange(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                            if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
+                          }}
+                          maxLength={10}
+                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                        />
+                        {dateError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>}
+                      </div>
+                      <div className="flex-1">
+                        <input type="text" placeholder="hh:mm" value={birthTime}
+                          onChange={(e) => handleTimeChange(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
+                          maxLength={5}
+                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                        />
+                        {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
+                      </div>
+                    </div>
+                    <input type="text" placeholder="city, country" value={birthLocation}
+                      onChange={(e) => handleLocationChange(e.target.value)}
+                      className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                    />
+                    {locationError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>}
+                  </div>
+                  {canContinueFromBirthdate && (
+                    <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-full text-xl" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>continue →</button>
+                  )}
+                </div>
+              )}
+              {currentStep === 3 && (
+                <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
+                  <div className="flex-1 overflow-y-auto">
+                    <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
+                  </div>
+                  {isTypingComplete && !isDragging && (
+                    <div className="flex items-center gap-4 mb-8">
+                      <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
+                        style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
+                        onMouseDown={handleMouseDown} draggable="false"
+                      />
+                      <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Cascaded cards trail - rendered at root level so they can go anywhere on screen */}
+      {/* Cascaded cards trail */}
       {cascadedCards.map((card, index) => (
-        <img
-          key={card.id}
-          src="/card-back.png"
-          alt=""
-          className="rounded-2xl select-none"
+        <img key={card.id} src="/card-back.png" alt="" className="rounded-2xl select-none"
           draggable="false"
           style={{
-            position: 'fixed',
-            left: card.x - 70,
-            top: card.y - 105,
-            width: '140px',
-            height: '210px',
-            objectFit: 'cover',
+            position: 'fixed', left: card.x - 70, top: card.y - 105,
+            width: '140px', height: '210px', objectFit: 'cover',
             transform: `rotate(${card.rotation}deg)`,
             opacity: shouldCrumble ? 0 : 1,
-            filter: shouldCrumble ? 'blur(10px)' : 'blur(0px)',
+            filter: shouldCrumble ? 'blur(10px)' : 'none',
             transition: shouldCrumble ? 'opacity 0.8s ease-out, filter 0.8s ease-out' : 'none',
-            pointerEvents: 'none',
-            zIndex: 9000 + index,
-            userSelect: 'none',
-            WebkitUserSelect: 'none'
+            pointerEvents: 'none', zIndex: 9000 + index,
+            userSelect: 'none', WebkitUserSelect: 'none',
           }}
         />
       ))}
 
-      {/* Active dragging card - always visible during drag */}
+      {/* Active dragging card */}
       {isDragging && (
-        <img
-          src="/card-back.png"
-          alt="Dragging card"
-          className="rounded-2xl shadow-2xl select-none"
+        <img src="/card-back.png" alt="Dragging card" className="rounded-2xl shadow-2xl select-none"
           draggable="false"
           style={{
-            position: 'fixed',
-            left: cardPosition.x - 70,
-            top: cardPosition.y - 105,
-            width: '140px',
-            height: '210px',
-            objectFit: 'cover',
-            cursor: 'grabbing',
-            zIndex: 10000,
-            pointerEvents: 'none',
-            userSelect: 'none',
-            WebkitUserSelect: 'none'
+            position: 'fixed', left: cardPosition.x - 70, top: cardPosition.y - 105,
+            width: '140px', height: '210px', objectFit: 'cover',
+            cursor: 'grabbing', zIndex: 10000, pointerEvents: 'none',
+            userSelect: 'none', WebkitUserSelect: 'none',
           }}
         />
       )}
