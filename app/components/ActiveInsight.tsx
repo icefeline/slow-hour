@@ -76,7 +76,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           <p
             className="text-[#172211]"
             style={{
-              fontSize: 'clamp(18px, 3.5vw, 26px)',
+              fontSize: 'clamp(16px, 2.5vw, 21px)',
               fontFamily: 'var(--font-vt323), monospace',
               lineHeight: '1.4',
               fontWeight: 400
@@ -90,7 +90,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
               <p
                 className="text-[#172211]/60"
                 style={{
-                  fontSize: 'clamp(12px, 1.8vw, 15px)',
+                  fontSize: 'clamp(16px, 2.5vw, 21px)',
                   fontFamily: 'var(--font-vt323), monospace',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
@@ -151,7 +151,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                 <div
                   className="mt-4 pt-4 px-6"
                   style={{
-                    fontSize: 'clamp(18px, 2.5vw, 20px)',
+                    fontSize: 'clamp(16px, 2.5vw, 21px)',
                     fontFamily: 'var(--font-vt323), monospace',
                     lineHeight: '1.5',
                     color: '#172211',

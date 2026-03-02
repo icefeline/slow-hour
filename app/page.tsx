@@ -267,7 +267,7 @@ export default function Home() {
           <div className="flex items-center gap-2 md:gap-3">
             <span
               className="text-[#E1EEFC]"
-              style={{ fontSize: 'clamp(22px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
+              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
             >
               slow hour
             </span>
@@ -275,7 +275,7 @@ export default function Home() {
               src="/spiral-logo.png"
               alt=""
               style={{
-                height: 'clamp(28px, 6vw, 56px)',
+                height: 'clamp(36px, 6vw, 56px)',
                 filter: 'brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(346%) hue-rotate(183deg) brightness(103%) contrast(97%)',
                 width: 'auto'
               }}
