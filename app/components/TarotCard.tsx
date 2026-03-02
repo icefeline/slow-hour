@@ -331,10 +331,10 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
 
       {/* Card Name and Info (only shown when revealed) */}
       {isRevealed && (
-        <div className="w-full space-y-8 md:space-y-12 animate-fade-in">
+        <div className="w-full space-y-4 md:space-y-12 animate-fade-in">
 
           {/* Keywords - Circular Marquee */}
-          <div className="relative w-24 h-24 md:w-64 md:h-64 mx-auto mt-8 mb-4 md:mt-24 md:mb-0">
+          <div className="relative w-24 h-24 md:w-64 md:h-64 mx-auto mt-8 mb-0 md:mt-24 md:mb-0">
             {activeKeywords.slice(0, 5).map((keyword, index) => {
               const totalKeywords = Math.min(activeKeywords.length, 5);
               const startAngle = (index / totalKeywords) * 360;
