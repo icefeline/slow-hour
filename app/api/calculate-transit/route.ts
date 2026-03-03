@@ -3,6 +3,21 @@ import Anthropic from '@anthropic-ai/sdk';
 import { calculateNatalChart, calculateActiveTransits, getDominantTransit } from '@/lib/utils/astrology-calculator';
 import { getCardArchetype, cardArchetypes } from '@/lib/data/card-archetypes';
 
+function getSunSign(month: number, day: number): string {
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return 'Aries';
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return 'Taurus';
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'Gemini';
+  if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'Cancer';
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'Leo';
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'Virgo';
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'Libra';
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return 'Scorpio';
+  if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return 'Sagittarius';
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'Capricorn';
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'Aquarius';
+  return 'Pisces';
+}
+
 const HOUSE_THEMES: Record<number, string> = {
   1: 'identity and how you show up',
   2: 'self-worth and resources',
@@ -34,7 +49,10 @@ async function generateClaudeInsight(
   phase: string,
   house: number,
   memoryNotes: string[],
-  recentCards: string[]
+  recentCards: string[],
+  sunSign: string,
+  hasBirthTime: boolean,
+  hasBirthLocation: boolean
 ): Promise<ClaudeInsight | null> {
   const cardArchetype = getCardArchetype(cardId, isReversed);
   if (!cardArchetype) return null;
@@ -85,6 +103,14 @@ ${recentCards.length > 0 ? `\nCards drawn recently: ${recentCards.join(', ')}` :
 `;
   }
 
+  const dataNote = !hasBirthTime && !hasBirthLocation
+    ? `Birth time and location were not provided. The house and rising sign data is estimated. Weight your insight on the card themes and sun sign, using the transit as general planetary weather rather than a precise personal placement.`
+    : !hasBirthTime
+    ? `Birth time was not provided. The house position is estimated. Weight the card themes and sun sign heavily; use the transit as supporting context.`
+    : !hasBirthLocation
+    ? `Birth location was not provided. House cusps are estimated. Use the transit planet energies but treat the house activation lightly.`
+    : '';
+
   const prompt = `${memoryContext}You generate tarot reading synthesis for an app called Slow Hour. Your job is to write the "what this means for you" section.
 
 Voice rules (never break these):
@@ -97,6 +123,10 @@ Voice rules (never break these):
 - Don't explain the card meaning back to them (they can read it)
 - Don't explain what the transit "means" in general. Say what it means for THEM right now
 - Short, direct sentences. No fluff
+- Always weave in the person's sun sign when it's relevant to the card or transit
+
+Person's sun sign: ${sunSign}
+${dataNote ? `Data note: ${dataNote}` : ''}
 
 Card: ${cardName} (${orientation})
 Card themes: ${coreThemes}
@@ -170,6 +200,7 @@ export async function POST(request: Request) {
     // Parse birth date
     const [month, day, year] = birthDate.split('/').map(Number);
     const parsedBirthDate = new Date(year, month - 1, day);
+    const sunSign = getSunSign(month, day);
 
     // Calculate natal chart
     const natalChart = await calculateNatalChart(
@@ -208,7 +239,10 @@ export async function POST(request: Request) {
       dominantTransit.phase,
       dominantTransit.house,
       Array.isArray(memoryNotes) ? memoryNotes : [],
-      Array.isArray(recentCards) ? recentCards : []
+      Array.isArray(recentCards) ? recentCards : [],
+      sunSign,
+      !!birthTime,
+      !!birthLocation
     );
 
     return NextResponse.json({
