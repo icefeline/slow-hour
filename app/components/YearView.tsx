@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import TarotCard from './TarotCard';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
@@ -21,6 +21,17 @@ interface YearViewProps {
 }
 
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+// CSS mask layers that punch perforation holes along all 4 edges of the stamp body.
+// Each gradient is opaque (black) at hole positions, transparent elsewhere.
+// `subtract` composite removes the opaque circles from the accumulated base rectangle.
+const STAMP_MASK = [
+  `radial-gradient(circle at 50% 0,    black 2.5px, transparent 2.5px) top  left / 5px 5px repeat-x`,
+  `radial-gradient(circle at 50% 100%, black 2.5px, transparent 2.5px) bottom left / 5px 5px repeat-x`,
+  `radial-gradient(circle at 0%  50%,  black 2.5px, transparent 2.5px) top  left / 5px 5px repeat-y`,
+  `radial-gradient(circle at 100% 50%, black 2.5px, transparent 2.5px) top right / 5px 5px repeat-y`,
+  `linear-gradient(black, black)`,
+].join(', ');
 
 const MONTH_NAMES = [
   'january', 'february', 'march', 'april', 'may', 'june',
@@ -280,32 +291,60 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                             : undefined
                         }
                       >
-                        {/* Card image fills the cell */}
+                        {/* Stamp or empty cell */}
                         {hasCard && cardData ? (
-                          <div className={`absolute inset-0 ${isReversed ? 'rotate-180' : ''}`}>
-                            <img
-                              src={`/cards/${getCardFilename(entry!.cardId, cardData.name)}.png`}
-                              alt={cardData.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
+                          /* STAMP: cream body, perforated edges, card image inset, day as denomination */
+                          <div className="absolute inset-0 bg-[#172211]">
+                            <div
+                              className="absolute inset-0"
+                              style={{
+                                background: '#CEF17B',
+                                mask: STAMP_MASK,
+                                maskComposite: 'subtract, subtract, subtract, subtract, add',
+                                WebkitMask: STAMP_MASK,
+                                WebkitMaskComposite: 'destination-out, destination-out, destination-out, destination-out, source-over',
+                              } as React.CSSProperties}
+                            >
+                              {/* Card image — centred with equal cream border on all sides */}
+                              <div
+                                className={`absolute ${isReversed ? 'rotate-180' : ''}`}
+                                style={{ inset: '4px' }}
+                              >
+                                <img
+                                  src={`/cards/${getCardFilename(entry!.cardId, cardData.name)}.png`}
+                                  alt={cardData.name}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                />
+                              </div>
+                              {/* Day number — top-left, same style as empty cells */}
+                              <span
+                                className="absolute top-0.5 left-1 leading-none select-none z-10"
+                                style={{
+                                  fontSize: '9px',
+                                  fontFamily: 'var(--font-vt323), monospace',
+                                  color: '#172211',
+                                  opacity: 0.7,
+                                }}
+                              >
+                                {day}
+                              </span>
+                            </div>
                           </div>
                         ) : (
                           /* Empty cell */
                           <div className="absolute inset-0 bg-[#172211] border border-[#CEF17B]/10 rounded-sm" />
                         )}
 
-                        {/* Date number overlay */}
-                        <span
-                          className={`absolute top-0.5 left-1 leading-none z-10 select-none ${
-                            hasCard
-                              ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]'
-                              : 'text-[#CEF17B]/30'
-                          }`}
-                          style={{ fontSize: '9px', fontFamily: 'var(--font-vt323), monospace' }}
-                        >
-                          {day}
-                        </span>
+                        {/* Date number — only shown on empty cells */}
+                        {!hasCard && (
+                          <span
+                            className="absolute top-0.5 left-1 leading-none z-10 select-none text-[#CEF17B]/30"
+                            style={{ fontSize: '9px', fontFamily: 'var(--font-vt323), monospace' }}
+                          >
+                            {day}
+                          </span>
+                        )}
                       </button>
                     </div>
                   );
