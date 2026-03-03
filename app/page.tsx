@@ -262,13 +262,14 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#172211]">
+    <main className="min-h-screen bg-[#172211]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       {/* Navigation Header with Backdrop Blur */}
       <div className="fixed top-0 left-0 right-0 z-30" style={{
         background: 'rgba(23, 34, 17, 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(206, 241, 123, 0.2)'
+        borderBottom: '1px solid rgba(206, 241, 123, 0.2)',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
       }}>
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-4 flex items-center justify-between">
           {/* Logo */}
@@ -357,7 +358,7 @@ export default function Home() {
       </div>
 
       {/* Content */}
-      <div className="pt-14 md:pt-20">
+      <div className="pt-safe-nav">
         {currentView === 'card' && card && (
           <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12">
             {/* Date */}

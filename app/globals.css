@@ -145,6 +145,16 @@ button, input, textarea, select {
   border-radius: 4px;
 }
 
+/* PWA safe-area utilities for viewport-fit=cover */
+.pt-safe-nav {
+  padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+}
+@media (min-width: 768px) {
+  .pt-safe-nav {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+  }
+}
+
 /* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; }
