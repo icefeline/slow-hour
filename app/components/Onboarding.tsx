@@ -31,7 +31,23 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [shouldCrumble, setShouldCrumble] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
 
+  // Device scale for MacBook / smaller-viewport desktop layout
+  const [deviceScale, setDeviceScale] = useState(1);
+
   const totalSteps = 3; // 0: welcome screen, 1: name, 2: birthdate+time+location, 3: message
+
+  // Compute the scale so the device frame + content area always fit within the viewport
+  useEffect(() => {
+    const computeScale = () => {
+      // Leave ~5% breathing room on each dimension
+      const scaleW = (window.innerWidth * 0.95) / 801;
+      const scaleH = (window.innerHeight * 0.95) / 1000;
+      setDeviceScale(Math.min(1, scaleW, scaleH));
+    };
+    computeScale();
+    window.addEventListener('resize', computeScale);
+    return () => window.removeEventListener('resize', computeScale);
+  }, []);
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -359,7 +375,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     border: '2px solid rgba(239, 68, 68, 0.6)',
   } as const;
 
-  // ── Step content ──────────────────────────────────────────────────────────
+  // ── Step content (MOBILE) ──────────────────────────────────────────────────────────
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -409,24 +425,28 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
               placeholder="your name"
-              className="w-full px-6 py-5 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+              className="w-full px-6 py-5 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
               style={inputStyle}
               autoFocus
             />
 
-            {canContinueFromName && (
-              <button
-                onClick={handleNext}
-                className="px-10 py-3 rounded-full text-2xl transition-all duration-200 mt-2"
-                style={{
-                  fontFamily: 'var(--font-reenie-beanie), cursive',
-                  background: '#CEF17B',
-                  color: '#172211',
-                }}
-              >
-                continue →
-              </button>
-            )}
+            {/* Always rendered — opacity toggles to avoid layout shift */}
+            <button
+              onClick={handleNext}
+              disabled={!canContinueFromName}
+              tabIndex={canContinueFromName ? 0 : -1}
+              aria-hidden={!canContinueFromName}
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-2"
+              style={{
+                fontFamily: 'var(--font-reenie-beanie), cursive',
+                background: '#CEF17B',
+                color: '#172211',
+                opacity: canContinueFromName ? 1 : 0,
+                pointerEvents: canContinueFromName ? 'auto' : 'none',
+              }}
+            >
+              continue →
+            </button>
           </div>
         );
 
@@ -464,7 +484,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     }
                   }}
                   maxLength={10}
-                  className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                  className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                   style={dateError ? inputErrorStyle : inputStyle}
                 />
                 {dateError && (
@@ -487,7 +507,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       }
                     }}
                     maxLength={5}
-                    className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                     style={timeError ? inputErrorStyle : inputStyle}
                   />
                   {timeError && (
@@ -501,7 +521,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     placeholder="city, country (optional)"
                     value={birthLocation}
                     onChange={(e) => handleLocationChange(e.target.value)}
-                    className="w-full px-6 py-4 rounded-2xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                     style={locationError ? inputErrorStyle : inputStyle}
                   />
                   {locationError && (
@@ -511,26 +531,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
             </div>
 
-            {canContinueFromBirthdate && (
-              <button
-                onClick={handleNext}
-                className="px-10 py-3 rounded-full text-2xl transition-all duration-200 mt-2"
-                style={{
-                  fontFamily: 'var(--font-reenie-beanie), cursive',
-                  background: '#CEF17B',
-                  color: '#172211',
-                }}
-              >
-                continue →
-              </button>
-            )}
+            {/* Always rendered — opacity toggles to avoid layout shift */}
+            <button
+              onClick={handleNext}
+              disabled={!canContinueFromBirthdate}
+              tabIndex={canContinueFromBirthdate ? 0 : -1}
+              aria-hidden={!canContinueFromBirthdate}
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-2"
+              style={{
+                fontFamily: 'var(--font-reenie-beanie), cursive',
+                background: '#CEF17B',
+                color: '#172211',
+                opacity: canContinueFromBirthdate ? 1 : 0,
+                pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
+              }}
+            >
+              continue →
+            </button>
           </div>
         );
 
       case 3:
         return (
+          // Text starts from the top (not centred) so typewriter grows downward, matching desktop
           <div className="flex flex-col items-center justify-between h-full py-4 gap-3">
-            <div className="flex-1 flex items-center justify-center overflow-y-auto">
+            <div className="flex-1 overflow-y-auto w-full">
               <p
                 className="text-[27px] md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.25' }}
@@ -613,131 +638,184 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </div>
       </div>
 
-      {/* ── DESKTOP layout — device frame ── */}
-      <div className="hidden md:flex relative z-10 items-center justify-center min-h-screen px-4">
-        <div className="relative flex items-center justify-center">
-          {/* Device frame with deck fan */}
-          <img
-            src="/device-frame-deck.png"
-            alt=""
-            className="absolute pointer-events-none z-0"
+      {/* ── DESKTOP layout — device frame, proportionally scaled to fit viewport ── */}
+      <div className="hidden md:flex relative z-10 items-center justify-center min-h-screen">
+        {/*
+          Outer sizing box: gives the flex container real dimensions (scaled) so
+          centering works correctly without relying on the absolutely-positioned children.
+        */}
+        <div style={{ position: 'relative', width: `${801 * deviceScale}px`, height: `${1000 * deviceScale}px` }}>
+          {/*
+            Inner natural-size container scaled via transform.
+            Both the device frame image and the content area live here at their natural
+            pixel sizes, so they always stay in exact proportion regardless of viewport.
+          */}
+          <div
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               width: '801px',
               height: '1000px',
-              maxWidth: '110vw',
-              maxHeight: '100vh',
-              objectFit: 'contain',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
-          />
-          {/* Blue screen content area */}
-          <div
-            className="overflow-hidden absolute z-20"
-            style={{
-              width: '647px',
-              height: '909px',
-              maxWidth: '85vw',
-              maxHeight: '80vh',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-60.5%, -50%)',
-              background: '#E1EEFC',
+              transformOrigin: 'top left',
+              transform: `scale(${deviceScale})`,
             }}
           >
-            {/* Desktop content uses original dark-on-light styling */}
-            <div className="h-full px-12 overflow-y-auto" style={{ color: '#172211' }}>
-              {currentStep === 0 && (
-                <div className="flex flex-col items-center justify-center h-full gap-12">
-                  <img src="/slow-hour-logo.png" alt="slow hour" style={{ width: '100%', maxWidth: '400px' }} />
-                  <button
-                    onClick={handleNext}
-                    className="px-12 py-4 bg-black text-white rounded-full text-3xl"
-                    style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                  >
-                    continue →
-                  </button>
-                </div>
-              )}
-              {currentStep === 1 && (
-                <div className="flex flex-col items-center justify-center h-full gap-8">
-                  <div className="text-center">
-                    <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
-                    <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
+            {/* Device frame with deck fan */}
+            <img
+              src="/device-frame-deck.png"
+              alt=""
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '801px',
+                height: '1000px',
+                objectFit: 'contain',
+                pointerEvents: 'none',
+                zIndex: 0,
+              }}
+            />
+
+            {/* Blue screen content area — positioned to sit exactly inside the device frame image */}
+            <div
+              className="overflow-hidden absolute z-20"
+              style={{
+                width: '647px',
+                height: '909px',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-60.5%, -50%)',
+                background: '#E1EEFC',
+              }}
+            >
+              {/* Desktop content uses original dark-on-light styling */}
+              <div className="h-full px-12 overflow-y-auto" style={{ color: '#172211' }}>
+
+                {/* Step 0 — welcome / logo */}
+                {currentStep === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full gap-12">
+                    {/* Logo spans the full content-area width */}
+                    <img src="/slow-hour-logo.png" alt="slow hour" style={{ width: '100%' }} />
+                    <button
+                      onClick={handleNext}
+                      className="px-12 py-4 bg-black text-white rounded-full text-3xl"
+                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                    >
+                      continue →
+                    </button>
                   </div>
-                  <input
-                    type="text" value={name} onChange={(e) => setName(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-                    className="w-full max-w-md px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                    style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
-                    autoFocus
-                  />
-                  {canContinueFromName && (
-                    <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-full text-xl" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>continue →</button>
-                  )}
-                </div>
-              )}
-              {currentStep === 2 && (
-                <div className="flex flex-col items-center justify-center h-full gap-6">
-                  <div className="text-center">
-                    <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
-                    <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>time moves differently depending on when you arrived</p>
-                  </div>
-                  <div className="w-full max-w-2xl space-y-4">
-                    <div className="flex gap-3">
-                      <div className="flex-1">
-                        <input type="text" placeholder="mm/dd/yyyy" value={birthDate}
-                          onChange={(e) => handleDateChange(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
-                            if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
-                          }}
-                          maxLength={10}
-                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                        />
-                        {dateError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>}
-                      </div>
-                      <div className="flex-1">
-                        <input type="text" placeholder="hh:mm" value={birthTime}
-                          onChange={(e) => handleTimeChange(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
-                          maxLength={5}
-                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                        />
-                        {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
-                      </div>
+                )}
+
+                {/* Step 1 — name */}
+                {currentStep === 1 && (
+                  <div className="flex flex-col items-center justify-center h-full gap-8">
+                    <div className="text-center">
+                      <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
+                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
                     </div>
-                    <input type="text" placeholder="city, country" value={birthLocation}
-                      onChange={(e) => handleLocationChange(e.target.value)}
-                      className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                    <input
+                      type="text" value={name} onChange={(e) => setName(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                      className="w-full max-w-md px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
+                      autoFocus
                     />
-                    {locationError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>}
+                    {/* Always rendered — opacity toggles to avoid layout shift */}
+                    <button
+                      onClick={handleNext}
+                      disabled={!canContinueFromName}
+                      tabIndex={canContinueFromName ? 0 : -1}
+                      aria-hidden={!canContinueFromName}
+                      className="px-8 py-3 bg-black text-white rounded-full text-xl transition-opacity duration-200"
+                      style={{
+                        fontFamily: 'var(--font-reenie-beanie), cursive',
+                        opacity: canContinueFromName ? 1 : 0,
+                        pointerEvents: canContinueFromName ? 'auto' : 'none',
+                      }}
+                    >
+                      continue →
+                    </button>
                   </div>
-                  {canContinueFromBirthdate && (
-                    <button onClick={handleNext} className="px-8 py-3 bg-black text-white rounded-full text-xl" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>continue →</button>
-                  )}
-                </div>
-              )}
-              {currentStep === 3 && (
-                <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
-                  <div className="flex-1 overflow-y-auto">
-                    <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
-                  </div>
-                  {isTypingComplete && !isDragging && (
-                    <div className="flex items-center gap-4 mb-8">
-                      <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
-                        style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
-                        onMouseDown={handleMouseDown} draggable="false"
-                      />
-                      <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
+                )}
+
+                {/* Step 2 — birthdate */}
+                {currentStep === 2 && (
+                  <div className="flex flex-col items-center justify-center h-full gap-6">
+                    <div className="text-center">
+                      <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
+                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>time moves differently depending on when you arrived</p>
                     </div>
-                  )}
-                </div>
-              )}
+                    <div className="w-full max-w-2xl space-y-4">
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <input type="text" placeholder="mm/dd/yyyy" value={birthDate}
+                            onChange={(e) => handleDateChange(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                              if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
+                            }}
+                            maxLength={10}
+                            className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                            style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                          />
+                          {dateError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>}
+                        </div>
+                        <div className="flex-1">
+                          <input type="text" placeholder="hh:mm" value={birthTime}
+                            onChange={(e) => handleTimeChange(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
+                            maxLength={5}
+                            className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                            style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                          />
+                          {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
+                        </div>
+                      </div>
+                      <input type="text" placeholder="city, country" value={birthLocation}
+                        onChange={(e) => handleLocationChange(e.target.value)}
+                        className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                      />
+                      {locationError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>}
+                    </div>
+                    {/* Always rendered — opacity toggles to avoid layout shift */}
+                    <button
+                      onClick={handleNext}
+                      disabled={!canContinueFromBirthdate}
+                      tabIndex={canContinueFromBirthdate ? 0 : -1}
+                      aria-hidden={!canContinueFromBirthdate}
+                      className="px-8 py-3 bg-black text-white rounded-full text-xl transition-opacity duration-200"
+                      style={{
+                        fontFamily: 'var(--font-reenie-beanie), cursive',
+                        opacity: canContinueFromBirthdate ? 1 : 0,
+                        pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
+                      }}
+                    >
+                      continue →
+                    </button>
+                  </div>
+                )}
+
+                {/* Step 3 — typewriter message + drag card */}
+                {currentStep === 3 && (
+                  <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
+                    <div className="flex-1 overflow-y-auto">
+                      <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
+                    </div>
+                    {isTypingComplete && !isDragging && (
+                      <div className="flex items-center gap-4 mb-8">
+                        <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
+                          style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
+                          onMouseDown={handleMouseDown} draggable="false"
+                        />
+                        <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
             </div>
           </div>
         </div>

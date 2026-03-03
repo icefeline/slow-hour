@@ -120,14 +120,14 @@ const MiniTarotCard = ({ cardId, cardName, isToday }: { cardId: string; cardName
 export default function YearView({ year, journalEntries, onDateClick, onNavigateToToday, currentDate }: YearViewProps) {
   const currentMonthIndex = new Date(currentDate + 'T00:00:00').getMonth();
 
-  const [viewMonthIndex, setViewMonthIndex] = useState(currentMonthIndex);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [animating, setAnimating] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<TarotCardType | null>(null);
 
-  const touchStartX = useRef<number | null>(null);
+  // Ref to scroll mobile view to current month on mount
+  const currentMonthRef = useRef<HTMLDivElement>(null);
 
   const daysWithCards = journalEntries.length;
 
@@ -143,7 +143,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     return map;
   }, [journalEntries]);
 
-  const calendarDays = useMemo(() => buildCalendarDays(year, viewMonthIndex), [year, viewMonthIndex]);
+  // Pre-compute calendar days for all 12 months
+  const allMonthCalendarDays = useMemo(() => {
+    return MONTH_NAMES.map((_, i) => buildCalendarDays(year, i));
+  }, [year]);
 
   // All days flat (for desktop grid)
   const allDaysInYear = useMemo(() => {
@@ -164,6 +167,15 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     const maxDelay = journalEntries.length * 15;
     const timer = setTimeout(() => setAnimating(false), maxDelay + 500);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll mobile view to current month on mount
+  useEffect(() => {
+    if (currentMonthRef.current) {
+      const headerHeight = 80; // sticky header height
+      const elementTop = currentMonthRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: elementTop - headerHeight - 12, behavior: 'instant' });
+    }
   }, []);
 
   // Fetch past card for drawer
@@ -192,23 +204,6 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     }
   };
 
-  const goToPrevMonth = () => setViewMonthIndex(prev => Math.max(0, prev - 1));
-  const goToNextMonth = () => setViewMonthIndex(prev => Math.min(11, prev + 1));
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const delta = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(delta) > 50) {
-      if (delta < 0) goToNextMonth();
-      else goToPrevMonth();
-    }
-    touchStartX.current = null;
-  };
-
   return (
     <div className="relative min-h-screen bg-[#172211] pt-6 md:pt-12">
 
@@ -230,126 +225,108 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         </div>
       </div>
 
-      {/* ── MOBILE: Month calendar grid ── */}
-      <div className="md:hidden px-4 pb-12">
+      {/* ── MOBILE: All 12 months, vertically scrollable ── */}
+      <div className="md:hidden px-4 pb-16">
+        {MONTH_NAMES.map((monthName, monthIndex) => {
+          const isCurrentMonth = monthIndex === currentMonthIndex;
+          const monthDays = allMonthCalendarDays[monthIndex];
 
-        {/* Month navigation */}
-        <div className="flex items-center justify-between mb-3">
-          <button
-            onClick={goToPrevMonth}
-            disabled={viewMonthIndex === 0}
-            aria-label="Previous month"
-            className="w-10 h-10 flex items-center justify-center text-[#CEF17B] disabled:opacity-20 active:scale-90 transition-transform"
-            style={{ fontSize: '26px', fontFamily: 'var(--font-vt323), monospace' }}
-          >
-            ←
-          </button>
-          <h2
-            className="text-[#CEF17B]"
-            style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '30px', lineHeight: 1 }}
-            aria-live="polite"
-          >
-            {MONTH_NAMES[viewMonthIndex]}
-          </h2>
-          <button
-            onClick={goToNextMonth}
-            disabled={viewMonthIndex === 11}
-            aria-label="Next month"
-            className="w-10 h-10 flex items-center justify-center text-[#CEF17B] disabled:opacity-20 active:scale-90 transition-transform"
-            style={{ fontSize: '26px', fontFamily: 'var(--font-vt323), monospace' }}
-          >
-            →
-          </button>
-        </div>
-
-        {/* Weekday headers */}
-        <div className="grid grid-cols-7 gap-0.5 mb-0.5">
-          {WEEKDAYS.map(wd => (
+          return (
             <div
-              key={wd}
-              className="text-center text-[#CEF17B] opacity-35"
-              style={{
-                fontSize: '10px',
-                fontFamily: 'var(--font-vt323), monospace',
-                letterSpacing: '0.04em',
-                paddingBottom: '4px'
-              }}
+              key={monthName}
+              ref={isCurrentMonth ? currentMonthRef : undefined}
+              className="mb-10"
+              style={{ scrollMarginTop: '92px' }}
             >
-              {wd}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar day grid */}
-        <div
-          className="grid grid-cols-7 gap-0.5"
-          role="grid"
-          aria-label={`${MONTH_NAMES[viewMonthIndex]} ${year}`}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {calendarDays.map(({ date, day, isCurrentMonth }) => {
-            const entry = isCurrentMonth ? cardMap.get(date) : undefined;
-            const isToday = date === currentDate;
-            const hasCard = !!entry;
-            const isReversed = entry?.isReversed || false;
-            const cardData = entry ? cardLookup.get(entry.cardId) : null;
-
-            return (
-              <div
-                key={date}
-                role="gridcell"
-                className={`relative overflow-hidden rounded-sm aspect-[2/3] ${!isCurrentMonth ? 'opacity-20' : ''} ${isToday ? 'ring-1 ring-[#CEF17B]' : ''}`}
+              {/* Month name */}
+              <h2
+                className={`mb-3 ${isCurrentMonth ? 'text-[#CEF17B]' : 'text-[#CEF17B]/50'}`}
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '30px', lineHeight: 1 }}
               >
-                <button
-                  onClick={() => isCurrentMonth && handleDayClick(date, hasCard, isToday)}
-                  className={`w-full h-full relative block ${hasCard && isCurrentMonth ? 'cursor-pointer active:opacity-75' : 'cursor-default'}`}
-                  tabIndex={hasCard && isCurrentMonth ? 0 : -1}
-                  aria-label={
-                    isCurrentMonth
-                      ? `${day} ${MONTH_NAMES[viewMonthIndex]}${isToday ? ', today' : ''}${hasCard ? `, ${isReversed ? 'reversed' : 'upright'} card` : ''}`
-                      : undefined
-                  }
-                >
-                  {/* Card image fills the cell */}
-                  {hasCard && cardData ? (
-                    <div className={`absolute inset-0 ${isReversed ? 'rotate-180' : ''}`}>
-                      <img
-                        src={`/cards/${getCardFilename(entry!.cardId, cardData.name)}.png`}
-                        alt={cardData.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    /* Empty cell */
-                    <div className="absolute inset-0 bg-[#172211] border border-[#CEF17B]/10 rounded-sm" />
-                  )}
+                {monthName}
+              </h2>
 
-                  {/* Date number overlay */}
-                  <span
-                    className={`absolute top-0.5 left-1 leading-none z-10 select-none ${
-                      hasCard
-                        ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]'
-                        : 'text-[#CEF17B]/30'
-                    }`}
-                    style={{ fontSize: '9px', fontFamily: 'var(--font-vt323), monospace' }}
+              {/* Weekday headers */}
+              <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+                {WEEKDAYS.map(wd => (
+                  <div
+                    key={wd}
+                    className="text-center text-[#CEF17B] opacity-35"
+                    style={{
+                      fontSize: '10px',
+                      fontFamily: 'var(--font-vt323), monospace',
+                      letterSpacing: '0.04em',
+                      paddingBottom: '4px'
+                    }}
                   >
-                    {day}
-                  </span>
-                </button>
+                    {wd}
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        </div>
 
-        {/* Swipe hint */}
-        <p
-          className="text-center mt-3 text-[#CEF17B]/20"
-          style={{ fontSize: '11px', fontFamily: 'var(--font-vt323), monospace', letterSpacing: '0.05em' }}
-        >
-          swipe to browse months
-        </p>
+              {/* Calendar day grid */}
+              <div
+                className="grid grid-cols-7 gap-0.5"
+                role="grid"
+                aria-label={`${monthName} ${year}`}
+              >
+                {monthDays.map(({ date, day, isCurrentMonth: isCurrMonth }) => {
+                  const entry = isCurrMonth ? cardMap.get(date) : undefined;
+                  const isToday = date === currentDate;
+                  const hasCard = !!entry;
+                  const isReversed = entry?.isReversed || false;
+                  const cardData = entry ? cardLookup.get(entry.cardId) : null;
+
+                  return (
+                    <div
+                      key={date}
+                      role="gridcell"
+                      className={`relative overflow-hidden rounded-sm aspect-[2/3] ${!isCurrMonth ? 'opacity-20' : ''} ${isToday ? 'ring-1 ring-[#CEF17B]' : ''}`}
+                    >
+                      <button
+                        onClick={() => isCurrMonth && handleDayClick(date, hasCard, isToday)}
+                        className={`w-full h-full relative block ${hasCard && isCurrMonth ? 'cursor-pointer active:opacity-75' : 'cursor-default'}`}
+                        tabIndex={hasCard && isCurrMonth ? 0 : -1}
+                        aria-label={
+                          isCurrMonth
+                            ? `${day} ${monthName}${isToday ? ', today' : ''}${hasCard ? `, ${isReversed ? 'reversed' : 'upright'} card` : ''}`
+                            : undefined
+                        }
+                      >
+                        {/* Card image fills the cell */}
+                        {hasCard && cardData ? (
+                          <div className={`absolute inset-0 ${isReversed ? 'rotate-180' : ''}`}>
+                            <img
+                              src={`/cards/${getCardFilename(entry!.cardId, cardData.name)}.png`}
+                              alt={cardData.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : (
+                          /* Empty cell */
+                          <div className="absolute inset-0 bg-[#172211] border border-[#CEF17B]/10 rounded-sm" />
+                        )}
+
+                        {/* Date number overlay */}
+                        <span
+                          className={`absolute top-0.5 left-1 leading-none z-10 select-none ${
+                            hasCard
+                              ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]'
+                              : 'text-[#CEF17B]/30'
+                          }`}
+                          style={{ fontSize: '9px', fontFamily: 'var(--font-vt323), monospace' }}
+                        >
+                          {day}
+                        </span>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* ── DESKTOP: Flat year grid ── */}
