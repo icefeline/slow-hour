@@ -211,9 +211,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         </div>
       </div>
 
-      {/* ── ALL SCREENS: 12 months, vertically scrollable, 1–3 columns ── */}
-      <div className="px-4 md:px-10 pb-16">
-        <div className="max-w-sm md:max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8">
+      {/* ── ALL SCREENS: 12 months, vertically scrollable, single column ── */}
+      <div className="px-4 pb-16">
+        <div className="max-w-sm md:max-w-xl mx-auto">
         {MONTH_NAMES.map((monthName, monthIndex) => {
           const isCurrentMonth = monthIndex === currentMonthIndex;
           const monthDays = allMonthCalendarDays[monthIndex];

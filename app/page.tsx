@@ -178,6 +178,7 @@ export default function Home() {
     // On desktop, navigate to card view
     // On mobile, the drawer will open (handled in YearView)
     if (window.innerWidth >= 768) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       setCurrentView('card');
     }
   };
@@ -294,6 +295,7 @@ export default function Home() {
             <button
               onClick={() => {
                 setViewingPastCard(false);
+                window.scrollTo({ top: 0, behavior: 'instant' });
                 setCurrentView('card');
               }}
               aria-pressed={currentView === 'card'}
@@ -440,6 +442,7 @@ export default function Home() {
             onDateClick={handleDateClick}
             onNavigateToToday={() => {
               setViewingPastCard(false);
+              window.scrollTo({ top: 0, behavior: 'instant' });
               setCurrentView('card');
             }}
             currentDate={new Date().toISOString().split('T')[0]}
