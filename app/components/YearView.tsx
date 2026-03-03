@@ -120,7 +120,6 @@ const MiniTarotCard = ({ cardId, cardName, isToday }: { cardId: string; cardName
 export default function YearView({ year, journalEntries, onDateClick, onNavigateToToday, currentDate }: YearViewProps) {
   const currentMonthIndex = new Date(currentDate + 'T00:00:00').getMonth();
 
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [animating, setAnimating] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -146,19 +145,6 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   // Pre-compute calendar days for all 12 months
   const allMonthCalendarDays = useMemo(() => {
     return MONTH_NAMES.map((_, i) => buildCalendarDays(year, i));
-  }, [year]);
-
-  // All days flat (for desktop grid)
-  const allDaysInYear = useMemo(() => {
-    const days: { date: string; month: string; monthIndex: number }[] = [];
-    for (let month = 0; month < 12; month++) {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        days.push({ date, month: MONTH_NAMES[month], monthIndex: month });
-      }
-    }
-    return days;
   }, [year]);
 
   // Cascading flip animation
@@ -211,13 +197,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       <div className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
-            className="text-2xl md:text-5xl text-[#CEF17B] mb-1"
+            className="text-4xl md:text-6xl text-[#CEF17B] mb-1"
             style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
           >
             {year}
           </h1>
           <p
-            className="text-[#E1EEFC] text-sm md:text-lg opacity-70"
+            className="text-[#E1EEFC] text-base md:text-xl opacity-70"
             style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
           >
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
@@ -225,8 +211,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         </div>
       </div>
 
-      {/* ── MOBILE: All 12 months, vertically scrollable ── */}
-      <div className="md:hidden px-4 pb-16">
+      {/* ── ALL SCREENS: 12 months, vertically scrollable, 1–3 columns ── */}
+      <div className="px-4 md:px-10 pb-16">
+        <div className="max-w-sm md:max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8">
         {MONTH_NAMES.map((monthName, monthIndex) => {
           const isCurrentMonth = monthIndex === currentMonthIndex;
           const monthDays = allMonthCalendarDays[monthIndex];
@@ -238,10 +225,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               className="mb-10"
               style={{ scrollMarginTop: '92px' }}
             >
-              {/* Month name */}
+              {/* Month name — intentionally small */}
               <h2
                 className={`mb-3 ${isCurrentMonth ? 'text-[#CEF17B]' : 'text-[#CEF17B]/50'}`}
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '30px', lineHeight: 1 }}
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '20px', lineHeight: 1 }}
               >
                 {monthName}
               </h2>
@@ -327,90 +314,6 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             </div>
           );
         })}
-      </div>
-
-      {/* ── DESKTOP: Flat year grid ── */}
-      <div className="hidden md:block w-full max-w-[1600px] mx-auto px-12 lg:px-16 pb-8">
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(28px,1fr))] gap-5 gap-y-8 justify-items-center items-end">
-          {allDaysInYear.map((dayData) => {
-            const { date, month } = dayData;
-            const entry = cardMap.get(date);
-            const isToday = date === currentDate;
-            const hasCard = !!entry;
-            const isReversed = entry?.isReversed || false;
-            const dayOfMonth = parseInt(date.split('-')[2]);
-            const isMonthStart = dayOfMonth === 1;
-            const cardIndex = journalEntries.findIndex(e => e.date === date);
-            const animationDelay = hasCard && cardIndex >= 0 ? cardIndex * 15 : 0;
-
-            return (
-              <div
-                key={date}
-                className="relative flex items-end"
-                style={{ animationDelay: hasCard ? `${animationDelay}ms` : '0ms', height: 'clamp(36px, 5vw, 48px)' }}
-              >
-                {isMonthStart && (
-                  <div
-                    className="absolute -top-5 left-0 text-base text-[#CEF17B] whitespace-nowrap pointer-events-none"
-                    style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                  >
-                    {month.slice(0, 3).toLowerCase()}
-                  </div>
-                )}
-
-                <button
-                  onClick={() => handleDayClick(date, hasCard, isToday)}
-                  onMouseEnter={() => setHoveredDate(date)}
-                  onMouseLeave={() => setHoveredDate(null)}
-                  aria-label={`${new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}${hasCard ? (isReversed ? ', reversed' : ', upright') : ''}`}
-                  className={`
-                    relative transition-all duration-200
-                    ${hasCard ? 'hover:scale-125 hover:z-30 cursor-pointer' : 'cursor-default'}
-                    ${isToday ? 'scale-110 z-20' : 'z-0'}
-                    ${hasCard && animating ? 'card-flip-enter' : ''}
-                  `}
-                  style={{
-                    width: hasCard ? 'clamp(24px, 3.5vw, 32px)' : '2.5px',
-                    height: hasCard ? '100%' : 'clamp(28px, 4vw, 36px)',
-                    animationDelay: hasCard ? `${animationDelay}ms` : '0ms',
-                    animationFillMode: 'backwards',
-                  }}
-                >
-                  {hasCard && entry && cardLookup.get(entry.cardId) ? (
-                    <>
-                      <div className={isReversed ? 'rotate-180 w-full h-full' : 'w-full h-full'}>
-                        <MiniTarotCard cardId={entry.cardId} cardName={cardLookup.get(entry.cardId)!.name} isToday={isToday} />
-                      </div>
-                      {isReversed && (
-                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
-                          <svg viewBox="0 0 8 4" className="w-2 h-2 text-[#CEF17B]" opacity="0.6">
-                            <path d="M 1 1 Q 4 3 7 1" stroke="currentColor" strokeWidth="1" fill="none" strokeLinecap="round" />
-                          </svg>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <VerticalLine isToday={isToday} />
-                  )}
-
-                  {/* Hover tooltip */}
-                  {hoveredDate === date && (
-                    <div
-                      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-md bg-[#172211]/95 text-[#CEF17B] px-3 py-2 rounded-lg text-xl whitespace-nowrap z-50 shadow-lg border border-[#CEF17B]/30 pointer-events-none"
-                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                    >
-                      <div>
-                        {new Date(date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toLowerCase()}
-                      </div>
-                      {hasCard && entry && (
-                        <div className="text-xl">{isReversed ? '↻ reversed' : 'upright'}</div>
-                      )}
-                    </div>
-                  )}
-                </button>
-              </div>
-            );
-          })}
         </div>
       </div>
 
