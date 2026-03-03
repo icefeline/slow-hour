@@ -386,7 +386,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 </p>
               </div>
 
-              <div className="max-w-[280px] mx-auto mb-4">
+              <div className="mb-4">
                 <TarotCard card={selectedCard} isReversed={selectedEntry.isReversed || false} isRevealed={true} />
               </div>
 
