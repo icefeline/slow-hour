@@ -138,6 +138,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
 
   // Ref to scroll mobile view to current month on mount
   const currentMonthRef = useRef<HTMLDivElement>(null);
+  const yearHeaderRef = useRef<HTMLDivElement>(null);
 
   const daysWithCards = journalEntries.length;
 
@@ -166,12 +167,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll mobile view to current month on mount
+  // Scroll to current month, leaving month name visible below the fixed nav + sticky year header
   useEffect(() => {
     if (currentMonthRef.current) {
-      const headerHeight = 80; // sticky header height
+      const navHeight = 56; // fixed top nav (pt-14)
+      const stickyHeight = yearHeaderRef.current?.offsetHeight ?? 88;
+      const gap = 12; // breathing room so month name sits comfortably below headers
       const elementTop = currentMonthRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: elementTop - headerHeight - 12, behavior: 'instant' });
+      window.scrollTo({ top: elementTop - navHeight - stickyHeight - gap, behavior: 'instant' });
     }
   }, []);
 
@@ -205,7 +208,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     <div className="relative min-h-screen bg-[#172211] pt-6 md:pt-12">
 
       {/* Sticky header */}
-      <div className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
+      <div ref={yearHeaderRef} className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
             className="text-4xl md:text-6xl text-[#CEF17B] mb-1"
