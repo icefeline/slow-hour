@@ -425,7 +425,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
               placeholder="your name"
-              className="w-full px-6 py-5 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+              className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
               style={inputStyle}
               autoFocus
             />
@@ -632,8 +632,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="absolute inset-0 bg-[#172211]/60" />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
-      <div className="md:hidden relative z-10 flex flex-col min-h-screen px-5 py-8 justify-center">
-        <div className="w-full max-w-sm mx-auto">
+      {/* For step 3 we remove justify-center and give the inner div flex-1 so
+          h-full works correctly and the typewriter text flows from the top */}
+      <div className={`md:hidden relative z-10 flex flex-col min-h-screen px-5 py-8 ${currentStep === 3 ? '' : 'justify-center'}`}>
+        <div className={`w-full max-w-sm mx-auto ${currentStep === 3 ? 'flex-1 flex flex-col' : ''}`}>
           {renderStepContent()}
         </div>
       </div>
