@@ -10,6 +10,12 @@ import { tarotDeck } from '@/lib/data/tarot-deck';
 
 type View = 'card' | 'year';
 
+// Use local calendar date (not UTC) so midnight in user's timezone triggers the new card
+function localDateString(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 interface JournalEntry {
   date: string;
   cardId: string;
@@ -65,16 +71,17 @@ export default function Home() {
         params.append('birthdate', birthdate);
       }
 
-      const url = params.toString() ? `/api/daily-card?${params.toString()}` : '/api/daily-card';
+      // Pass local date so server uses user's calendar day, not UTC
+      const today = localDateString();
+      params.append('date', today);
+
+      const url = `/api/daily-card?${params.toString()}`;
       const response = await fetch(url);
       const data = await response.json();
 
       setCard(data.card);
       setIsReversed(data.isReversed);
       setDateString(data.date);
-
-      // Check if already revealed today
-      const today = new Date().toISOString().split('T')[0];
       const lastDrawDate = localStorage.getItem('lastDrawDate');
       const wasRevealed = localStorage.getItem('cardRevealed') === 'true';
 
@@ -283,12 +290,14 @@ export default function Home() {
           </div>
 
           {/* View Toggle Buttons */}
-          <div className="flex gap-2 md:gap-3 items-center ml-4 md:ml-12">
+          <div className="flex gap-2 md:gap-3 items-center ml-4 md:ml-12" role="navigation" aria-label="View switcher">
             <button
               onClick={() => {
                 setViewingPastCard(false);
                 setCurrentView('card');
               }}
+              aria-pressed={currentView === 'card'}
+              aria-label="View today's card"
               className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'card'
                   ? 'bg-[#CEF17B] text-[#172211]'
@@ -300,6 +309,8 @@ export default function Home() {
             </button>
             <button
               onClick={() => setCurrentView('year')}
+              aria-pressed={currentView === 'year'}
+              aria-label="View year history"
               className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'year'
                   ? 'bg-[#CEF17B] text-[#172211]'
@@ -404,6 +415,7 @@ export default function Home() {
                   </h3>
                   {isToday ? (
                     <textarea
+                      aria-label="Write your reflection on today's card"
                       className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#CEF17B]/30 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
                       placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}

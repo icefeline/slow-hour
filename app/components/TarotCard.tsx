@@ -334,13 +334,13 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
         <div className="w-full space-y-6 md:space-y-12 animate-fade-in">
 
           {/* Keywords - Circular Marquee */}
-          <div className="relative w-24 h-24 md:w-64 md:h-64 mx-auto mt-10 mb-0 md:mt-24 md:mb-0">
+          <div className="relative w-36 h-36 md:w-64 md:h-64 mx-auto mt-10 mb-0 md:mt-24 md:mb-0">
             {activeKeywords.slice(0, 5).map((keyword, index) => {
               const totalKeywords = Math.min(activeKeywords.length, 5);
               const startAngle = (index / totalKeywords) * 360;
               const animationDelay = -(index / totalKeywords) * 20; // Stagger start positions
               // Scale font down when 5 keywords to avoid crowding on mobile
-              const mobileFontSize = totalKeywords >= 5 ? 'clamp(14px, 3vw, 32px)' : 'clamp(18px, 3.5vw, 32px)';
+              const mobileFontSize = totalKeywords >= 5 ? 'clamp(16px, 3.5vw, 32px)' : 'clamp(20px, 4vw, 32px)';
 
               return (
                 <span
@@ -366,7 +366,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           {/* Meaning */}
           <div>
             <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
           {/* Active Insight - Personalized Context */}
@@ -391,7 +391,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           {/* Description */}
           <div>
             <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{card.description.toLowerCase()}</p>
+            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}

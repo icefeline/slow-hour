@@ -116,7 +116,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           {transitInfo && (
             <div className="mt-6 -mx-6">
               <div
-                className="overflow-hidden cursor-pointer pb-2 transition-all"
+                className="overflow-hidden cursor-pointer pb-1 transition-all"
                 onClick={() => setIsExpanded(!isExpanded)}
                 role="button"
                 tabIndex={0}
@@ -145,6 +145,17 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                     {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()}
                   </span>
                 </div>
+                {/* Tap hint — visible on mobile, disappears once expanded */}
+                {!isExpanded && (
+                  <div className="flex justify-center mt-1 px-6">
+                    <span
+                      className="text-[#172211]/40"
+                      style={{ fontSize: '11px', fontFamily: 'var(--font-vt323), monospace', letterSpacing: '0.05em' }}
+                    >
+                      tap to explore ↓
+                    </span>
+                  </div>
+                )}
               </div>
 
               {isExpanded && transitExplanation && (

@@ -6,9 +6,11 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const seed = searchParams.get('seed');
     const birthdate = searchParams.get('birthdate') || undefined;
+    // Prefer client-supplied local date (avoids UTC vs local timezone mismatch)
+    const clientDate = searchParams.get('date');
 
     let card, isReversed;
-    const today = new Date().toISOString().split('T')[0];
+    const today = clientDate || new Date().toISOString().split('T')[0];
 
     if (seed) {
       // Use seed for testing/shuffling

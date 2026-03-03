@@ -120,10 +120,10 @@ button, input, textarea, select {
 /* Circular marquee animation for keywords */
 @keyframes circular-revolve {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(55px) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg) translateX(68px) rotate(0deg);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg) translateX(55px) rotate(-360deg);
+    transform: translate(-50%, -50%) rotate(360deg) translateX(68px) rotate(-360deg);
   }
 }
 
@@ -136,4 +136,21 @@ button, input, textarea, select {
       transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg);
     }
   }
+}
+
+/* Accessible focus styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #CEF17B;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-in forwards;
 }

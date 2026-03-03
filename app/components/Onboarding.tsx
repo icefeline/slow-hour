@@ -302,6 +302,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   // Touch drag
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isTypingComplete) return;
+    e.preventDefault(); // Prevent iOS tap highlight / scale flash before drag
     const touch = e.touches[0];
     setIsDragging(true);
     setCardPosition({ x: touch.clientX, y: touch.clientY });
@@ -531,8 +532,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <div className="flex flex-col items-center justify-between h-full py-4 gap-3">
             <div className="flex-1 flex items-center justify-center overflow-y-auto">
               <p
-                className="text-[23px] md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
+                className="text-[27px] md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.25' }}
               >
                 {displayedText}
               </p>
