@@ -367,7 +367,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
           {/* Active Insight - Personalized Context */}
           {insightError ? (
             <div>
-              <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this means for you</h4>
+              <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
               {insightError === 'rate-limited' ? (
                 <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
                   you&apos;ve had five readings today. the cards will be here tomorrow.

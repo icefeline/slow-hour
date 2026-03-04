@@ -70,7 +70,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
               fontWeight: 700
             }}
           >
-            what this means for you
+            what this could mean for you
           </h4>
 
           <p
@@ -174,6 +174,9 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                   </p>
                   <p>
                     {transitExplanation.phaseMeaning.toLowerCase()}
+                  </p>
+                  <p className="mt-4 pt-3 border-t border-[#172211]/20 text-[#172211]/50">
+                    slow hour reads using the vedic sidereal system. your placements may differ from your western horoscope — that&apos;s expected.
                   </p>
                 </div>
               )}

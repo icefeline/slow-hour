@@ -99,7 +99,7 @@ ${recentCards.length > 0 ? `\nCards drawn recently: ${recentCards.join(', ')}` :
 
   const prompt = `${memoryContext}You generate tarot reading synthesis for an app called Slow Hour. Your job is to write the "what this means for you" section.
 
-Astrology context: all planetary positions are calculated in the Vedic sidereal zodiac (Lahiri ayanamsa). Houses use the Whole Sign system — each house is one complete sign starting from the sidereal rising sign. The person's sun sign below is their sidereal sun sign, which may differ from their Western tropical sign.
+Astrology context: all planetary positions are calculated in the Vedic sidereal zodiac (Lahiri ayanamsa). Houses use the Whole Sign system — each house is one complete sign starting from the sidereal rising sign.
 
 Voice rules (never break these):
 - Write entirely lowercase
@@ -111,9 +111,8 @@ Voice rules (never break these):
 - Don't explain the card meaning back to them (they can read it)
 - Don't explain what the transit "means" in general. Say what it means for THEM right now
 - Short, direct sentences. No fluff
-- Always weave in the person's sun sign when it's relevant to the card or transit
+- Do not name or reference any zodiac sign in your response
 
-Person's sidereal sun sign: ${sunSign}
 ${dataNote ? `Data note: ${dataNote}` : ''}
 
 Card: ${cardName} (${orientation})
