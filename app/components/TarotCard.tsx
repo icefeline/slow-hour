@@ -125,9 +125,10 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     return loadCachedInsight(card.id, cardDate);
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [insightError, setInsightError] = useState<'rate-limited' | 'error' | null>(null);
   const isFirstMount = useRef(true);
 
-  // Reset insight when card or date changes, then try loading from cache for the new card/date
+  // Reset insight + error when card or date changes, then try loading from cache for the new card/date
   useEffect(() => {
     if (isFirstMount.current) {
       isFirstMount.current = false;
@@ -135,129 +136,118 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     }
     const cached = loadCachedInsight(card.id, cardDate);
     setGeneratedInsight(cached);
+    setInsightError(null);
   }, [card.id, cardDate]);
 
   // Generate insight when card is revealed
   useEffect(() => {
-    if (isRevealed && !generatedInsight) {
-      setIsGenerating(true);
+    // Don't trigger if already have a result or a confirmed error
+    if (!isRevealed || generatedInsight || insightError) return;
 
-      // Calculate real astrology transits based on user's birth data
-      const calculateRealTransit = async () => {
-        try {
-          // Get user's birth data from localStorage
-          const birthDateStr = localStorage.getItem('userBirthdate');
-          const birthTime = localStorage.getItem('userBirthTime');
-          const birthLocation = localStorage.getItem('userBirthLocation');
+    setIsGenerating(true);
 
-          if (!birthDateStr) {
-            throw new Error('No birth date found');
-          }
+    const calculateRealTransit = async () => {
+      try {
+        const birthDateStr = localStorage.getItem('userBirthdate');
+        const birthTime = localStorage.getItem('userBirthTime');
+        const birthLocation = localStorage.getItem('userBirthLocation');
 
-          // Generate seed from card ID to consistently select same transit for same card
-          const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
+        if (!birthDateStr) throw new Error('No birth date found');
 
-          // Load memory to send as context
-          const memory = loadMemory();
-          const memoryNotes = memory.memoryNotes;
-          const recentCards = memory.readings.slice(0, 7).map(r =>
-            `${r.cardName}${r.isReversed ? ' (reversed)' : ''}`
-          );
+        // Seed selects the same transit for the same card (deterministic tie-breaking)
+        const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
 
-          // Call API to calculate transits (Swiss Ephemeris runs server-side)
-          const response = await fetch('/api/calculate-transit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              birthDate: birthDateStr,
-              birthTime: birthTime || null,
-              birthLocation: birthLocation || null,
-              seed: cardSeed,
-              cardId: card.id,
-              isReversed,
-              memoryNotes,
-              recentCards
-            })
-          });
+        const memory = loadMemory();
+        const memoryNotes = memory.memoryNotes;
+        const recentCards = memory.readings.slice(0, 7).map(r =>
+          `${r.cardName}${r.isReversed ? ' (reversed)' : ''}`
+        );
 
-          if (!response.ok) {
-            throw new Error('Failed to fetch transit data');
-          }
+        const response = await fetch('/api/calculate-transit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            birthDate: birthDateStr,
+            birthTime: birthTime || null,
+            birthLocation: birthLocation || null,
+            seed: cardSeed,
+            cardId: card.id,
+            isReversed,
+            memoryNotes,
+            recentCards
+          })
+        });
 
-          const data = await response.json();
-          const dominantTransit: ActiveTransit = data.dominantTransit;
-
-          // Convert to TransitData format
-          const transitData = convertToTransitData(dominantTransit);
-
-          // Use Claude-generated insight if available, fall back to template
-          if (data.claudeInsight) {
-            const templateInsight = generateInsight(card.id, transitData, isReversed);
-            const freshInsight: GeneratedInsight = {
-              keyPhrase: data.claudeInsight.keyPhrase,
-              insight: data.claudeInsight.insight,
-              action: data.claudeInsight.action,
-              transitInfo: templateInsight?.transitInfo || '',
-              transitExplanation: templateInsight?.transitExplanation || {
-                transitingPlanet: dominantTransit.transitingPlanet,
-                transitingPlanetMeaning: '',
-                natalPlanet: dominantTransit.natalPlanet,
-                natalPlanetMeaning: '',
-                aspectType: dominantTransit.aspect,
-                aspectMeaning: '',
-                phaseMeaning: '',
-              },
-            };
-            setGeneratedInsight(freshInsight);
-            saveCachedInsight(card.id, freshInsight, cardDate);
-
-            // Save this reading + memory note to localStorage
-            const cardFullName = card.name || card.id;
-            saveMemory(
-              memory,
-              {
-                date: new Date().toISOString().split('T')[0],
-                cardName: cardFullName,
-                isReversed,
-                transitingPlanet: dominantTransit.transitingPlanet,
-                natalPlanet: dominantTransit.natalPlanet,
-                aspectType: dominantTransit.aspect,
-                house: dominantTransit.house,
-                keyPhrase: data.claudeInsight.keyPhrase,
-              },
-              data.claudeInsight.memoryNote
-            );
-          } else {
-            const insight = generateInsight(card.id, transitData, isReversed);
-            setGeneratedInsight(insight);
-            if (insight) saveCachedInsight(card.id, insight, cardDate);
-          }
-        } catch (error) {
-          console.error('Failed to calculate real transit:', error);
-          // Fall back to a default transit if calculation fails
-          const defaultTransitData: TransitData = {
-            transitingPlanet: 'Saturn',
-            natalPlanet: 'Sun',
-            aspectType: 'square',
-            phase: 'approaching',
-            house: 10,
-            daysRemaining: 14
-          };
-          const insight = generateInsight(card.id, defaultTransitData, isReversed);
-          setGeneratedInsight(insight);
-        } finally {
-          setIsGenerating(false);
+        if (response.status === 429) {
+          // Rate limit hit — user has used their 5 readings today
+          setInsightError('rate-limited');
+          return;
         }
-      };
 
-      // Add slight delay for better UX
-      setTimeout(() => {
-        calculateRealTransit();
-      }, 800);
-    }
-  }, [isRevealed, card.id, isReversed, generatedInsight]);
+        if (!response.ok) {
+          setInsightError('error');
+          return;
+        }
+
+        const data = await response.json();
+        const dominantTransit: ActiveTransit = data.dominantTransit;
+
+        if (!data.claudeInsight) {
+          // API worked but Claude returned nothing — surface the error, don't fake a reading
+          setInsightError('error');
+          return;
+        }
+
+        // Build transit metadata (ticker + explanation accordion) from the real transit data
+        const transitData = convertToTransitData(dominantTransit);
+        const transitMeta = generateInsight(card.id, transitData, isReversed);
+
+        const freshInsight: GeneratedInsight = {
+          keyPhrase: data.claudeInsight.keyPhrase,
+          insight: data.claudeInsight.insight,
+          action: data.claudeInsight.action,
+          transitInfo: transitMeta?.transitInfo || '',
+          transitExplanation: transitMeta?.transitExplanation || {
+            transitingPlanet: dominantTransit.transitingPlanet,
+            transitingPlanetMeaning: '',
+            natalPlanet: dominantTransit.natalPlanet,
+            natalPlanetMeaning: '',
+            aspectType: dominantTransit.aspect,
+            aspectMeaning: '',
+            phaseMeaning: '',
+          },
+        };
+
+        setGeneratedInsight(freshInsight);
+        saveCachedInsight(card.id, freshInsight, cardDate);
+
+        // Save reading + memory note for future personalisation
+        saveMemory(
+          memory,
+          {
+            date: new Date().toISOString().split('T')[0],
+            cardName: card.name || card.id,
+            isReversed,
+            transitingPlanet: dominantTransit.transitingPlanet,
+            natalPlanet: dominantTransit.natalPlanet,
+            aspectType: dominantTransit.aspect,
+            house: dominantTransit.house,
+            keyPhrase: data.claudeInsight.keyPhrase,
+          },
+          data.claudeInsight.memoryNote
+        );
+      } catch (error) {
+        console.error('Failed to calculate real transit:', error);
+        setInsightError('error');
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    // Slight delay for better UX
+    const timer = setTimeout(calculateRealTransit, 800);
+    return () => clearTimeout(timer);
+  }, [isRevealed, card.id, isReversed, generatedInsight, insightError]);
 
   // Convert card ID to filename
   const getCardFilename = (cardId: string, cardName: string) => {
@@ -375,23 +365,47 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
           </div>
 
           {/* Active Insight - Personalized Context */}
-          <ActiveInsight
-            keyPhrase={generatedInsight?.keyPhrase || ""}
-            insight={generatedInsight?.insight || ""}
-            action={generatedInsight?.action || ""}
-            transitInfo={generatedInsight?.transitInfo || ""}
-            userName={userName}
-            transitExplanation={generatedInsight?.transitExplanation || {
-              transitingPlanet: "",
-              transitingPlanetMeaning: "",
-              natalPlanet: "",
-              natalPlanetMeaning: "",
-              aspectType: "",
-              aspectMeaning: "",
-              phaseMeaning: ""
-            }}
-            isLoading={isGenerating}
-          />
+          {insightError ? (
+            <div>
+              <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this means for you</h4>
+              {insightError === 'rate-limited' ? (
+                <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                  you&apos;ve had five readings today. the cards will be here tomorrow.
+                </p>
+              ) : (
+                <div>
+                  <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                    couldn&apos;t connect to the reading right now.
+                  </p>
+                  <button
+                    onClick={() => setInsightError(null)}
+                    className="mt-3 text-[#CEF17B] opacity-70 hover:opacity-100 transition-opacity"
+                    style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  >
+                    try again ↻
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <ActiveInsight
+              keyPhrase={generatedInsight?.keyPhrase || ""}
+              insight={generatedInsight?.insight || ""}
+              action={generatedInsight?.action || ""}
+              transitInfo={generatedInsight?.transitInfo || ""}
+              userName={userName}
+              transitExplanation={generatedInsight?.transitExplanation || {
+                transitingPlanet: "",
+                transitingPlanetMeaning: "",
+                natalPlanet: "",
+                natalPlanetMeaning: "",
+                aspectType: "",
+                aspectMeaning: "",
+                phaseMeaning: ""
+              }}
+              isLoading={isGenerating}
+            />
+          )}
 
           {/* Description */}
           <div>
