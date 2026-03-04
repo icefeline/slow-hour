@@ -33,6 +33,43 @@ const ASPECT_ORBS = {
 };
 
 /**
+ * Compute the Lahiri (Chitrapaksha) ayanamsa for a given date.
+ * This is the standard ayanamsa used in Indian Vedic astrology (also adopted by the
+ * Indian government's Rashtriya Panchang).
+ *
+ * Formula: 23.85129° at J2000.0, increasing at ~0.013972°/year (50.3"/year precession).
+ */
+function getLahiriAyanamsa(date: Date): number {
+  const J2000 = new Date('2000-01-01T12:00:00Z');
+  const yearsDiff = (date.getTime() - J2000.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+  return 23.85129 + yearsDiff * 0.013972;
+}
+
+/**
+ * Convert a tropical ecliptic longitude to sidereal by subtracting the ayanamsa.
+ */
+function toSidereal(tropicalLon: number, ayanamsa: number): number {
+  let sid = tropicalLon - ayanamsa;
+  while (sid < 0) sid += 360;
+  while (sid >= 360) sid -= 360;
+  return sid;
+}
+
+/**
+ * Apply ayanamsa to every planet position in a map, returning sidereal longitudes.
+ */
+function applyAyanamsaToPositions(
+  positions: Record<Planet, number>,
+  ayanamsa: number
+): Record<Planet, number> {
+  const sidereal: Partial<Record<Planet, number>> = {};
+  for (const [planet, lon] of Object.entries(positions)) {
+    sidereal[planet as Planet] = toSidereal(lon, ayanamsa);
+  }
+  return sidereal as Record<Planet, number>;
+}
+
+/**
  * Calculate planetary positions for a given date
  */
 function calculatePlanetaryPositions(date: Date, observer?: Astronomy.Observer): Record<Planet, number> {
@@ -67,41 +104,42 @@ function calculatePlanetaryPositions(date: Date, observer?: Astronomy.Observer):
 }
 
 /**
- * Calculate house cusps using simple equal house system
- * (Placidus would require more complex calculations)
+ * Calculate the sidereal ascendant for a given date/location.
+ * Uses Local Sidereal Time to estimate the tropical ascendant, then
+ * subtracts the Lahiri ayanamsa to convert to sidereal.
  */
-function calculateHouses(date: Date, latitude: number, longitude: number): { houses: number[]; ascendant: number } {
+function calculateSiderealAscendant(
+  date: Date,
+  latitude: number,
+  longitude: number,
+  ayanamsa: number
+): number {
   try {
-    // Convert Date to AstroTime
     const astroTime = new Astronomy.AstroTime(date);
-
-    // Get local sidereal time in degrees
-    const lst = Astronomy.SiderealTime(astroTime) * 15; // Convert hours to degrees
-
-    // Calculate ascendant (simplified)
-    // In reality, this requires obliquity of ecliptic and more complex math
-    // For now, using a simplified calculation
-    const ascendant = (lst + longitude) % 360;
-
-    // Equal house system: divide ecliptic into 12 equal 30° segments starting from ascendant
-    const houses: number[] = [];
-    for (let i = 0; i < 12; i++) {
-      houses.push((ascendant + i * 30) % 360);
-    }
-
-    return {
-      houses,
-      ascendant
-    };
+    // Greenwich Mean Sidereal Time (hours) → degrees, then add observer longitude
+    const gmst = Astronomy.SiderealTime(astroTime) * 15;
+    const tropicalAscendant = ((gmst + longitude) % 360 + 360) % 360;
+    return toSidereal(tropicalAscendant, ayanamsa);
   } catch (error) {
-    console.error('Failed to calculate houses:', error);
-    // Return default houses if calculation fails
-    const houses = Array.from({ length: 12 }, (_, i) => i * 30);
-    return {
-      houses,
-      ascendant: 0
-    };
+    console.error('Failed to calculate ascendant:', error);
+    return 0;
   }
+}
+
+/**
+ * Whole Sign house system (standard Vedic / Jyotish).
+ * The entire sign containing the sidereal ascendant is House 1.
+ * Each subsequent sign is the next house — 12 even 30° houses.
+ * This gives clean, unambiguous house placements regardless of latitude.
+ */
+function calculateWholeSignHouses(siderealAscendant: number): { houses: number[]; ascendant: number } {
+  // 0° of the ascendant's sign is the House 1 cusp
+  const h1Start = Math.floor(siderealAscendant / 30) * 30;
+  const houses: number[] = [];
+  for (let i = 0; i < 12; i++) {
+    houses.push((h1Start + i * 30) % 360);
+  }
+  return { houses, ascendant: siderealAscendant };
 }
 
 /**
@@ -246,11 +284,18 @@ export async function calculateNatalChart(
     // Create observer for location
     const observer = new Astronomy.Observer(location.latitude, location.longitude, 0);
 
-    // Calculate planetary positions
-    const positions = calculatePlanetaryPositions(birthDateTime, observer);
+    // Lahiri ayanamsa for the birth date
+    const ayanamsa = getLahiriAyanamsa(birthDateTime);
 
-    // Calculate houses
-    const { houses: houseCusps, ascendant } = calculateHouses(birthDateTime, location.latitude, location.longitude);
+    // Planetary positions → sidereal (subtract ayanamsa)
+    const tropicalPositions = calculatePlanetaryPositions(birthDateTime, observer);
+    const positions = applyAyanamsaToPositions(tropicalPositions, ayanamsa);
+
+    // Sidereal ascendant → Whole Sign house cusps
+    const siderealAscendant = calculateSiderealAscendant(
+      birthDateTime, location.latitude, location.longitude, ayanamsa
+    );
+    const { houses: houseCusps, ascendant } = calculateWholeSignHouses(siderealAscendant);
 
     // Build houses array with themes
     const houseThemes = [
@@ -268,9 +313,9 @@ export async function calculateNatalChart(
     }));
 
     return {
-      sunSign: getZodiacSign(positions.sun),
-      moonSign: getZodiacSign(positions.moon),
-      risingSign: getZodiacSign(ascendant),
+      sunSign: getZodiacSign(positions.sun),   // sidereal sun sign
+      moonSign: getZodiacSign(positions.moon), // sidereal moon sign
+      risingSign: getZodiacSign(ascendant),    // sidereal rising sign
       birthDate,
       birthTime: birthTime || '12:00',
       birthLocation: location,
@@ -297,23 +342,33 @@ export async function calculateActiveTransits(
       0
     );
 
-    // Get current planetary positions
-    const currentPositions = calculatePlanetaryPositions(currentDate, observer);
-
-    // Get natal planetary positions
+    // Reconstruct natal datetime
     let natalDateTime = new Date(natalChart.birthDate);
     if (natalChart.birthTime) {
       const [hours, minutes] = natalChart.birthTime.split(':').map(Number);
       natalDateTime.setHours(hours, minutes, 0, 0);
     }
-    const natalPositions = calculatePlanetaryPositions(natalDateTime, observer);
 
-    // Get house cusps
-    const { houses: houseCusps } = calculateHouses(
-      currentDate,
+    // Ayanamsa for birth date and current date (ayanamsa drifts ~0.014°/yr, so they differ slightly)
+    const birthAyanamsa = getLahiriAyanamsa(natalDateTime);
+    const currentAyanamsa = getLahiriAyanamsa(currentDate);
+
+    // Sidereal natal positions
+    const natalTropical = calculatePlanetaryPositions(natalDateTime, observer);
+    const natalPositions = applyAyanamsaToPositions(natalTropical, birthAyanamsa);
+
+    // Sidereal current (transit) positions
+    const currentTropical = calculatePlanetaryPositions(currentDate, observer);
+    const currentPositions = applyAyanamsaToPositions(currentTropical, currentAyanamsa);
+
+    // Natal Whole Sign house cusps — aspects activate natal houses, not current-sky houses
+    const siderealNatalAsc = calculateSiderealAscendant(
+      natalDateTime,
       natalChart.birthLocation.latitude,
-      natalChart.birthLocation.longitude
+      natalChart.birthLocation.longitude,
+      birthAyanamsa
     );
+    const { houses: houseCusps } = calculateWholeSignHouses(siderealNatalAsc);
 
     const transits: ActiveTransit[] = [];
 

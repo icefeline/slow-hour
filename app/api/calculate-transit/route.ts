@@ -3,20 +3,6 @@ import Anthropic from '@anthropic-ai/sdk';
 import { calculateNatalChart, calculateActiveTransits, getDominantTransit } from '@/lib/utils/astrology-calculator';
 import { getCardArchetype, cardArchetypes } from '@/lib/data/card-archetypes';
 
-function getSunSign(month: number, day: number): string {
-  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return 'Aries';
-  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return 'Taurus';
-  if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'Gemini';
-  if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'Cancer';
-  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'Leo';
-  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'Virgo';
-  if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'Libra';
-  if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return 'Scorpio';
-  if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return 'Sagittarius';
-  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'Capricorn';
-  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'Aquarius';
-  return 'Pisces';
-}
 
 const HOUSE_THEMES: Record<number, string> = {
   1: 'identity and how you show up',
@@ -113,6 +99,8 @@ ${recentCards.length > 0 ? `\nCards drawn recently: ${recentCards.join(', ')}` :
 
   const prompt = `${memoryContext}You generate tarot reading synthesis for an app called Slow Hour. Your job is to write the "what this means for you" section.
 
+Astrology context: all planetary positions are calculated in the Vedic sidereal zodiac (Lahiri ayanamsa). Houses use the Whole Sign system — each house is one complete sign starting from the sidereal rising sign. The person's sun sign below is their sidereal sun sign, which may differ from their Western tropical sign.
+
 Voice rules (never break these):
 - Write entirely lowercase
 - No em dashes
@@ -125,7 +113,7 @@ Voice rules (never break these):
 - Short, direct sentences. No fluff
 - Always weave in the person's sun sign when it's relevant to the card or transit
 
-Person's sun sign: ${sunSign}
+Person's sidereal sun sign: ${sunSign}
 ${dataNote ? `Data note: ${dataNote}` : ''}
 
 Card: ${cardName} (${orientation})
@@ -200,9 +188,8 @@ export async function POST(request: Request) {
     // Parse birth date
     const [month, day, year] = birthDate.split('/').map(Number);
     const parsedBirthDate = new Date(year, month - 1, day);
-    const sunSign = getSunSign(month, day);
 
-    // Calculate natal chart
+    // Calculate natal chart (positions are now sidereal — Lahiri ayanamsa applied)
     const natalChart = await calculateNatalChart(
       parsedBirthDate,
       birthTime || undefined,
@@ -228,6 +215,10 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
+
+    // Use the sidereal sun sign from the calculated natal chart
+    // (natalChart.sunSign is already Lahiri sidereal after the calculator update)
+    const sunSign = natalChart.sunSign;
 
     // Generate Claude insight (with memory context if available)
     const claudeInsight = await generateClaudeInsight(
