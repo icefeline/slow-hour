@@ -54,34 +54,38 @@ export default function Home() {
     }
   }, [currentView]);
 
-  const loadTodaysCard = async (autoReveal = false) => {
+  const loadTodaysCard = (autoReveal = false) => {
     try {
-      // Build URL with query parameters
-      const params = new URLSearchParams();
-
-      // Add test seed if present (for development)
-      const testSeed = localStorage.getItem('testSeed');
-      if (testSeed) {
-        params.append('seed', testSeed);
-      }
-
-      // Add birthdate for personalized card selection
-      const birthdate = localStorage.getItem('userBirthdate');
-      if (birthdate) {
-        params.append('birthdate', birthdate);
-      }
-
-      // Pass local date so server uses user's calendar day, not UTC
       const today = localDateString();
-      params.append('date', today);
 
-      const url = `/api/daily-card?${params.toString()}`;
-      const response = await fetch(url);
-      const data = await response.json();
+      // Check if a card has already been drawn today
+      const storedCardId = localStorage.getItem(`card-${today}`);
+      const storedReversed = localStorage.getItem(`reversed-${today}`);
 
-      setCard(data.card);
-      setIsReversed(data.isReversed);
-      setDateString(data.date);
+      let todayCard: TarotCardType | null = null;
+      let todayReversed = false;
+
+      if (storedCardId) {
+        // Re-use the card drawn earlier today — stays consistent all day
+        todayCard = tarotDeck.find(c => c.id === storedCardId) ?? null;
+        todayReversed = storedReversed === 'true';
+      }
+
+      if (!todayCard) {
+        // First draw of the day — pick a truly random card, like pulling from a real deck
+        const randomIndex = Math.floor(Math.random() * tarotDeck.length);
+        todayCard = tarotDeck[randomIndex];
+        todayReversed = Math.random() < 0.30; // 30% chance reversed
+
+        // Commit to localStorage immediately so it's stable for the rest of the day
+        localStorage.setItem(`card-${today}`, todayCard.id);
+        localStorage.setItem(`reversed-${today}`, todayReversed.toString());
+      }
+
+      setCard(todayCard);
+      setIsReversed(todayReversed);
+      setDateString(today);
+
       const lastDrawDate = localStorage.getItem('lastDrawDate');
       const wasRevealed = localStorage.getItem('cardRevealed') === 'true';
 
@@ -94,10 +98,6 @@ export default function Home() {
         setIsRevealed(true);
         localStorage.setItem('lastDrawDate', today);
         localStorage.setItem('cardRevealed', 'true');
-        if (data.card) {
-          localStorage.setItem(`card-${data.date}`, data.card.id);
-          localStorage.setItem(`reversed-${data.date}`, data.isReversed.toString());
-        }
         loadJournalEntries();
       }
 
@@ -145,16 +145,10 @@ export default function Home() {
 
   const handleRevealCard = () => {
     setIsRevealed(true);
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDateString();
     localStorage.setItem('lastDrawDate', today);
     localStorage.setItem('cardRevealed', 'true');
-
-    // Save card data and reversed state
-    if (card) {
-      localStorage.setItem(`card-${dateString}`, card.id);
-      localStorage.setItem(`reversed-${dateString}`, isReversed.toString());
-    }
-
+    // Card is already stored in localStorage from loadTodaysCard — no re-save needed
     // Refresh journal entries to show the new card in year view
     loadJournalEntries();
   };
@@ -185,16 +179,15 @@ export default function Home() {
 
   const handleReset = () => {
     // Only reset today's card, keep all historical data
-    const today = new Date().toISOString().split('T')[0];
+    const today = localDateString();
     localStorage.removeItem('lastDrawDate');
     localStorage.removeItem('cardRevealed');
     localStorage.removeItem(`card-${today}`);
     localStorage.removeItem(`reversed-${today}`);
     localStorage.removeItem(`reflection-${today}`);
-    // Add random timestamp to force different card draw
-    localStorage.setItem('testSeed', Math.random().toString());
+    localStorage.removeItem('testSeed'); // clean up old workaround
 
-    // Reset view and reload card
+    // Reset view — next loadTodaysCard will draw a fresh random card
     setCurrentView('card');
     setIsRevealed(false);
     loadTodaysCard();
