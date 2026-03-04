@@ -12,7 +12,8 @@ interface TarotCardProps {
   card: TarotCardType;
   isReversed: boolean;
   isRevealed: boolean;
-  userName?: string; // Optional: user's first name for personalization
+  userName?: string;
+  cardDate?: string; // YYYY-MM-DD of when the card was drawn; defaults to today
 }
 
 // Memory types
@@ -38,9 +39,10 @@ function todayKey(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function loadCachedInsight(cardId: string): GeneratedInsight | null {
+function loadCachedInsight(cardId: string, date?: string): GeneratedInsight | null {
   try {
-    const raw = localStorage.getItem(`insight-${cardId}-${todayKey()}`);
+    const key = date ?? todayKey();
+    const raw = localStorage.getItem(`insight-${cardId}-${key}`);
     if (!raw) return null;
     return JSON.parse(raw) as GeneratedInsight;
   } catch {
@@ -48,9 +50,10 @@ function loadCachedInsight(cardId: string): GeneratedInsight | null {
   }
 }
 
-function saveCachedInsight(cardId: string, insight: GeneratedInsight): void {
+function saveCachedInsight(cardId: string, insight: GeneratedInsight, date?: string): void {
   try {
-    localStorage.setItem(`insight-${cardId}-${todayKey()}`, JSON.stringify(insight));
+    const key = date ?? todayKey();
+    localStorage.setItem(`insight-${cardId}-${key}`, JSON.stringify(insight));
   } catch {
     // ignore
   }
@@ -110,27 +113,29 @@ function convertToTransitData(transit: ActiveTransit): TransitData {
   };
 }
 
-export default function TarotCard({ card, isReversed, isRevealed, userName }: TarotCardProps) {
+export default function TarotCard({ card, isReversed, isRevealed, userName, cardDate }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
 
   // State for generated insight — load from cache immediately on mount
+  // Uses cardDate (the date the card was drawn) so past cards hit their original cached insight
   const [generatedInsight, setGeneratedInsight] = useState<GeneratedInsight | null>(() => {
     if (typeof window === 'undefined') return null;
-    return loadCachedInsight(card.id);
+    return loadCachedInsight(card.id, cardDate);
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const isFirstMount = useRef(true);
 
-  // Reset insight when card changes (skip initial mount — cache already loaded above)
+  // Reset insight when card or date changes, then try loading from cache for the new card/date
   useEffect(() => {
     if (isFirstMount.current) {
       isFirstMount.current = false;
       return;
     }
-    setGeneratedInsight(null);
-  }, [card.id]);
+    const cached = loadCachedInsight(card.id, cardDate);
+    setGeneratedInsight(cached);
+  }, [card.id, cardDate]);
 
   // Generate insight when card is revealed
   useEffect(() => {
@@ -206,7 +211,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
               },
             };
             setGeneratedInsight(freshInsight);
-            saveCachedInsight(card.id, freshInsight);
+            saveCachedInsight(card.id, freshInsight, cardDate);
 
             // Save this reading + memory note to localStorage
             const cardFullName = card.name || card.id;
@@ -227,7 +232,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName }: Ta
           } else {
             const insight = generateInsight(card.id, transitData, isReversed);
             setGeneratedInsight(insight);
-            if (insight) saveCachedInsight(card.id, insight);
+            if (insight) saveCachedInsight(card.id, insight, cardDate);
           }
         } catch (error) {
           console.error('Failed to calculate real transit:', error);

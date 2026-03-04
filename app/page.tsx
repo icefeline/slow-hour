@@ -382,6 +382,7 @@ export default function Home() {
               isReversed={isReversed}
               isRevealed={isRevealed}
               userName={localStorage.getItem('userName') || undefined}
+              cardDate={dateString}
             />
 
             {/* Reveal Button */}
