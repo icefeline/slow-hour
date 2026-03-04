@@ -451,6 +451,17 @@ export default function Home() {
         )}
       </div>
 
+      {/* Footer */}
+      <div className="text-center py-6 opacity-30 hover:opacity-60 transition-opacity">
+        <a
+          href="/privacy"
+          className="text-[#E1EEFC]"
+          style={{ fontSize: '18px', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        >
+          privacy policy
+        </a>
+      </div>
+
       {/* Development Card Selector */}
       {process.env.NODE_ENV === 'development' && (
         <CardSelector onSelectCard={handleSelectCard} />

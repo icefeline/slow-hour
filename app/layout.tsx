@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Reenie_Beanie, VT323 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -52,6 +53,7 @@ export default function RootLayout({
       </head>
       <body className={`${reenieBeanie.variable} ${vt323.variable} antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
