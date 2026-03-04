@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -362,13 +362,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   }, [isDragging]);
 
   // ── Shared input style ────────────────────────────────────────────────────
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     fontFamily: 'var(--font-reenie-beanie), cursive',
     background: 'rgba(255, 255, 255, 0.12)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
     color: '#E1EEFC',
-  } as const;
+    borderRadius: '1.5rem',   // explicit radius — prevents iOS from squaring corners on focus
+    WebkitAppearance: 'none',
+    appearance: 'none',
+  };
 
   const inputErrorStyle = {
     ...inputStyle,

@@ -274,12 +274,6 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 md:gap-3">
-            <span
-              className="text-[#E1EEFC]"
-              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
-            >
-              slow hour
-            </span>
             <img
               src="/spiral-logo.png"
               alt=""
@@ -289,6 +283,12 @@ export default function Home() {
                 width: 'auto'
               }}
             />
+            <span
+              className="text-[#E1EEFC]"
+              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
+            >
+              slow hour
+            </span>
           </div>
 
           {/* View Toggle Buttons */}

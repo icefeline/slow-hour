@@ -136,6 +136,11 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<TarotCardType | null>(null);
 
+  // Swipe-to-close gesture state
+  const touchStartY = useRef<number>(0);
+  const [drawerTranslateY, setDrawerTranslateY] = useState(0);
+  const savedScrollY = useRef(0);
+
   // Ref to scroll mobile view to current month on mount
   const currentMonthRef = useRef<HTMLDivElement>(null);
   const yearHeaderRef = useRef<HTMLDivElement>(null);
@@ -178,16 +183,57 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     }
   }, []);
 
-  // Fetch past card for drawer
+  // Look up past card directly from stored cardId — never re-fetch from API
+  // (the API doesn't know the user's birthdate so would return a different card)
   const selectedEntry = selectedDate ? journalEntries.find(e => e.date === selectedDate) : null;
   useEffect(() => {
     if (selectedDate && selectedEntry) {
-      fetch(`/api/daily-card?seed=${selectedDate}`)
-        .then(res => res.json())
-        .then(data => setSelectedCard(data.card))
-        .catch(err => console.error('Failed to load card:', err));
+      const card = cardLookup.get(selectedEntry.cardId) ?? null;
+      setSelectedCard(card);
+    } else {
+      setSelectedCard(null);
     }
-  }, [selectedDate, selectedEntry]);
+  }, [selectedDate, selectedEntry, cardLookup]);
+
+  // Lock body scroll when drawer is open (iOS-safe: position:fixed approach)
+  useEffect(() => {
+    if (drawerOpen) {
+      savedScrollY.current = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${savedScrollY.current}px`;
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, savedScrollY.current);
+      setDrawerTranslateY(0);
+    }
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [drawerOpen]);
+
+  const closeDrawer = () => setDrawerOpen(false);
+
+  const handleDrawerTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleDrawerTouchMove = (e: React.TouchEvent) => {
+    const dy = e.touches[0].clientY - touchStartY.current;
+    if (dy > 0) setDrawerTranslateY(dy); // only allow downward drag
+  };
+
+  const handleDrawerTouchEnd = () => {
+    if (drawerTranslateY > 80) {
+      closeDrawer();
+    } else {
+      setDrawerTranslateY(0);
+    }
+  };
 
   const handleDayClick = (date: string, hasCard: boolean, isToday: boolean) => {
     if (!hasCard) return;
@@ -362,18 +408,30 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       {/* Bottom drawer — past card detail (mobile) */}
       {drawerOpen && selectedDate && selectedCard && selectedEntry && (
         <>
+          {/* Backdrop */}
           <div
             className="md:hidden fixed inset-0 bg-[#172211]/60 backdrop-blur-sm z-40"
-            onClick={() => setDrawerOpen(false)}
+            onClick={closeDrawer}
             aria-hidden="true"
           />
+          {/* Drawer panel */}
           <div
             className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#CEF17B]/30"
             role="dialog"
             aria-modal="true"
             aria-label={`Card reading for ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`}
+            style={{
+              transform: `translateY(${drawerTranslateY}px)`,
+              transition: drawerTranslateY === 0 ? 'transform 0.3s ease' : 'none',
+            }}
           >
-            <div className="sticky top-0 bg-[#172211] pt-4 pb-3 flex justify-center rounded-t-3xl z-10">
+            {/* Drag handle — touch target for swipe-to-close */}
+            <div
+              className="sticky top-0 bg-[#172211] pt-4 pb-3 flex justify-center rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
+              onTouchStart={handleDrawerTouchStart}
+              onTouchMove={handleDrawerTouchMove}
+              onTouchEnd={handleDrawerTouchEnd}
+            >
               <div className="w-12 h-1.5 bg-[#CEF17B]/40 rounded-full" />
             </div>
 
@@ -390,7 +448,12 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               </div>
 
               <div className="mb-4">
-                <TarotCard card={selectedCard} isReversed={selectedEntry.isReversed || false} isRevealed={true} />
+                <TarotCard
+                  card={selectedCard}
+                  isReversed={selectedEntry.isReversed || false}
+                  isRevealed={true}
+                  cardDate={selectedDate}
+                />
               </div>
 
               {(() => {

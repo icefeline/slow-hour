@@ -145,6 +145,14 @@ button, input, textarea, select {
   border-radius: 4px;
 }
 
+/* Onboarding inputs — keep rounded corners on focus, show accent border */
+input.rounded-3xl:focus,
+input.rounded-3xl:focus-within {
+  border-color: rgba(206, 241, 123, 0.6) !important;
+  border-radius: 1.5rem !important;
+  outline: none;
+}
+
 /* PWA safe-area utilities for viewport-fit=cover */
 .pt-safe-nav {
   padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
