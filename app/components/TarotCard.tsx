@@ -273,7 +273,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
               <img
                 src={`/cards/${getCardFilename(card.id, card.name)}.png`}
                 alt={card.name}
-                className="w-full h-full object-cover shadow-xl"
+                className="w-full h-full object-cover shadow-xl animate-sand-reveal"
                 onError={(e) => {
                   // Fallback to SVG if PNG doesn't exist
                   e.currentTarget.src = card.imagePath;
@@ -369,9 +369,28 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
             <div>
               <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
               {insightError === 'rate-limited' ? (
-                <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                  you&apos;ve had five readings today. the cards will be here tomorrow.
-                </p>
+                <div className="space-y-4">
+                  <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                    hey! thank you so much for using slow hour.
+                  </p>
+                  <p className="text-[#E1EEFC] opacity-80" style={{ fontSize: 'clamp(20px, 4vw, 30px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                    i made this entirely by myself — the design, the code, the readings. each insight costs real money to generate, so five a day is where i&apos;ve had to draw the line for now.
+                  </p>
+                  <p className="text-[#E1EEFC] opacity-80" style={{ fontSize: 'clamp(20px, 4vw, 30px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                    if slow hour has meant something to you, supporting it helps keep it running.{' '}
+                    <a
+                      href="https://buymeacoffee.com/shxntxnx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#CEF17B] underline underline-offset-4 hover:opacity-80 transition-opacity"
+                    >
+                      buy me a coffee →
+                    </a>
+                  </p>
+                  <p className="text-[#E1EEFC] opacity-50" style={{ fontSize: 'clamp(18px, 3.5vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                    your readings are always here when you want to come back to them.
+                  </p>
+                </div>
               ) : (
                 <div>
                   <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>

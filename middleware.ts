@@ -11,8 +11,7 @@ const ratelimit =
           url: process.env.UPSTASH_REDIS_REST_URL,
           token: process.env.UPSTASH_REDIS_REST_TOKEN,
         }),
-        // 50 insight requests per IP per day — raised for testing (revert to 5 for prod)
-        limiter: Ratelimit.slidingWindow(50, '24 h'),
+        limiter: Ratelimit.slidingWindow(5, '24 h'),
         prefix: 'slow-hour',
         analytics: false,
       })
