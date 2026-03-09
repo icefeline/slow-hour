@@ -623,7 +623,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   <div className="flex-1">
                     <input
                       type="text"
-                      placeholder="city, country"
+                      placeholder="city, country (optional)"
                       value={birthLocation}
                       onChange={(e) => handleLocationChange(e.target.value)}
                       className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
@@ -886,7 +886,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
                         </div>
                       </div>
-                      <input type="text" placeholder="city, country (close enough)" value={birthLocation}
+                      <input type="text" placeholder="city, country (optional)" value={birthLocation}
                         onChange={(e) => handleLocationChange(e.target.value)}
                         className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
                         style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
