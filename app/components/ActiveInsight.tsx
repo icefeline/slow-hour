@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 
 interface ActiveInsightProps {
   insight: string;
@@ -24,6 +24,15 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
   const [isExpanded, setIsExpanded] = useState(false);
   const [internalLoading, setInternalLoading] = useState(true);
   const [dots, setDots] = useState('');
+  const marqueeContainerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!marqueeContainerRef.current || !transitInfo) return;
+    const span = marqueeContainerRef.current.querySelector('span') as HTMLSpanElement;
+    if (!span) return;
+    const oneWidth = span.scrollWidth / 4;
+    marqueeContainerRef.current.style.setProperty('--marquee-offset', `-${oneWidth}px`);
+  }, [transitInfo]);
 
   const isLoading = externalLoading !== undefined ? externalLoading : internalLoading;
 
@@ -129,20 +138,22 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? "Hide transit explanation" : "Show transit explanation"}
               >
-                <div className="animate-marquee whitespace-nowrap">
+                <div ref={marqueeContainerRef} className="overflow-hidden whitespace-nowrap">
                   <span
-                    className="text-[#172211]/70 inline-block hover:text-[#172211] transition-colors"
+                    className="text-[#172211]/70 hover:text-[#172211] transition-colors"
                     style={{
+                      display: 'inline-block',
                       fontSize: 'clamp(16px, 2vw, 18px)',
                       fontFamily: 'var(--font-vt323), monospace',
-                      animation: 'marquee 15s linear infinite',
+                      animation: 'marqueeScroll 22s linear infinite',
+                      willChange: 'transform',
                       fontWeight: 400,
                       textDecoration: 'underline',
                       textDecorationStyle: 'dotted',
                       textUnderlineOffset: '4px'
                     }}
                   >
-                    {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()} • {transitInfo.toLowerCase()}
+                    {(`${transitInfo.toLowerCase()} • `).repeat(4)}
                   </span>
                 </div>
                 {/* Tap hint — visible on mobile, disappears once expanded */}
@@ -185,16 +196,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
         </div>
       )}
 
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-25%);
-          }
-        }
-      `}</style>
+
     </div>
   );
 }

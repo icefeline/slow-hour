@@ -153,6 +153,14 @@ input.rounded-3xl:focus-within {
   outline: none;
 }
 
+/* On desktop the device frame has a light background — use a dark focus border */
+@media (min-width: 768px) {
+  input.rounded-3xl:focus,
+  input.rounded-3xl:focus-within {
+    border-color: rgba(23, 34, 17, 0.35) !important;
+  }
+}
+
 /* PWA safe-area utilities for viewport-fit=cover */
 .pt-safe-nav {
   padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
@@ -163,6 +171,12 @@ input.rounded-3xl:focus-within {
   }
 }
 
+/* Continuous marquee — offset measured in JS and set as --marquee-offset */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--marquee-offset, -25%)); }
+}
+
 /* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -171,4 +185,24 @@ input.rounded-3xl:focus-within {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-in forwards;
+}
+
+/* Sand dissolve — warm grain flare then blur out (onboarding crumble) */
+@keyframes sandDissolve {
+  0%   { opacity: 1; filter: none; }
+  25%  { opacity: 0.9; filter: brightness(1.5) sepia(0.5) blur(0px); }
+  60%  { opacity: 0.5; filter: brightness(1.1) sepia(0.2) blur(3px); }
+  100% { opacity: 0; filter: blur(10px); }
+}
+
+/* Sand reveal — warm grain that clears to show the card */
+@keyframes sandReveal {
+  0%   { opacity: 0; filter: brightness(2) sepia(0.8) blur(10px); }
+  35%  { opacity: 0.7; filter: brightness(1.4) sepia(0.4) blur(3px); }
+  70%  { opacity: 0.95; filter: brightness(1.1) sepia(0.1) blur(0.5px); }
+  100% { opacity: 1; filter: none; }
+}
+
+.animate-sand-reveal {
+  animation: sandReveal 1.5s ease-out forwards;
 }

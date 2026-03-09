@@ -97,42 +97,45 @@ ${recentCards.length > 0 ? `\nCards drawn recently: ${recentCards.join(', ')}` :
     ? `Birth location was not provided. House cusps are estimated. Use the transit planet energies but treat the house activation lightly.`
     : '';
 
-  const prompt = `${memoryContext}You generate tarot reading synthesis for an app called Slow Hour. Your job is to write the "what this means for you" section.
+  const prompt = `${memoryContext}You write the personalised synthesis for a tarot app called Slow Hour. This is the "what this could mean for you" section — the part that makes the reading feel like it was written specifically for this person.
 
-Astrology context: all planetary positions are calculated in the Vedic sidereal zodiac (Lahiri ayanamsa). Houses use the Whole Sign system — each house is one complete sign starting from the sidereal rising sign.
+The app exists to help people see themselves more clearly, not to tell them what to do or think. The best insight doesn't hand them a conclusion — it holds up a mirror at exactly the right angle so they can find the thing themselves. Think less therapist, more that one friend who says the true thing gently and then lets you sit with it.
 
-Voice rules (never break these):
-- Write entirely lowercase
-- No em dashes
-- No questions at the end (the card already asks questions)
-- Sound like a perceptive friend who really knows you, not a therapist or AI
-- No words like "journey", "navigate", "embrace", "explore", "tap into", "delve", "unpack", "it's okay to", "honor your", "give yourself permission"
-- No filler affirmations. Be specific and real
-- Don't explain the card meaning back to them (they can read it)
-- Don't explain what the transit "means" in general. Say what it means for THEM right now
-- Short, direct sentences. No fluff
-- Do not name or reference any zodiac sign in your response
+Astrology context: Vedic sidereal zodiac (Lahiri ayanamsa), Whole Sign houses.
+
+Voice (these matter):
+- Entirely lowercase, no em dashes
+- Sound like a perceptive friend, not a practitioner
+- Be specific — vague wisdom is worthless here
+- No "journey", "navigate", "embrace", "explore", "tap into", "delve", "unpack", "honour your", "give yourself permission"
+- No questions anywhere in the insight or action (the card already asks them)
+- Do not restate or paraphrase the card meaning — they can read it
+- Do not explain the transit in general terms — tell them what THIS transit means in THEIR life right now
+- Do not name any zodiac sign
 
 ${dataNote ? `Data note: ${dataNote}` : ''}
 
-Card: ${cardName} (${orientation})
-Card themes: ${coreThemes}
-Emotional tone: ${emotionalTone}
+About this person:
+- Sun sign (sidereal): ${sunSign} — this colours how they move through everything
+- Card drawn: ${cardName} (${orientation})
+- Card themes: ${coreThemes}
+- Emotional tone of this card: ${emotionalTone}
 
-Current transit: ${transitingPlanet} ${aspectType} ${natalPlanet}
-Transit meaning: ${planetMeaning[transitingPlanet.toLowerCase()] || transitingPlanet} creating ${aspectMeaning[aspectType] || aspectType} with ${planetMeaning[natalPlanet.toLowerCase()] || natalPlanet}
-Phase: ${phase} (${phaseMeaning[phase] || phase})
-House activated: ${house} (${houseTheme})
+What's happening in their chart right now:
+- Transit: ${transitingPlanet} ${aspectType} ${natalPlanet}
+- ${planetMeaning[transitingPlanet.toLowerCase()] || transitingPlanet} is creating ${aspectMeaning[aspectType] || aspectType} with their natal ${planetMeaning[natalPlanet.toLowerCase()] || natalPlanet}
+- Phase: ${phaseMeaning[phase] || phase}
+- This is activating their ${house}th house: ${houseTheme}
 
 Write a JSON object with exactly these four fields:
 
-"keyPhrase": 3-6 words. The headline for this moment. Lowercase. Something specific to BOTH the card and the transit together, not just one or the other.
+"keyPhrase": 3-6 words. The headline for this specific moment — something that could only come from the combination of this card and this transit. Not a platitude. Lowercase.
 
-"insight": 2-3 sentences. What's actually happening for this person given BOTH the card AND the transit. Be specific about the combination. Don't explain the card or the transit separately. Say what the collision between them means. No questions. No affirmations.
+"insight": 2-4 sentences. This is the main reading. The card is a pattern. The transit is a pressure or an opening. The house is where it's playing out in their life. Put those three things together — not as separate facts, but as one coherent thing that's happening to them right now. Let their sun sign quietly shape the flavour of how they experience it. Make them feel seen in a way that surprises them slightly. No moralising, no advice. No questions.
 
-"action": 1-2 sentences. A neuroplasticity-style practice of noticing. Not a task to complete, but something to pay attention to or catch in the moment. Like: "notice the moment you reach for distraction instead of sitting with it." or "catch the first thought that comes up when someone challenges your plan." The observation itself is the practice.
+"action": 1-2 sentences. Not a task — a practice of noticing. Help them catch themselves at the exact moment the pattern runs automatically: the flinch, the deflection, the story they tell to stay comfortable. Frame it as an observation to collect, not a behaviour to change. The awareness is the whole point.
 
-"memoryNote": Exactly one sentence, lowercase. A quiet observation about what's surfacing in this person's inner life right now — written as a pattern description, not an event. Do not mention card names or planet names. Do not use "they" or "you". Write it as an observation about a theme ("themes of X are coexisting with Y" or "tension between A and B is the active current"). This note is private and will inform future readings.
+"memoryNote": One sentence, lowercase. An honest private note about what's active in this person's inner life right now — written as a theme, not an event. No card names, no planet names, no "they" or "you". Pattern language only ("tension between X and Y" or "themes of A surfacing alongside B").
 
 Return only valid JSON, no markdown, no extra text.`;
 
@@ -185,7 +188,7 @@ export async function POST(request: Request) {
     }
 
     // Parse birth date
-    const [month, day, year] = birthDate.split('/').map(Number);
+    const [day, month, year] = birthDate.split('/').map(Number);
     const parsedBirthDate = new Date(year, month - 1, day);
 
     // Calculate natal chart (positions are now sidereal — Lahiri ayanamsa applied)

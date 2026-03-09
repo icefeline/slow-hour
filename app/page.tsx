@@ -360,7 +360,7 @@ export default function Home() {
                 className="text-[#CEF17B]"
                 style={{ fontSize: 'clamp(26px, 3.5vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
-                {new Date(dateString + 'T00:00:00').toLocaleDateString('en-US', {
+                {new Date(dateString + 'T00:00:00').toLocaleDateString('en-GB', {
                   weekday: 'long',
                   month: 'long',
                   day: 'numeric',
@@ -389,7 +389,7 @@ export default function Home() {
                   reveal card
                 </button>
                 <p className="text-[#E1EEFC] mt-4 opacity-60" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                  take a moment to center yourself
+                  take a moment to centre yourself
                 </p>
               </div>
             )}
@@ -446,13 +446,23 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="text-center py-6 opacity-30 hover:opacity-60 transition-opacity">
+      <div className="text-center py-6 flex items-center justify-center gap-5">
         <a
           href="/privacy"
-          className="text-[#E1EEFC]"
+          className="text-[#E1EEFC] opacity-30 hover:opacity-60 transition-opacity"
           style={{ fontSize: '18px', fontFamily: 'var(--font-reenie-beanie), cursive' }}
         >
           privacy policy
+        </a>
+        <span className="text-[#E1EEFC] opacity-30" style={{ fontSize: '18px' }}>·</span>
+        <a
+          href="https://buymeacoffee.com/shxntxnx"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#E1EEFC] opacity-30 hover:opacity-60 transition-opacity"
+          style={{ fontSize: '18px', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        >
+          buy me a coffee
         </a>
       </div>
 

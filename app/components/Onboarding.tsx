@@ -9,7 +9,7 @@ interface OnboardingProps {
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [name, setName] = useState('');
-  const [birthDate, setBirthDate] = useState(''); // MM/DD/YYYY
+  const [birthDate, setBirthDate] = useState(''); // DD/MM/YYYY
   const [birthTime, setBirthTime] = useState('');
   const [birthLocation, setBirthLocation] = useState('');
   const [noKnowBirthTime, setNoKnowBirthTime] = useState(false);
@@ -33,8 +33,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Device scale for MacBook / smaller-viewport desktop layout
   const [deviceScale, setDeviceScale] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Location geocode feedback
+  const [locationResolved, setLocationResolved] = useState<string | null>(null);
+  const [locationChecking, setLocationChecking] = useState(false);
+  const locationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalSteps = 3; // 0: welcome screen, 1: name, 2: birthdate+time+location, 3: message
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Compute the scale so the device frame + content area always fit within the viewport
   useEffect(() => {
@@ -77,8 +90,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (digitsOnly.length >= 4) formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2, 4) + '/' + digitsOnly.slice(4, 8);
     setBirthDate(formatted);
     if (digitsOnly.length === 8) {
-      const month = parseInt(digitsOnly.slice(0, 2));
-      const day = parseInt(digitsOnly.slice(2, 4));
+      const day = parseInt(digitsOnly.slice(0, 2));
+      const month = parseInt(digitsOnly.slice(2, 4));
       const year = parseInt(digitsOnly.slice(4, 8));
       const date = new Date(year, month - 1, day);
       const today = new Date();
@@ -106,6 +119,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const handleLocationChange = (value: string) => {
     setBirthLocation(value);
+    setLocationResolved(null);
+    if (locationDebounceRef.current) clearTimeout(locationDebounceRef.current);
+
     if (value.length === 0) { setLocationError(''); return; }
     if (value.includes(',')) {
       const parts = value.split(',').map(p => p.trim());
@@ -116,10 +132,25 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       if (value.trim().length < 2) { setLocationError('please enter a valid location'); return; }
       setLocationError('');
     }
+
+    if (value.trim().length >= 3) {
+      locationDebounceRef.current = setTimeout(async () => {
+        setLocationChecking(true);
+        try {
+          const res = await fetch(`/api/geocode-check?q=${encodeURIComponent(value.trim())}`);
+          const data = await res.json();
+          setLocationResolved(data.found ?? '');
+        } catch {
+          setLocationResolved('');
+        } finally {
+          setLocationChecking(false);
+        }
+      }, 800);
+    }
   };
 
   const getSunSign = (dateStr: string): string => {
-    const [month, day] = dateStr.split('/').map(num => parseInt(num));
+    const [day, month] = dateStr.split('/').map(num => parseInt(num));
     const m = month; const d = day;
     if ((m === 3 && d >= 21) || (m === 4 && d <= 19)) return 'aries';
     if ((m === 4 && d >= 20) || (m === 5 && d <= 20)) return 'taurus';
@@ -145,7 +176,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const getMoonSign = (dateStr: string, timeStr: string): string => {
-    const [month, day, year] = dateStr.split('/').map(Number);
+    const [day, month, year] = dateStr.split('/').map(Number);
     const dayOfYear = Math.floor((new Date(year, month - 1, day).getTime() - new Date(year, 0, 0).getTime()) / 86400000);
     const moonIndex = Math.floor((dayOfYear * 12) / 365) % 12;
     const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
@@ -188,6 +219,72 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     capricorn: "people see composure, but they miss the weight of it.",
     aquarius: "you think in ways that feel different from everyone around you.",
     pisces: "you feel everything like it's yours, even when it isn't."
+  };
+
+  const moonInsightsMobile: { [key: string]: string } = {
+    aries: "you process by moving, not by sitting still with it.",
+    taurus: "you need solid ground. change shakes you more than anyone sees.",
+    gemini: "you need to talk it through to make sense of what you feel.",
+    cancer: "your emotions go back further than you — it's ancestral weight.",
+    leo: "you need to be seen when you're soft, not just when you're shining.",
+    virgo: "you try to organise feelings like problems to solve. some refuse to be fixed.",
+    libra: "you feel through the people around you until you've lost track of what's yours.",
+    scorpio: "you're all the way in or all the way shut. no in-between.",
+    sagittarius: "you need space around your feelings. when it tightens, it starts to feel like captivity.",
+    capricorn: "you keep vulnerability contained. letting it loose feels like losing control.",
+    aquarius: "you need distance to understand what you feel. raw emotion without analysis panics you.",
+    pisces: "you soak up everything around you. other people's pain becomes yours.",
+  };
+
+  const risingInsightsMobile: { [key: string]: string } = {
+    aries: "you walk in direct and braced. people mistake it for fearlessness.",
+    taurus: "you make people feel safe without trying, even when you're still finding your footing.",
+    gemini: "you shift to match whoever's in front of you, then forget which version is actually you.",
+    cancer: "you lead with softness even when you're trying to protect yourself.",
+    leo: "you take up space without trying, even when you're making yourself smaller.",
+    virgo: "you arrive looking put-together. no one sees how much overthinking it took.",
+    libra: "you make everyone comfortable. sometimes you disappear in the process.",
+    scorpio: "people feel your intensity before you've spoken. small talk is agony.",
+    sagittarius: "you show up open and light. people don't realise you're just better at moving than sitting still.",
+    capricorn: "you look composed and fine. they can't see the pressure you're holding inside.",
+    aquarius: "you show up slightly outside the frame. people either get it or they don't.",
+    pisces: "you absorb the feeling of rooms without meaning to. it takes more from you than they realise.",
+  };
+
+  const numerologyInsightsMobile: { [key: number]: string } = {
+    1: "you're here to lead, even when it's isolating.",
+    2: "you build bridges between people. but sometimes you've lost your own voice in the process.",
+    3: "expression is what you're here to do. holding it back makes it fester.",
+    4: "you're building something meant to last. the pressure of being the stable one is exhausting.",
+    5: "freedom isn't optional for you. you're figuring out how to commit without disappearing.",
+    6: "you're built to care for people. you're learning that martyrdom isn't love.",
+    7: "you're here to go deep. surface conversations make your skin itch.",
+    8: "your path is about legacy. real strength isn't the same as control.",
+    9: "you're always finishing cycles, releasing things even when it hurts.",
+    11: "you pick up on frequencies others can't hear. the sensitivity is overwhelming until you realise it's a gift.",
+    22: "you're here to build something massive. the vision is clear but bringing it to earth takes everything.",
+    33: "you carry a healing frequency people feel before you speak. the responsibility gets heavy.",
+  };
+
+  const getWelcomeMessageMobile = (): string => {
+    if (!birthDate) return '';
+    const sunSign = getSunSign(birthDate);
+    const hasBirthTime = birthTime && !noKnowBirthTime;
+    const hasLocation = birthLocation && birthLocation.trim().length >= 2;
+    if (hasBirthTime && hasLocation) {
+      const moonSign = getMoonSign(birthDate, birthTime);
+      const risingSign = getRisingSign(birthDate, birthTime);
+      return `${name}, hey.\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\n${risingInsightsMobile[risingSign]}\n\nthe cards see all of it.`;
+    }
+    if (hasBirthTime) {
+      const moonSign = getMoonSign(birthDate, birthTime);
+      return `nice to meet you, ${name}.\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\nthe cards get it.`;
+    }
+    if (hasLocation) {
+      return `nice to meet you, ${name}.\n\n${sunInsightsMobile[sunSign]}\n\nthe cards get it.`;
+    }
+    const lifePathNumber = getLifePathNumber(birthDate);
+    return `${name}, welcome.\n\n${sunInsightsMobile[sunSign]}\n\n${numerologyInsightsMobile[lifePathNumber]}\n\ndraw whenever it feels right.`;
   };
 
   const moonInsights: { [key: string]: string } = {
@@ -261,7 +358,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (currentStep === 3) {
       setDisplayedText('');
       setIsTypingComplete(false);
-      const fullText = getWelcomeMessage();
+      const fullText = isMobile ? getWelcomeMessageMobile() : getWelcomeMessage();
       let currentIndex = 0;
       const typingInterval = setInterval(() => {
         if (currentIndex < fullText.length) {
@@ -274,7 +371,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       }, 30);
       return () => clearInterval(typingInterval);
     }
-  }, [currentStep, name, birthDate]);
+  }, [currentStep, name, birthDate, isMobile]);
 
   // ── Drag helpers ─────────────────────────────────────────────────────────
   const addCascadeCard = (x: number, y: number) => {
@@ -476,7 +573,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               <div>
                 <input
                   type="text"
-                  placeholder="mm/dd/yyyy"
+                  placeholder="dd/mm/yyyy"
                   value={birthDate}
                   onChange={(e) => handleDateChange(e.target.value)}
                   onKeyDown={(e) => {
@@ -521,7 +618,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 <div className="flex-1">
                   <input
                     type="text"
-                    placeholder="city, country (optional)"
+                    placeholder="city, country (close enough)"
                     value={birthLocation}
                     onChange={(e) => handleLocationChange(e.target.value)}
                     className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
@@ -529,6 +626,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   />
                   {locationError && (
                     <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
+                  )}
+                  {!locationError && locationChecking && (
+                    <p className="text-[#E1EEFC]/40 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
+                  )}
+                  {!locationError && !locationChecking && locationResolved !== null && (
+                    <p className={`text-lg mt-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                      {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
+                    </p>
                   )}
                 </div>
               </div>
@@ -556,44 +661,44 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 3:
         return (
-          // Text starts from the top (not centred) so typewriter grows downward, matching desktop
-          <div className="flex flex-col items-center justify-between h-full py-4 gap-3">
-            <div className="flex-1 overflow-y-auto w-full">
+          <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
+            <div className="flex-1 w-full">
               <p
-                className="text-[27px] md:text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.25' }}
+                className="text-[19px] text-[#E1EEFC] text-center whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}
               >
                 {displayedText}
               </p>
             </div>
 
-            {isTypingComplete && !isDragging && (
-              <div className="flex flex-col items-center gap-1.5 pb-1 shrink-0">
-                <img
-                  src="/card-back.png"
-                  alt="Card back"
-                  className="rounded-2xl shadow-xl select-none"
-                  style={{
-                    width: '80px',
-                    height: '120px',
-                    objectFit: 'cover',
-                    cursor: 'grab',
-                    userSelect: 'none',
-                    WebkitUserSelect: 'none',
-                    touchAction: 'none',
-                  }}
-                  onMouseDown={handleMouseDown}
-                  onTouchStart={handleTouchStart}
-                  draggable="false"
-                />
-                <p
-                  className="text-base text-[#E1EEFC]/60 animate-bounce"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  drag me to begin
-                </p>
-              </div>
-            )}
+            <div
+              className="flex flex-col items-center gap-1.5 pb-1 shrink-0"
+              style={{ visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden' }}
+            >
+              <img
+                src="/card-back.png"
+                alt="Card back"
+                className="rounded-2xl shadow-xl select-none"
+                style={{
+                  width: '80px',
+                  height: '120px',
+                  objectFit: 'cover',
+                  cursor: 'grab',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  touchAction: 'none',
+                }}
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                draggable="false"
+              />
+              <p
+                className="text-base text-[#E1EEFC]/60 animate-bounce"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+              >
+                drag me to begin
+              </p>
+            </div>
           </div>
         );
 
@@ -637,7 +742,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       {/* ── MOBILE layout — full screen, no device frame ── */}
       {/* For step 3 we remove justify-center and give the inner div flex-1 so
           h-full works correctly and the typewriter text flows from the top */}
-      <div className={`md:hidden relative z-10 flex flex-col min-h-screen px-5 py-8 ${currentStep === 3 ? '' : 'justify-center'}`}>
+      <div className={`md:hidden relative z-10 flex flex-col px-5 ${currentStep === 3 ? 'h-[100dvh] overflow-hidden py-6' : 'min-h-screen py-8 justify-center'}`}>
         <div className={`w-full max-w-sm mx-auto ${currentStep === 3 ? 'flex-1 flex flex-col' : ''}`}>
           {renderStepContent()}
         </div>
@@ -754,7 +859,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <div className="w-full max-w-2xl space-y-4">
                       <div className="flex gap-3">
                         <div className="flex-1">
-                          <input type="text" placeholder="mm/dd/yyyy" value={birthDate}
+                          <input type="text" placeholder="dd/mm/yyyy" value={birthDate}
                             onChange={(e) => handleDateChange(e.target.value)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
@@ -777,12 +882,20 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
                         </div>
                       </div>
-                      <input type="text" placeholder="city, country" value={birthLocation}
+                      <input type="text" placeholder="city, country (close enough)" value={birthLocation}
                         onChange={(e) => handleLocationChange(e.target.value)}
                         className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
                         style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
                       />
                       {locationError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>}
+                      {!locationError && locationChecking && (
+                        <p className="text-black/40 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
+                      )}
+                      {!locationError && !locationChecking && locationResolved !== null && (
+                        <p className={`text-lg mt-1 text-center ${locationResolved ? 'text-green-700/80' : 'text-black/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                          {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
+                        </p>
+                      )}
                     </div>
                     {/* Always rendered — opacity toggles to avoid layout shift */}
                     <button
@@ -808,15 +921,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <div className="flex-1 overflow-y-auto">
                       <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
                     </div>
-                    {isTypingComplete && !isDragging && (
-                      <div className="flex items-center gap-4 mb-8">
-                        <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
-                          style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
-                          onMouseDown={handleMouseDown} draggable="false"
-                        />
-                        <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
-                      </div>
-                    )}
+                    <div
+                      className="flex items-center gap-4 mb-8"
+                      style={{ visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden' }}
+                    >
+                      <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
+                        style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
+                        onMouseDown={handleMouseDown} draggable="false"
+                      />
+                      <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
+                    </div>
                   </div>
                 )}
 
@@ -834,9 +948,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             position: 'fixed', left: card.x - 70, top: card.y - 105,
             width: '140px', height: '210px', objectFit: 'cover',
             transform: `rotate(${card.rotation}deg)`,
-            opacity: shouldCrumble ? 0 : 1,
-            filter: shouldCrumble ? 'blur(10px)' : 'none',
-            transition: shouldCrumble ? 'opacity 0.8s ease-out, filter 0.8s ease-out' : 'none',
+            animation: shouldCrumble ? 'sandDissolve 1.2s ease-out forwards' : 'none',
             pointerEvents: 'none', zIndex: 9000 + index,
             userSelect: 'none', WebkitUserSelect: 'none',
           }}
