@@ -172,15 +172,16 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll to current month, leaving month name visible below the fixed nav + sticky year header
+  // Scroll to current month after the first paint so getBoundingClientRect is accurate
   useEffect(() => {
-    if (currentMonthRef.current) {
-      const navHeight = 56; // fixed top nav (pt-14)
+    requestAnimationFrame(() => {
+      if (!currentMonthRef.current) return;
+      const navHeight = window.innerWidth >= 768 ? 80 : 56; // md:top-20 = 80px, top-14 = 56px
       const stickyHeight = yearHeaderRef.current?.offsetHeight ?? 88;
-      const gap = 12; // breathing room so month name sits comfortably below headers
+      const gap = 16;
       const elementTop = currentMonthRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: elementTop - navHeight - stickyHeight - gap, behavior: 'instant' });
-    }
+    });
   }, []);
 
   // Look up past card directly from stored cardId — never re-fetch from API

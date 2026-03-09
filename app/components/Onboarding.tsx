@@ -191,34 +191,34 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const sunInsights: { [key: string]: string } = {
-    aries: "you move through the world with this quiet fire, and people see the action but miss how much you're holding back. there's a part of you that second-guesses before the leap, even when everyone assumes you're certain.",
-    taurus: "you show up steady and people lean on that, but underneath there's this exhaustion from always being the one who holds it together. sometimes you just want permission to be soft without the world needing something from you.",
-    gemini: "you're quick and adaptable, and people think that means you're light. but there's this depth you carry that no one sees, thoughts that circle back when you're alone and the performance is over.",
-    cancer: "you feel everything even when you don't show it, and people mistake your care for simplicity. but you're learning the harder thing: when to protect yourself, when to let others carry their own weight.",
-    leo: "you shine in rooms and people assume it's confidence, but sometimes the spotlight feels like a weight you didn't ask for. there's a version of you that just wants to rest without worrying the light will go out.",
-    virgo: "you notice everything, the details and patterns others miss. but sometimes all that analyzing is just a way to stay above the mess instead of sitting in the feeling itself.",
-    libra: "you make it look easy, the balance and the grace. but inside you're constantly weighing what you gave against what you got back, wondering if you disappeared somewhere in the middle.",
-    scorpio: "you hold things close because you've learned that intensity scares people. but what they don't see is how carefully you choose what to reveal, how much protection that distance really is.",
-    sagittarius: "you're always looking ahead, searching for the next thing. but sometimes the optimism is just armor keeping you moving so you don't have to sit with what's uncomfortable right here.",
-    capricorn: "you carry responsibility like it's woven into you, and people see composure. but they miss the weight of it, the exhaustion you don't name because naming it feels like failing.",
-    aquarius: "you see patterns others miss and think in ways that feel different from everyone around you. but sometimes that distance is lonely, like you're watching from outside a window you can't quite open.",
-    pisces: "you dissolve into the emotions around you and feel everything like it's yours. but sometimes you need permission to put it down, to remember that not all of it belongs to you."
+    aries: "you carry more under the surface than people tend to see. there's a lot more going on than you tend to show, and that's what makes this interesting.",
+    taurus: "you hold things together in ways others only notice when you stop. there's something in you that needs far more than it asks for.",
+    gemini: "you think fast and feel deeply, and most people only catch one of those things. the cards tend to find both.",
+    cancer: "you absorb more than you let on — other people's heaviness, old patterns, things that were never even yours. it shows up.",
+    leo: "there's more tenderness in you than the confidence suggests. it's often the softer version that people actually need.",
+    virgo: "you notice everything, including the things that would be easier to miss. the cards like working with that kind of attention.",
+    libra: "you carry a lot for the people around you and make it look effortless. the cards are good at finding what that costs.",
+    scorpio: "you already sense more than you're saying — about the situation, about people, about yourself. the cards just confirm it.",
+    sagittarius: "you keep looking forward because standing still feels uncomfortable. there's usually something worth pausing for.",
+    capricorn: "you hold everything together and almost never let anyone see the effort. the cards notice what you've stopped noticing about yourself.",
+    aquarius: "you observe more than you participate. the cards tend to ask what you're watching from that distance.",
+    pisces: "everything you feel lands twice as hard because you feel it for yourself and for everyone else. sorting that out is the real work.",
   };
 
   // Short mobile-only insights (1 sentence each)
   const sunInsightsMobile: { [key: string]: string } = {
-    aries: "you move with quiet fire, and people miss how much you hold back.",
-    taurus: "you hold it together for everyone, but sometimes you just want permission to be soft.",
-    gemini: "people think you're light, but there's a depth you carry that no one sees.",
-    cancer: "you feel everything, even when you don't show it.",
-    leo: "the spotlight feels like a weight you didn't ask for sometimes.",
-    virgo: "you notice everything others miss, but the analyzing never stops.",
-    libra: "you make it look easy, but inside you're always weighing what you gave.",
-    scorpio: "you hold things close because you've learned intensity scares people.",
-    sagittarius: "the optimism is armor, keeping you moving so you don't have to sit still.",
-    capricorn: "people see composure, but they miss the weight of it.",
-    aquarius: "you think in ways that feel different from everyone around you.",
-    pisces: "you feel everything like it's yours, even when it isn't."
+    aries: "you carry more under the surface than people know.",
+    taurus: "steadiness that costs more than it looks.",
+    gemini: "quick on the outside, much deeper underneath.",
+    cancer: "you absorb so much that isn't yours to carry.",
+    leo: "more tender than the confidence suggests.",
+    virgo: "you notice everything. even the things you'd rather not.",
+    libra: "holding a lot together for everyone.",
+    scorpio: "you already know. you're just waiting to be sure.",
+    sagittarius: "always moving so you don't have to stop.",
+    capricorn: "composure that takes effort they can't see.",
+    aquarius: "observing from a distance, feeling it all anyway.",
+    pisces: "everything lands twice as hard when you feel it for everyone.",
   };
 
   const moonInsightsMobile: { [key: string]: string } = {
@@ -274,62 +274,62 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (hasBirthTime && hasLocation) {
       const moonSign = getMoonSign(birthDate, birthTime);
       const risingSign = getRisingSign(birthDate, birthTime);
-      return `${name}, hey.\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\n${risingInsightsMobile[risingSign]}\n\nthe cards see all of it.`;
+      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\n${risingInsightsMobile[risingSign]}\n\nthe cards are ready — pull one!`;
     }
     if (hasBirthTime) {
       const moonSign = getMoonSign(birthDate, birthTime);
-      return `nice to meet you, ${name}.\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\nthe cards get it.`;
+      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\nthe cards are excited. pull one!`;
     }
     if (hasLocation) {
-      return `nice to meet you, ${name}.\n\n${sunInsightsMobile[sunSign]}\n\nthe cards get it.`;
+      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\nthe cards are ready for you. pull one!`;
     }
     const lifePathNumber = getLifePathNumber(birthDate);
-    return `${name}, welcome.\n\n${sunInsightsMobile[sunSign]}\n\n${numerologyInsightsMobile[lifePathNumber]}\n\ndraw whenever it feels right.`;
+    return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${numerologyInsightsMobile[lifePathNumber]}\n\nthe cards are ready. pull one!`;
   };
 
   const moonInsights: { [key: string]: string } = {
-    aries: "emotionally, you can't sit still with what hurts. you need to move through it, do something, anything. processing while static feels like drowning.",
-    taurus: "your emotional world craves the familiar, the solid ground. when things shift unexpectedly, it shakes you more than anyone sees.",
-    gemini: "you need to talk through what you feel, turn it over in conversation until it makes sense. silence with emotion feels suffocating.",
-    cancer: "your feelings go deeper than this lifetime, like you're carrying emotions your family never had words for. it's ancestral weight.",
-    leo: "you need people to see you when you're soft, not just when you're shining. the attention isn't vanity, it's how you know you're real.",
-    virgo: "you try to organize emotions like they're problems to solve, tasks to complete. but some feelings refuse to be fixed.",
-    libra: "you feel through the people around you, absorbing and reflecting until you're not sure what's yours anymore. it's exhausting.",
-    scorpio: "your emotions don't know moderation. you're either diving into the depths or shutting down completely, no in-between.",
-    sagittarius: "you need space around your feelings, room to breathe and move. when commitment tightens, it starts to feel like captivity.",
-    capricorn: "you guard your soft parts with discipline, keep vulnerability contained. letting it loose feels like losing control of everything.",
-    aquarius: "you need distance to understand what you feel, space to think it through. raw emotion without analysis makes you panic.",
-    pisces: "you soak up everything around you like you're made of water. other people's pain becomes yours, and you forget where you end."
+    aries: "emotionally, you process by moving — you need to do something with it, not sit still.",
+    taurus: "your inner world needs stability. unexpected shifts rattle you harder than most people around you know.",
+    gemini: "you need to talk through what you feel to make sense of it. silence with big emotions doesn't work for you.",
+    cancer: "some of what you carry emotionally is older than you — pattern, not just feeling.",
+    leo: "you need to be seen when you're soft, not just when you're on.",
+    virgo: "you try to organise feelings like problems to solve. some of them refuse.",
+    libra: "you feel through the people around you until you've lost track of what's actually yours.",
+    scorpio: "there's no in-between emotionally — all in or all the way shut.",
+    sagittarius: "you need space around your feelings. too much closeness starts to feel like confinement.",
+    capricorn: "vulnerability feels like losing control. you're slowly learning that it isn't.",
+    aquarius: "you process feelings better from a distance. raw emotion without analysis makes things worse.",
+    pisces: "you absorb everything around you. other people's pain becomes yours before you've noticed.",
   };
 
   const risingInsights: { [key: string]: string } = {
-    aries: "you walk into rooms like you're braced for impact, direct and unfiltered. people mistake it for fearlessness, but really you just can't do pretense.",
-    taurus: "there's something grounded in how you show up that makes people feel safe. they don't know you're still finding your footing too.",
-    gemini: "you shift to match whoever's in front of you, adapting without thinking. it's useful until you can't remember which version is actually you.",
-    cancer: "you lead with something soft even when you're trying to protect yourself. people pick up on it before you've said anything.",
-    leo: "you take up space without meaning to, even when you're trying to make yourself smaller. there's something magnetic you can't turn off.",
-    virgo: "you arrive looking like you've considered every detail, put together and prepared. no one sees how much overthinking it took to get there.",
-    libra: "you smooth things over without trying, make everyone comfortable. but sometimes in all that harmony, you disappear.",
-    scorpio: "there's an intensity people feel before you've even spoken. you're terrible at small talk because you can't do surface level.",
-    sagittarius: "you show up open and enthusiastic, like nothing could weigh you down. people don't realize you're just better at moving forward than sitting still.",
-    capricorn: "you carry yourself with this serious composure that makes people think you're fine. they can't see the pressure you're holding inside.",
-    aquarius: "you show up slightly outside the frame, different in a way that's hard to name. people either get it or they don't, rarely anything in between.",
-    pisces: "you absorb the feeling of rooms without meaning to, porous in a way that makes people feel seen. it takes more from you than they realize."
+    aries: "you show up direct and ready, even when you're not — people read that as certainty.",
+    taurus: "something in your presence makes people feel settled before you've said anything.",
+    gemini: "you shift to fit whoever's in front of you, which works until you've lost track of which one is you.",
+    cancer: "you lead with care even when you're trying to protect yourself — it comes through anyway.",
+    leo: "you take up space effortlessly, even when you're actively trying not to.",
+    virgo: "you arrive looking composed and prepared. they can't see the analysis that got you there.",
+    libra: "you smooth everything over for everyone. sometimes you disappear a little in the process.",
+    scorpio: "people feel the intensity before you've spoken. small talk genuinely costs you something.",
+    sagittarius: "you come across bright and open. people don't realise you're just faster at moving than stopping.",
+    capricorn: "you carry a composed, reliable presence. the pressure behind it isn't visible.",
+    aquarius: "you arrive slightly outside the frame. people either get that or they don't.",
+    pisces: "you absorb the mood of whatever room you enter. it takes more from you than it looks.",
   };
 
   const numerologyInsights: { [key: number]: string } = {
-    1: "your path keeps pushing you to lead even when it feels isolating. you're learning to trust where you're going when no one else is coming with you.",
-    2: "you're here to find the middle ground, build bridges between people. but sometimes keeping peace means you've lost track of your own voice.",
-    3: "expression is what you're here to do, whether it's through words or art or just being fully yourself. when you hold it back, it festers inside.",
-    4: "you're building something meant to last, something solid. but that pressure to be the stable one can feel like you're holding up the ceiling.",
-    5: "freedom isn't optional for you, it's oxygen. routine makes you want to crawl out of your skin. you're figuring out how to commit without disappearing.",
-    6: "you're built to take care of people, to serve and nurture. but you're learning the hard way that martyrdom isn't love.",
-    7: "you're here to go deep, question everything, seek what's true underneath. surface conversations make your skin itch. you need solitude like other people need air.",
-    8: "your work is about power and legacy, building something that matters. but you're learning that real strength isn't the same as control.",
-    9: "you're always finishing cycles, letting go of what other people cling to. wisdom for you means releasing, again and again, even when it hurts.",
-    11: "you pick up on things most people miss, tuned into frequencies others can't hear. the sensitivity is overwhelming until you realize it's a gift.",
-    22: "you're here to build something massive, something that outlives you. the vision is crystal clear but bringing it to life takes everything you have.",
-    33: "you carry this healing frequency that people can feel before you speak. the responsibility of it gets heavy when you realize they're all looking to you."
+    1: "you're being pushed to lead, even when it feels like a solo thing.",
+    2: "you build bridges between people. sometimes you lose your own voice doing it.",
+    3: "expression is what you're here for. holding it in makes things worse.",
+    4: "you're building something solid, and carrying the weight of being the stable one.",
+    5: "freedom isn't optional for you — you're figuring out how to commit without losing yourself.",
+    6: "you're built to care for people. the line between love and self-erasure is the real work.",
+    7: "you're here to go deep. surface-level anything makes your skin itch.",
+    8: "building something real that lasts. strength and control aren't the same thing.",
+    9: "you're always releasing things that others cling to. that's the path.",
+    11: "you pick up on frequencies others miss. the sensitivity is the gift, even when it's overwhelming.",
+    22: "you're here to build something massive. bringing the vision down to earth is everything.",
+    33: "you carry something people feel before you speak. the weight of that responsibility is real.",
   };
 
   const getWelcomeMessage = (): string => {
@@ -340,17 +340,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (hasBirthTime && hasLocation) {
       const moonSign = getMoonSign(birthDate, birthTime);
       const risingSign = getRisingSign(birthDate, birthTime);
-      return `${name}, hey.\n\n${sunInsights[sunSign]} ${moonInsights[moonSign]} ${risingInsights[risingSign]}\n\nthe cards see all of it. take your time here.`;
+      return `${name}!\n\n${sunInsights[sunSign]}\n\n${moonInsights[moonSign]}\n\n${risingInsights[risingSign]}\n\nthe cards see all of it — let's find out what's up.`;
     }
     if (hasBirthTime) {
       const moonSign = getMoonSign(birthDate, birthTime);
-      return `nice to meet you, ${name}.\n\n${sunInsights[sunSign]} ${moonInsights[moonSign]}\n\nthe cards get it. they're here when you need them.`;
+      return `${name}!\n\n${sunInsights[sunSign]}\n\n${moonInsights[moonSign]}\n\nthe cards get it. pull one when you're ready.`;
     }
     if (hasLocation) {
-      return `nice to meet you, ${name}.\n\n${sunInsights[sunSign]}\n\nthe cards get it. they're here when you need them.`;
+      return `${name}!\n\n${sunInsights[sunSign]}\n\nthe cards get it. pull one when you're ready.`;
     }
     const lifePathNumber = getLifePathNumber(birthDate);
-    return `${name}, welcome.\n\n${sunInsights[sunSign]} ${numerologyInsights[lifePathNumber]}\n\nthe cards won't ask you to explain yourself. draw whenever it feels right.`;
+    return `${name}!\n\n${sunInsights[sunSign]}\n\n${numerologyInsights[lifePathNumber]}\n\nthe cards are ready whenever you are.`;
   };
 
   // Typewriter effect
@@ -480,7 +480,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     switch (currentStep) {
       case 0:
         return (
-          <div className="flex flex-col items-center justify-center h-full gap-12 py-12">
+          <div className="flex flex-col items-center justify-center flex-1 gap-12 py-12">
             <img
               src="/slow-hour-logo.png"
               alt="slow hour"
@@ -503,8 +503,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 1:
         return (
-          <div className="flex flex-col items-center gap-8 py-12 w-full">
-            <div className="text-center">
+          <div className="flex flex-col items-center w-full flex-1 pt-14 pb-6">
+            <div className="text-center mb-5">
               <h2
                 className="text-5xl md:text-6xl text-[#E1EEFC]"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
@@ -512,7 +512,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 what's your name?
               </h2>
               <p
-                className="text-2xl text-[#E1EEFC]/60 mt-2"
+                className="text-2xl text-[#E1EEFC]/60 mt-1"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 the one that feels most like you
@@ -530,13 +530,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               autoFocus
             />
 
-            {/* Always rendered — opacity toggles to avoid layout shift */}
+            {/* mt-auto pins button to the bottom — opacity toggles to avoid layout shift */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromName}
               tabIndex={canContinueFromName ? 0 : -1}
               aria-hidden={!canContinueFromName}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-2"
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-auto"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
@@ -552,8 +552,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 2:
         return (
-          <div className="flex flex-col items-center gap-6 py-10 w-full">
-            <div className="text-center">
+          <div className="flex flex-col items-center w-full flex-1 pt-10 pb-6">
+            <div className="text-center mb-4">
               <h2
                 className="text-5xl md:text-6xl text-[#E1EEFC]"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
@@ -561,14 +561,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 when were you born?
               </h2>
               <p
-                className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-2"
+                className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-1"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 time moves differently depending on when you arrived
               </p>
             </div>
 
-            <div className="w-full space-y-3">
+            <div className="w-full space-y-2">
               {/* Date — full width on mobile */}
               <div>
                 <input
@@ -587,13 +587,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                   style={dateError ? inputErrorStyle : inputStyle}
                 />
-                {dateError && (
-                  <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>
-                )}
+                {/* Pre-allocated height so button never shifts when error appears */}
+                <div className="min-h-[24px]">
+                  {dateError && (
+                    <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>
+                  )}
+                </div>
               </div>
 
               {/* Time + Location — stacked on mobile, side by side on md+ */}
-              <div className="flex flex-col md:flex-row gap-3">
+              <div className="flex flex-col md:flex-row gap-2">
                 <div className="flex-1">
                   <input
                     type="text"
@@ -610,9 +613,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                     style={timeError ? inputErrorStyle : inputStyle}
                   />
-                  {timeError && (
-                    <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>
-                  )}
+                  <div className="min-h-[24px]">
+                    {timeError && (
+                      <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex-1">
@@ -624,28 +629,30 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                     style={locationError ? inputErrorStyle : inputStyle}
                   />
-                  {locationError && (
-                    <p className="text-red-400 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
-                  )}
-                  {!locationError && locationChecking && (
-                    <p className="text-[#E1EEFC]/40 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
-                  )}
-                  {!locationError && !locationChecking && locationResolved !== null && (
-                    <p className={`text-lg mt-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                      {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
-                    </p>
-                  )}
+                  <div className="min-h-[24px]">
+                    {locationError && (
+                      <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
+                    )}
+                    {!locationError && locationChecking && (
+                      <p className="text-[#E1EEFC]/40 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
+                    )}
+                    {!locationError && !locationChecking && locationResolved !== null && (
+                      <p className={`text-base mt-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                        {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Always rendered — opacity toggles to avoid layout shift */}
+            {/* mt-auto pins button to the bottom — opacity toggles to avoid layout shift */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromBirthdate}
               tabIndex={canContinueFromBirthdate ? 0 : -1}
               aria-hidden={!canContinueFromBirthdate}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-2"
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-auto"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
@@ -664,8 +671,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
             <div className="flex-1 w-full">
               <p
-                className="text-[19px] text-[#E1EEFC] text-center whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}
+                className="text-[22px] text-[#E1EEFC] text-center whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.5' }}
               >
                 {displayedText}
               </p>
@@ -740,10 +747,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="absolute inset-0 bg-[#172211]/60" />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
-      {/* For step 3 we remove justify-center and give the inner div flex-1 so
-          h-full works correctly and the typewriter text flows from the top */}
-      <div className={`md:hidden relative z-10 flex flex-col px-5 ${currentStep === 3 ? 'h-[100dvh] overflow-hidden py-6' : 'min-h-screen py-8 justify-center'}`}>
-        <div className={`w-full max-w-sm mx-auto ${currentStep === 3 ? 'flex-1 flex flex-col' : ''}`}>
+      <div className={`md:hidden relative z-10 flex flex-col px-5 h-[100dvh] ${currentStep === 3 ? 'overflow-hidden py-6' : 'py-8'}`}>
+        <div className="w-full max-w-sm mx-auto flex-1 flex flex-col">
           {renderStepContent()}
         </div>
       </div>
