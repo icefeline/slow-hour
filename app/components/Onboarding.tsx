@@ -503,40 +503,43 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 1:
         return (
-          <div className="flex flex-col items-center w-full flex-1 pt-14 pb-6">
-            <div className="text-center mb-5">
-              <h2
-                className="text-5xl md:text-6xl text-[#E1EEFC]"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-              >
-                what's your name?
-              </h2>
-              <p
-                className="text-2xl text-[#E1EEFC]/60 mt-1"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-              >
-                the one that feels most like you
-              </p>
+          <div className="flex flex-col items-center w-full flex-1 py-6">
+            {/* flex-1 centers the content vertically in the remaining space */}
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-5">
+              <div className="text-center">
+                <h2
+                  className="text-5xl md:text-6xl text-[#E1EEFC]"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  what's your name?
+                </h2>
+                <p
+                  className="text-2xl text-[#E1EEFC]/60 mt-1"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  the one that feels most like you
+                </p>
+              </div>
+
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                placeholder="your name"
+                className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                style={inputStyle}
+                autoFocus
+              />
             </div>
 
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-              placeholder="your name"
-              className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-              style={inputStyle}
-              autoFocus
-            />
-
-            {/* mt-auto pins button to the bottom — opacity toggles to avoid layout shift */}
+            {/* Button sits at the bottom — opacity toggles to avoid layout shift */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromName}
               tabIndex={canContinueFromName ? 0 : -1}
               aria-hidden={!canContinueFromName}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-auto"
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
@@ -552,84 +555,80 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 2:
         return (
-          <div className="flex flex-col items-center w-full flex-1 pt-10 pb-6">
-            <div className="text-center mb-4">
-              <h2
-                className="text-5xl md:text-6xl text-[#E1EEFC]"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-              >
-                when were you born?
-              </h2>
-              <p
-                className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-1"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-              >
-                time moves differently depending on when you arrived
-              </p>
-            </div>
+          <div className="flex flex-col items-center w-full flex-1 py-6">
+            {/* flex-1 centers the content vertically; errors expand the group but button stays at bottom */}
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-4">
+              <div className="text-center">
+                <h2
+                  className="text-5xl md:text-6xl text-[#E1EEFC]"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  when were you born?
+                </h2>
+                <p
+                  className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-1"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  time moves differently depending on when you arrived
+                </p>
+              </div>
 
-            <div className="w-full space-y-2">
-              {/* Date — full width on mobile */}
-              <div>
-                <input
-                  type="text"
-                  placeholder="dd/mm/yyyy"
-                  value={birthDate}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
-                    if (e.key === 'Backspace' && birthDate.length > 0) {
-                      e.preventDefault();
-                      handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1));
-                    }
-                  }}
-                  maxLength={10}
-                  className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                  style={dateError ? inputErrorStyle : inputStyle}
-                />
-                {/* Pre-allocated height so button never shifts when error appears */}
-                <div className="min-h-[24px]">
+              <div className="w-full flex flex-col gap-4">
+                {/* Date — full width */}
+                <div>
+                  <input
+                    type="text"
+                    placeholder="dd/mm/yyyy"
+                    value={birthDate}
+                    onChange={(e) => handleDateChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                      if (e.key === 'Backspace' && birthDate.length > 0) {
+                        e.preventDefault();
+                        handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1));
+                      }
+                    }}
+                    maxLength={10}
+                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    style={dateError ? inputErrorStyle : inputStyle}
+                  />
                   {dateError && (
                     <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>
                   )}
                 </div>
-              </div>
 
-              {/* Time + Location — stacked on mobile, side by side on md+ */}
-              <div className="flex flex-col md:flex-row gap-2">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="hh:mm (optional)"
-                    value={birthTime}
-                    onChange={(e) => handleTimeChange(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Backspace' && birthTime.length > 0) {
-                        e.preventDefault();
-                        handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
-                      }
-                    }}
-                    maxLength={5}
-                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                    style={timeError ? inputErrorStyle : inputStyle}
-                  />
-                  <div className="min-h-[24px]">
+                {/* Time + Location — stacked on mobile, side by side on md+ */}
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="hh:mm (optional)"
+                      value={birthTime}
+                      onChange={(e) => handleTimeChange(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && birthTime.length > 0) {
+                          e.preventDefault();
+                          handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
+                        }
+                      }}
+                      maxLength={5}
+                      className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                      style={timeError ? inputErrorStyle : inputStyle}
+                    />
                     {timeError && (
                       <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>
                     )}
                   </div>
-                </div>
 
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="city, country (close enough)"
-                    value={birthLocation}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                    style={locationError ? inputErrorStyle : inputStyle}
-                  />
-                  <div className="min-h-[24px]">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      placeholder="city, country"
+                      value={birthLocation}
+                      onChange={(e) => handleLocationChange(e.target.value)}
+                      className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                      style={locationError ? inputErrorStyle : inputStyle}
+                    />
                     {locationError && (
                       <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
                     )}
@@ -646,13 +645,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
             </div>
 
-            {/* mt-auto pins button to the bottom — opacity toggles to avoid layout shift */}
+            {/* Button sits at the bottom — opacity toggles to avoid layout shift */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromBirthdate}
               tabIndex={canContinueFromBirthdate ? 0 : -1}
               aria-hidden={!canContinueFromBirthdate}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200 mt-auto"
+              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
