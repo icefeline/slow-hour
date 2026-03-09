@@ -10,6 +10,7 @@ interface ActiveInsightProps {
   userName?: string;
   isLoading?: boolean;
   isRateLimited?: boolean;
+  onContinue?: () => void;
   transitExplanation?: {
     transitingPlanet: string;
     transitingPlanetMeaning: string;
@@ -21,7 +22,7 @@ interface ActiveInsightProps {
   };
 }
 
-export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userName, isLoading: externalLoading, isRateLimited, transitExplanation }: ActiveInsightProps) {
+export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userName, isLoading: externalLoading, isRateLimited, onContinue, transitExplanation }: ActiveInsightProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [internalLoading, setInternalLoading] = useState(true);
   const [dots, setDots] = useState('');
@@ -96,32 +97,34 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                   fontWeight: 400
                 }}
               >
-                hey! thank you so much for using slow hour. if this has meant something to you, you can unlock unlimited readings for a small one-time contribution — it goes directly toward keeping this running.
+                hey! thank you so much for using slow hour. i made this entirely by myself — if it&apos;s meant something to you, a small contribution helps keep it running.
               </p>
-              <a
-                href="https://buymeacoffee.com/shxntxnx"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-4 text-[#172211] underline underline-offset-4 hover:opacity-60 transition-opacity"
-                style={{
-                  fontSize: 'clamp(16px, 2.5vw, 21px)',
-                  fontFamily: 'var(--font-vt323), monospace',
-                  fontWeight: 700
-                }}
-              >
-                buy me a coffee →
-              </a>
-              <p
-                className="text-[#172211]/60 mt-4"
-                style={{
-                  fontSize: 'clamp(14px, 2vw, 18px)',
-                  fontFamily: 'var(--font-vt323), monospace',
-                  lineHeight: '1.4',
-                  fontWeight: 400
-                }}
-              >
-                your past readings are always here whenever you want to come back to them.
-              </p>
+              <div className="mt-5 flex flex-col gap-3">
+                <a
+                  href="https://buymeacoffee.com/shxntxnx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-[#172211] underline underline-offset-4 hover:opacity-60 transition-opacity"
+                  style={{
+                    fontSize: 'clamp(16px, 2.5vw, 21px)',
+                    fontFamily: 'var(--font-vt323), monospace',
+                    fontWeight: 700
+                  }}
+                >
+                  buy me a coffee →
+                </a>
+                <button
+                  onClick={onContinue}
+                  className="inline-block text-left text-[#172211]/60 hover:text-[#172211] transition-colors"
+                  style={{
+                    fontSize: 'clamp(16px, 2.5vw, 21px)',
+                    fontFamily: 'var(--font-vt323), monospace',
+                    fontWeight: 400
+                  }}
+                >
+                  continue to reading →
+                </button>
+              </div>
             </div>
           ) : (
           <p

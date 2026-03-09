@@ -141,50 +141,44 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     setIsRateLimited(false);
   }, [card.id, cardDate]);
 
-  // Generate insight when card is revealed
-  useEffect(() => {
-    // Don't trigger if already have a result or a confirmed error
-    if (!isRevealed || generatedInsight || insightError || isRateLimited) return;
-
+  const fetchInsight = async () => {
     setIsGenerating(true);
+    setIsRateLimited(false);
+    try {
+      const birthDateStr = localStorage.getItem('userBirthdate');
+      const birthTime = localStorage.getItem('userBirthTime');
+      const birthLocation = localStorage.getItem('userBirthLocation');
 
-    const calculateRealTransit = async () => {
-      try {
-        const birthDateStr = localStorage.getItem('userBirthdate');
-        const birthTime = localStorage.getItem('userBirthTime');
-        const birthLocation = localStorage.getItem('userBirthLocation');
+      if (!birthDateStr) throw new Error('No birth date found');
 
-        if (!birthDateStr) throw new Error('No birth date found');
+      const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
 
-        // Seed selects the same transit for the same card (deterministic tie-breaking)
-        const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
+      const memory = loadMemory();
+      const memoryNotes = memory.memoryNotes;
+      const recentCards = memory.readings.slice(0, 7).map(r =>
+        `${r.cardName}${r.isReversed ? ' (reversed)' : ''}`
+      );
 
-        const memory = loadMemory();
-        const memoryNotes = memory.memoryNotes;
-        const recentCards = memory.readings.slice(0, 7).map(r =>
-          `${r.cardName}${r.isReversed ? ' (reversed)' : ''}`
-        );
+      const response = await fetch('/api/calculate-transit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          birthDate: birthDateStr,
+          birthTime: birthTime || null,
+          birthLocation: birthLocation || null,
+          seed: cardSeed,
+          cardId: card.id,
+          isReversed,
+          memoryNotes,
+          recentCards
+        })
+      });
 
-        const response = await fetch('/api/calculate-transit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            birthDate: birthDateStr,
-            birthTime: birthTime || null,
-            birthLocation: birthLocation || null,
-            seed: cardSeed,
-            cardId: card.id,
-            isReversed,
-            memoryNotes,
-            recentCards
-          })
-        });
-
-        if (response.status === 429) {
-          setIsGenerating(false);
-          setIsRateLimited(true);
-          return;
-        }
+      if (response.status === 429) {
+        setIsGenerating(false);
+        setIsRateLimited(true);
+        return;
+      }
 
         if (!response.ok) {
           setInsightError('error');
@@ -223,7 +217,6 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
         setGeneratedInsight(freshInsight);
         saveCachedInsight(card.id, freshInsight, cardDate);
 
-        // Save reading + memory note for future personalisation
         saveMemory(
           memory,
           {
@@ -244,10 +237,12 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
       } finally {
         setIsGenerating(false);
       }
-    };
+  };
 
-    // Slight delay for better UX
-    const timer = setTimeout(calculateRealTransit, 800);
+  // Generate insight when card is revealed
+  useEffect(() => {
+    if (!isRevealed || generatedInsight || insightError || isRateLimited) return;
+    const timer = setTimeout(fetchInsight, 800);
     return () => clearTimeout(timer);
   }, [isRevealed, card.id, isReversed, generatedInsight, insightError]);
 
@@ -401,6 +396,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
               }}
               isLoading={isGenerating}
               isRateLimited={isRateLimited}
+              onContinue={() => fetchInsight()}
             />
           )}
 
