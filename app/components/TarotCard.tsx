@@ -141,7 +141,23 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     setIsRateLimited(false);
   }, [card.id, cardDate]);
 
-  const fetchInsight = async () => {
+  const SUPPORT_THRESHOLD = 2; // show message on 3rd new fetch
+  const getDrawCount = () => parseInt(localStorage.getItem('slow-hour-draw-count') || '0');
+  const incrementDrawCount = () => localStorage.setItem('slow-hour-draw-count', String(getDrawCount() + 1));
+  const hasSupportBeenAcknowledged = () => localStorage.getItem('slow-hour-support-ack') === 'true';
+  const acknowledgeSupportMessage = () => localStorage.setItem('slow-hour-support-ack', 'true');
+
+  const fetchInsight = async (skipSupportCheck = false) => {
+    // Client-side: show support message on 3rd+ fresh draw (before API call)
+    if (!skipSupportCheck && !hasSupportBeenAcknowledged()) {
+      const count = getDrawCount();
+      if (count >= SUPPORT_THRESHOLD) {
+        setIsRateLimited(true);
+        return;
+      }
+      incrementDrawCount();
+    }
+
     setIsGenerating(true);
     setIsRateLimited(false);
     try {
@@ -175,8 +191,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
       });
 
       if (response.status === 429) {
-        setIsGenerating(false);
-        setIsRateLimited(true);
+        setInsightError('error');
         return;
       }
 
@@ -396,7 +411,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
               }}
               isLoading={isGenerating}
               isRateLimited={isRateLimited}
-              onContinue={() => fetchInsight()}
+              onContinue={() => { acknowledgeSupportMessage(); fetchInsight(true); }}
             />
           )}
 

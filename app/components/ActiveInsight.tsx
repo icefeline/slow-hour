@@ -97,7 +97,8 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                   fontWeight: 400
                 }}
               >
-                hey! thank you so much for using slow hour. i made this entirely by myself — if it&apos;s meant something to you, a small contribution helps keep it running.
+                hey! thank you so much for using slow hour. if this has meant something to you, a small contribution goes directly toward keeping it running :-)
+
               </p>
               <div className="mt-5 flex flex-col gap-3">
                 <a
@@ -122,7 +123,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                     fontWeight: 400
                   }}
                 >
-                  continue to reading →
+                  show me my reading
                 </button>
               </div>
             </div>

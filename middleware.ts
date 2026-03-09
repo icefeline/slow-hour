@@ -11,7 +11,7 @@ const ratelimit =
           url: process.env.UPSTASH_REDIS_REST_URL,
           token: process.env.UPSTASH_REDIS_REST_TOKEN,
         }),
-        limiter: Ratelimit.slidingWindow(2, '24 h'),
+        limiter: Ratelimit.slidingWindow(1000, '24 h'),
         prefix: 'slow-hour',
         analytics: false,
       })
