@@ -85,7 +85,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
             </h4>
           )}
 
-          {isRateLimited ? (
+          {isRateLimited && !insight ? (
             <div>
               <p
                 className="text-[#172211]"
@@ -126,6 +126,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
           ) : (
           <p
             className="text-[#172211]"
+
             style={{
               fontSize: 'clamp(16px, 2.5vw, 21px)',
               fontFamily: 'var(--font-vt323), monospace',
