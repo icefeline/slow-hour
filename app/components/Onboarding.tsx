@@ -274,17 +274,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (hasBirthTime && hasLocation) {
       const moonSign = getMoonSign(birthDate, birthTime);
       const risingSign = getRisingSign(birthDate, birthTime);
-      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\n${risingInsightsMobile[risingSign]}\n\nthe cards are ready — pull one!`;
+      return `${name}!\n${sunInsightsMobile[sunSign]}\n${moonInsightsMobile[moonSign]}\n${risingInsightsMobile[risingSign]}\nthe cards are ready — pull one!`;
     }
     if (hasBirthTime) {
       const moonSign = getMoonSign(birthDate, birthTime);
-      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${moonInsightsMobile[moonSign]}\n\nthe cards are excited. pull one!`;
+      return `${name}!\n${sunInsightsMobile[sunSign]}\n${moonInsightsMobile[moonSign]}\nthe cards are excited. pull one!`;
     }
     if (hasLocation) {
-      return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\nthe cards are ready for you. pull one!`;
+      return `${name}!\n${sunInsightsMobile[sunSign]}\nthe cards are ready for you. pull one!`;
     }
     const lifePathNumber = getLifePathNumber(birthDate);
-    return `${name}!\n\n${sunInsightsMobile[sunSign]}\n\n${numerologyInsightsMobile[lifePathNumber]}\n\nthe cards are ready. pull one!`;
+    return `${name}!\n${sunInsightsMobile[sunSign]}\n${numerologyInsightsMobile[lifePathNumber]}\nthe cards are ready. pull one!`;
   };
 
   const moonInsights: { [key: string]: string } = {
@@ -460,7 +460,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // ── Shared input style ────────────────────────────────────────────────────
   const inputStyle: React.CSSProperties = {
-    fontFamily: 'var(--font-reenie-beanie), cursive',
+    fontFamily: 'var(--font-vt323), monospace',
     background: 'rgba(255, 255, 255, 0.12)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -505,7 +505,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         return (
           <div className="flex flex-col items-center w-full flex-1 py-6">
             {/* flex-1 centers the content vertically in the remaining space */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-5">
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl md:text-6xl text-[#E1EEFC]"
@@ -514,7 +514,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   what's your name?
                 </h2>
                 <p
-                  className="text-2xl text-[#E1EEFC]/60 mt-1"
+                  className="text-2xl text-[#E1EEFC]/60 mt-0"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   the one that feels most like you
@@ -539,7 +539,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               disabled={!canContinueFromName}
               tabIndex={canContinueFromName ? 0 : -1}
               aria-hidden={!canContinueFromName}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
+              className="w-full md:w-auto md:px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
@@ -557,7 +557,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         return (
           <div className="flex flex-col items-center w-full flex-1 py-6">
             {/* flex-1 centers the content vertically; errors expand the group but button stays at bottom */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-4">
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl md:text-6xl text-[#E1EEFC]"
@@ -566,7 +566,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   when were you born?
                 </h2>
                 <p
-                  className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-1"
+                  className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-0"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   time moves differently depending on when you arrived
@@ -651,7 +651,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               disabled={!canContinueFromBirthdate}
               tabIndex={canContinueFromBirthdate ? 0 : -1}
               aria-hidden={!canContinueFromBirthdate}
-              className="px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
+              className="w-full md:w-auto md:px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 background: '#CEF17B',
@@ -668,10 +668,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       case 3:
         return (
           <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
-            <div className="flex-1 w-full">
+            <div className="flex-1 w-full min-h-0 overflow-y-auto">
               <p
                 className="text-[30px] text-[#E1EEFC] text-center whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.5' }}
+                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
               >
                 {displayedText}
               </p>
