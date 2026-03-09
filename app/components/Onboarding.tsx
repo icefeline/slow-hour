@@ -670,7 +670,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
             <div className="flex-1 w-full">
               <p
-                className="text-[22px] text-[#E1EEFC] text-center whitespace-pre-line"
+                className="text-[30px] text-[#E1EEFC] text-center whitespace-pre-line"
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.5' }}
               >
                 {displayedText}
@@ -686,8 +686,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 alt="Card back"
                 className="rounded-2xl shadow-xl select-none"
                 style={{
-                  width: '80px',
-                  height: '120px',
+                  width: '140px',
+                  height: '210px',
                   objectFit: 'cover',
                   cursor: 'grab',
                   userSelect: 'none',
