@@ -125,7 +125,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     return loadCachedInsight(card.id, cardDate);
   });
   const [isGenerating, setIsGenerating] = useState(false);
-  const [insightError, setInsightError] = useState<'rate-limited' | 'error' | null>(null);
+  const [insightError, setInsightError] = useState<'error' | null>(null);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const isFirstMount = useRef(true);
 
   // Reset insight + error when card or date changes, then try loading from cache for the new card/date
@@ -137,12 +138,13 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     const cached = loadCachedInsight(card.id, cardDate);
     setGeneratedInsight(cached);
     setInsightError(null);
+    setIsRateLimited(false);
   }, [card.id, cardDate]);
 
   // Generate insight when card is revealed
   useEffect(() => {
     // Don't trigger if already have a result or a confirmed error
-    if (!isRevealed || generatedInsight || insightError) return;
+    if (!isRevealed || generatedInsight || insightError || isRateLimited) return;
 
     setIsGenerating(true);
 
@@ -179,8 +181,8 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
         });
 
         if (response.status === 429) {
-          // Rate limit hit — user has used their 5 readings today
-          setInsightError('rate-limited');
+          setIsGenerating(false);
+          setIsRateLimited(true);
           return;
         }
 
@@ -368,43 +370,18 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
           {insightError ? (
             <div>
               <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
-              {insightError === 'rate-limited' ? (
-                <div className="space-y-4">
-                  <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                    hey! thank you so much for using slow hour.
-                  </p>
-                  <p className="text-[#E1EEFC] opacity-80" style={{ fontSize: 'clamp(20px, 4vw, 30px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                    i made this entirely by myself — the design, the code, the readings. each insight costs real money to generate, so five a day is where i&apos;ve had to draw the line for now.
-                  </p>
-                  <p className="text-[#E1EEFC] opacity-80" style={{ fontSize: 'clamp(20px, 4vw, 30px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                    if slow hour has meant something to you, supporting it helps keep it running.{' '}
-                    <a
-                      href="https://buymeacoffee.com/shxntxnx"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#CEF17B] underline underline-offset-4 hover:opacity-80 transition-opacity"
-                    >
-                      buy me a coffee →
-                    </a>
-                  </p>
-                  <p className="text-[#E1EEFC] opacity-50" style={{ fontSize: 'clamp(18px, 3.5vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                    your readings are always here when you want to come back to them.
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
-                    couldn&apos;t connect to the reading right now.
-                  </p>
-                  <button
-                    onClick={() => setInsightError(null)}
-                    className="mt-3 text-[#CEF17B] opacity-70 hover:opacity-100 transition-opacity"
-                    style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                  >
-                    try again ↻
-                  </button>
-                </div>
-              )}
+              <div>
+                <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                  couldn&apos;t connect to the reading right now.
+                </p>
+                <button
+                  onClick={() => setInsightError(null)}
+                  className="mt-3 text-[#CEF17B] opacity-70 hover:opacity-100 transition-opacity"
+                  style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  try again ↻
+                </button>
+              </div>
             </div>
           ) : (
             <ActiveInsight
@@ -423,6 +400,7 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
                 phaseMeaning: ""
               }}
               isLoading={isGenerating}
+              isRateLimited={isRateLimited}
             />
           )}
 
