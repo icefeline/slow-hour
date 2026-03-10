@@ -1,62 +1,136 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
-function getSunSignApprox(dateStr: string): string {
-  const [day, month] = dateStr.split('/').map(Number);
-  const m = month; const d = day;
-  if ((m === 3 && d >= 21) || (m === 4 && d <= 19)) return 'aries';
-  if ((m === 4 && d >= 20) || (m === 5 && d <= 20)) return 'taurus';
-  if ((m === 5 && d >= 21) || (m === 6 && d <= 20)) return 'gemini';
-  if ((m === 6 && d >= 21) || (m === 7 && d <= 22)) return 'cancer';
-  if ((m === 7 && d >= 23) || (m === 8 && d <= 22)) return 'leo';
-  if ((m === 8 && d >= 23) || (m === 9 && d <= 22)) return 'virgo';
-  if ((m === 9 && d >= 23) || (m === 10 && d <= 22)) return 'libra';
-  if ((m === 10 && d >= 23) || (m === 11 && d <= 21)) return 'scorpio';
-  if ((m === 11 && d >= 22) || (m === 12 && d <= 21)) return 'sagittarius';
-  if ((m === 12 && d >= 22) || (m === 1 && d <= 19)) return 'capricorn';
-  if ((m === 1 && d >= 20) || (m === 2 && d <= 18)) return 'aquarius';
-  return 'pisces';
+// ── 27 Nakshatras ─────────────────────────────────────────────────────────────
+// In Vedic astrology the janma nakshatra (birth lunar mansion) is the most
+// personal marker — more specific than rashi, unique to a ~1 day window.
+// Each has a ruling planet (whose dasha themes colour the soul's path) and a
+// core quality that shapes how the person experiences and moves through life.
+const NAKSHATRAS = [
+  { name: 'ashwini',          planet: 'ketu',    quality: 'swift and instinctive — moves before thinking, heals by doing, carries more under the surface than the speed suggests' },
+  { name: 'bharani',          planet: 'venus',   quality: 'holds the full weight of experience — transformation through intensity, nothing is picked up or put down lightly' },
+  { name: 'krittika',         planet: 'sun',     quality: 'cuts to what is true — high standards, a refiner not a collector, finds it hard to settle for less than the real thing' },
+  { name: 'rohini',           planet: 'moon',    quality: 'deep sensory richness — creativity that needs fertile ground, drawn to beauty and rootedness, slow to leave what it loves' },
+  { name: 'mrigashira',       planet: 'mars',    quality: 'perpetual seeking — always searching, never quite settled, finds meaning in the pursuit itself rather than the arrival' },
+  { name: 'ardra',            planet: 'rahu',    quality: 'storm and renewal — intense emotional depth, things break down so something truer can emerge, not comfortable in stillness' },
+  { name: 'punarvasu',        planet: 'jupiter', quality: 'return to light — cycles of loss and recovery, an inner resilience that keeps reconstituting itself after being scattered' },
+  { name: 'pushya',           planet: 'saturn',  quality: 'nourishes everything it touches — carries others as a form of meaning, sometimes forgets to carry itself' },
+  { name: 'ashlesha',         planet: 'mercury', quality: 'penetrating insight — sees through surfaces, holds on, wisdom earned through pressure rather than ease' },
+  { name: 'magha',            planet: 'ketu',    quality: 'ancestral weight and authority — carries the past, leads from lineage, pride as both gift and burden' },
+  { name: 'purva phalguni',   planet: 'venus',   quality: 'rest and creative pleasure — needs beauty and ease to function, generosity that comes from genuine fullness' },
+  { name: 'uttara phalguni',  planet: 'sun',     quality: 'service and steadiness — takes on responsibility after the joy, builds things designed to last' },
+  { name: 'hasta',            planet: 'moon',    quality: 'precise and crafted — skill in the hands and the mind, attention to detail that approaches perfectionism' },
+  { name: 'chitra',           planet: 'mars',    quality: 'brilliance and craft — makes things beautiful and meaningful, becomes restless without something to build or shape' },
+  { name: 'swati',            planet: 'rahu',    quality: 'independent and adaptive — bends without breaking, balance as an ongoing practice, needs space to think clearly' },
+  { name: 'vishakha',         planet: 'jupiter', quality: 'driven by purpose — once the goal is set, everything else becomes noise; intensity in pursuit, difficulty letting go mid-path' },
+  { name: 'anuradha',         planet: 'saturn',  quality: 'devotion and loyalty — goes all the way in, carries the weight of relationships as a form of meaning, slow to leave' },
+  { name: 'jyeshtha',         planet: 'mercury', quality: 'protective elder energy — takes charge, holds others up, sometimes at great personal cost and without asking for help' },
+  { name: 'mula',             planet: 'ketu',    quality: 'pulled toward roots and dissolution — not satisfied until reaching the origin of things, unafraid of what others avoid' },
+  { name: 'purva ashadha',    planet: 'venus',   quality: 'fierce and undefeated — internal strength that does not advertise itself, moves with quiet conviction' },
+  { name: 'uttara ashadha',   planet: 'sun',     quality: 'quiet permanence — builds slowly and lasts long, values what endures over what impresses, principled to a fault' },
+  { name: 'shravana',         planet: 'moon',    quality: 'listens before it speaks — processes the world by receiving it, hears what others miss, needs to digest before responding' },
+  { name: 'dhanishtha',       planet: 'mars',    quality: 'rhythm and abundance — moves between worlds easily, gathers and gives in equal measure, a certain restless vitality' },
+  { name: 'shatabhisha',      planet: 'rahu',    quality: 'healing through solitude — needs space to understand things, carries a quiet depth that is not always easy to access' },
+  { name: 'purva bhadrapada', planet: 'jupiter', quality: 'fire beneath the surface — intense inner life, transformation through heat, not easily read by the people around them' },
+  { name: 'uttara bhadrapada',planet: 'saturn',  quality: 'still depths — slow to act but thorough, carries something ancient, not easily shaken by what rattles everyone else' },
+  { name: 'revati',           planet: 'mercury', quality: 'compassionate completion — feels everything, carries others across thresholds, sometimes loses the boundary between self and world' },
+];
+
+// What the ruling planet's dasha period tends to call forward
+const DASHA_THEMES: Record<string, string> = {
+  ketu:    'a calling to release attachment and look inward — not what to gain but what to let go',
+  venus:   'a pull toward beauty, connection, and the pleasure of being alive — and what that costs',
+  sun:     'a push to stand in one\'s own authority — not borrowed, not performed',
+  moon:    'a period of emotional learning — what the feelings are actually pointing to',
+  mars:    'a drive toward action and will — what is worth fighting for, what isn\'t',
+  rahu:    'an expansion into unfamiliar territory — desire as a teacher, restlessness as a signal',
+  jupiter: 'a broadening of meaning and worldview — what is believed and why',
+  saturn:  'a long slow building — patience and discipline over quick results',
+  mercury: 'a sharpening of the mind and voice — what needs to be said, learned, or named',
+};
+
+// Vedic moon rashi (janma rashi) qualities — in Jyotish the moon sign is the
+// primary identity marker, not the sun sign
+const MOON_RASHI_QUALITIES: Record<string, string> = {
+  aries:       'emotionally quick to fire and quick to recover — processes by moving, not by sitting still',
+  taurus:      'needs solid ground — change shakes it harder than it shows, slow to trust but deep once it does',
+  gemini:      'processes feeling through words and ideas — needs to talk through it to understand what it actually feels',
+  cancer:      'carries emotion that goes back further than this lifetime — absorbs, stores, feels for everyone',
+  leo:         'needs to be seen when it\'s soft, not just when it\'s shining — emotional generosity that can burn itself out',
+  virgo:       'tries to organise feelings like problems to solve — some of them refuse to be organised',
+  libra:       'feels through the people around it until it\'s lost track of what is actually its own',
+  scorpio:     'all the way in or all the way shut — emotional intensity without much middle ground',
+  sagittarius: 'needs space around its feelings — too much closeness starts to feel like confinement',
+  capricorn:   'keeps vulnerability contained — letting it loose feels like losing control, even when it wouldn\'t',
+  aquarius:    'needs distance to understand what it feels — raw emotion without analysis is overwhelming',
+  pisces:      'absorbs everything around it — other people\'s pain becomes its own before it\'s even noticed',
+};
+
+// ── Calculations ───────────────────────────────────────────────────────────────
+
+function getNakshatraApprox(dateStr: string): typeof NAKSHATRAS[0] {
+  const [day, month, year] = dateStr.split('/').map(Number);
+  const date = new Date(year, month - 1, day);
+  // Approximate: moon spends ~1 day per nakshatra (sidereal cycle 27.3217 days / 27)
+  // Reference anchor: 2000-01-01 moon was in Punarvasu (index 6) — approximate
+  const REF_DATE = new Date(2000, 0, 1);
+  const REF_NAKSHATRA = 6; // Punarvasu
+  const daysDiff = (date.getTime() - REF_DATE.getTime()) / 86400000;
+  const idx = ((Math.floor(daysDiff) + REF_NAKSHATRA) % 27 + 27) % 27;
+  return NAKSHATRAS[idx];
+}
+
+function getMoonRashiApprox(dateStr: string): string {
+  const [day, month, year] = dateStr.split('/').map(Number);
+  const date = new Date(year, month - 1, day);
+  // Moon moves ~1 rashi per 2.28 days. Reference: 2000-01-01 moon ≈ Gemini (index 2)
+  const REF_DATE = new Date(2000, 0, 1);
+  const REF_RASHI = 2; // Gemini
+  const daysDiff = (date.getTime() - REF_DATE.getTime()) / 86400000;
+  const rashis = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const idx = ((Math.floor(daysDiff / 2.28) + REF_RASHI) % 12 + 12) % 12;
+  return rashis[idx];
 }
 
 function getLifePathNumber(dateStr: string): number {
   const digits = dateStr.replace(/\//g, '').split('').map(Number);
-  let sum = digits.reduce((acc, digit) => acc + digit, 0);
+  let sum = digits.reduce((a, d) => a + d, 0);
   while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
-    sum = sum.toString().split('').map(Number).reduce((acc, d) => acc + d, 0);
+    sum = sum.toString().split('').map(Number).reduce((a, d) => a + d, 0);
   }
   return sum;
 }
 
-// Qualities rather than labels — Claude should describe the energy, not name the sign
-const sunSignQualities: Record<string, string> = {
-  aries: 'initiating fire energy — moves first, processes internally, carries more weight than it shows',
-  taurus: 'grounded earth steadiness — holds things together for others, needs far more than it asks for',
-  gemini: 'dual-natured air intelligence — quick on the surface, goes much deeper underneath',
-  cancer: 'absorptive water depth — takes on weight that isn\'t always its own, old patterns underneath current feelings',
-  leo: 'radiant fire warmth — more tender than the confidence suggests, needs to be seen in softness not just strength',
-  virgo: 'discerning earth attention — catches what others miss, processes feeling through precision',
-  libra: 'relational air grace — holds everyone in balance, often disappears in the effort of it',
-  scorpio: 'penetrating water perception — already sensing what hasn\'t been said, all-in or completely shut',
-  sagittarius: 'expansive fire searching — always moving toward meaning, discomfort with standing still',
-  capricorn: 'structural earth composure — carries enormous invisible pressure, rarely lets the effort show',
-  aquarius: 'observing air detachment — feels things deeply while keeping distance, slightly outside the frame',
-  pisces: 'porous water sensitivity — absorbs the world around it, feels for itself and everyone else at once',
+const LIFE_PATH_NOTES: Record<number, string> = {
+  1:  'a path of standing alone in leadership — isolation as the price of autonomy',
+  2:  'a path of bridging people — building connection, sometimes at the cost of own voice',
+  3:  'a path of expression — things fester when held in, creation as the release valve',
+  4:  'a path of building structure — carries the weight of being the stable one',
+  5:  'a path of freedom — figuring out how to commit without disappearing into the commitment',
+  6:  'a path of care — learning where love ends and self-erasure begins',
+  7:  'a path of depth — surface anything is genuinely uncomfortable',
+  8:  'a path of legacy — real strength and control are not the same thing',
+  9:  'a path of release — always finishing cycles before others are ready for them to end',
+  11: 'a master path of extreme sensitivity — picks up frequencies others cannot hear',
+  22: 'a master path of large-scale building — the vision is clear but bringing it to earth takes everything',
+  33: 'a master path of healing presence — people feel it before anything is said',
 };
 
-const lifePathMeanings: Record<number, string> = {
-  1: 'a path of leading, often alone',
-  2: 'a path of bridging — building connection, sometimes at the cost of their own voice',
-  3: 'a path of expression — things fester when held in',
-  4: 'a path of building structure that others rely on',
-  5: 'a path of freedom — figuring out how to commit without losing themselves',
-  6: 'a path of care — learning where love ends and self-erasure begins',
-  7: 'a path of depth — surface anything is uncomfortable',
-  8: 'a path of legacy — real strength isn\'t control',
-  9: 'a path of release — always finishing cycles before others are ready to',
-  11: 'a master path of sensitivity — picks up frequencies others can\'t hear',
-  22: 'a master path of building something large and lasting',
-  33: 'a master path of healing presence — people feel it before they speak',
+// ── Greeting options mapped to nakshatra ruling planet ─────────────────────────
+// The greeting style is chosen to match the energy of the ruling planet
+const GREETING_BY_PLANET: Record<string, string[]> = {
+  ketu:    ['{name}.', 'oh, {name}.'],
+  venus:   ['welcome, {name}.', 'hey, {name}.'],
+  sun:     ['hey, {name}.', '{name}.'],
+  moon:    ['hey, {name}.', 'oh, {name}.'],
+  mars:    ['hey, {name}.', 'there you are, {name}.'],
+  rahu:    ['oh, {name}.', 'there you are, {name}.'],
+  jupiter: ['welcome, {name}.', 'good, {name}.'],
+  saturn:  ['{name}.', 'good, {name}.'],
+  mercury: ['hey, {name}.', 'welcome, {name}.'],
 };
+
+// ── Route handler ─────────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
   try {
@@ -66,18 +140,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Birth date required' }, { status: 400 });
     }
 
-    const sunSign = getSunSignApprox(birthDate);
-    const lifePathNumber = getLifePathNumber(birthDate);
-    const hasBirthTime = birthTime && birthTime.trim().length > 0;
-    const hasBirthLocation = birthLocation && birthLocation.trim().length >= 2;
+    const nakshatra   = getNakshatraApprox(birthDate);
+    const moonRashi   = getMoonRashiApprox(birthDate);
+    const lifePath    = getLifePathNumber(birthDate);
+    const hasBirthTime     = !!birthTime?.trim();
+    const hasBirthLocation = !!(birthLocation?.trim().length >= 2);
 
-    const dataContext = hasBirthTime && hasBirthLocation
-      ? `full chart context — birth date, time (${birthTime}), and location (${birthLocation}) all provided. moon, rising, and houses are calculable.`
+    // Pick a greeting candidate set for this nakshatra's ruling planet
+    const greetingOptions = GREETING_BY_PLANET[nakshatra.planet] ?? ['{name}.'];
+    const greetingHint = greetingOptions.map(g => g.replace('{name}', name)).join(' / ');
+
+    const dataNote = hasBirthTime && hasBirthLocation
+      ? `full Jyotish context available (date, time, location) — nakshatra and moon rashi can be calculated precisely; lagna is determinable`
       : hasBirthTime
-      ? `birth date and time provided — moon is calculable, rising estimated, houses limited`
+      ? `birth time provided — nakshatra and moon rashi more precise; lagna estimated`
       : hasBirthLocation
-      ? `birth date and location provided — no birth time, so sun sign and life path are the main anchors, with location adding geographic depth`
-      : `birth date only — sun sign quality and life path number are the primary anchors`;
+      ? `location provided, no birth time — nakshatra approximate (moon moves ~1/day); no lagna`
+      : `birth date only — nakshatra and moon rashi are approximate anchors`;
 
     const apiKey = process.env.SLOW_HOUR_ANTHROPIC_KEY;
     if (!apiKey) {
@@ -86,29 +165,39 @@ export async function POST(request: Request) {
 
     const anthropic = new Anthropic({ apiKey });
 
-    const prompt = `You write the welcome message for a tarot app called Slow Hour. Someone has just entered their birth details. This is the first thing they read — 3-4 sentences that feel like the app actually looked at their data and found something true about them. It should open toward their first card draw.
+    const prompt = `You write the welcome message for Slow Hour, a tarot app grounded in Vedic astrology (Jyotish). Someone has just entered their birth details for the first time. This is what they read first — a brief, personal reflection that shows their chart has actually been considered, and opens toward their first card draw.
 
-Voice (strict):
+This app uses Jyotish, not Western astrology. That means:
+- The janma nakshatra (birth lunar mansion) is the most personal and distinctive marker — lean into it heavily
+- The janma rashi (moon sign in Jyotish) is the primary identity marker — more important than the sun sign
+- Do NOT write about sun sign energy as the main thing — the nakshatra and moon rashi say more
+- The ruling planet of the nakshatra colours what the soul is being asked to work with
+
+Voice (non-negotiable):
 - Entirely lowercase, no em dashes, no exclamation marks
-- Sound like a perceptive friend who just glanced at their chart — not a practitioner, not a chatbot
-- Vary sentence openings intentionally — no two sentences may start with the same word. Absolutely no sentence may start with "you" — use alternatives like "there's", "something in", "a lot of what", "for someone with", "in someone like", "what shows up", "the pattern here", "most of", "some of what"
-- Be specific to their actual placements — not generic horoscope copy
-- 3-4 sentences total, 55-75 words
-- The final sentence should be brief (5-8 words) and gesture quietly toward the card draw — low-key, not instructional
-- No zodiac sign names — describe the quality, not the label
-- No: "journey", "navigate", "embrace", "explore", "tap into", "delve", "unpack", "honour", "give yourself permission", "resonate"
+- Perceptive friend who just looked at the chart — warm and specific, not practitioner-speak
+- Begin with this greeting (choose the one that best fits the nakshatra energy): ${greetingHint}
+- After the greeting: 3 sentences only. Each must open with a different word. No sentence after the greeting may start with "you"
+- Use varied openers: "there's", "something in", "a lot of what", "for someone", "in people with", "what shows up", "the pattern", "most of what", "some of", "this kind of"
+- Be specific to the actual placements — not generic. The nakshatra quality is the anchor
+- Final sentence: 5-8 words, quietly gestures toward the card draw
+- No nakshatra name, no rashi name, no planet name — describe the quality, embody the concept
+- No: "journey", "navigate", "embrace", "explore", "tap into", "delve", "unpack", "honour", "karma", "dharma", "resonate"
 - No questions
 
+About this person:
 Name: ${name}
-Sun sign quality (sidereal): ${sunSignQualities[sunSign]}
-Life path: ${lifePathMeanings[lifePathNumber] || lifePathNumber}
-Data context: ${dataContext}
+Janma nakshatra quality: ${nakshatra.quality}
+Nakshatra ruling planet theme: ${DASHA_THEMES[nakshatra.planet]}
+Janma rashi (moon sign) quality: ${MOON_RASHI_QUALITIES[moonRashi]}
+Life path: ${LIFE_PATH_NOTES[lifePath] ?? lifePath}
+Data: ${dataNote}
 
-Write only the message. No labels, no JSON, no preamble.`;
+Write: greeting line + exactly 3 sentences. Total ~65-80 words. Nothing else.`;
 
     const message = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
+      max_tokens: 220,
       messages: [{ role: 'user', content: prompt }],
     });
 
