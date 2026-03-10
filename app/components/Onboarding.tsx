@@ -40,6 +40,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [locationChecking, setLocationChecking] = useState(false);
   const locationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Claude-generated welcome message for step 3
+  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
+  const [isLoadingWelcome, setIsLoadingWelcome] = useState(false);
+
   const totalSteps = 3; // 0: welcome screen, 1: name, 2: birthdate+time+location, 3: message
 
   useEffect(() => {
@@ -63,7 +67,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   }, []);
 
   const handleNext = () => {
-    if (currentStep < totalSteps) {
+    if (currentStep === 2) {
+      // Transition to step 3 immediately and fetch the welcome message in parallel
+      setCurrentStep(3);
+      setWelcomeMessage(null);
+      setIsLoadingWelcome(true);
+      fetch('/api/welcome-insight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          birthDate,
+          birthTime: noKnowBirthTime ? '' : birthTime,
+          birthLocation,
+        }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          setWelcomeMessage(data.message || getWelcomeMessage());
+          setIsLoadingWelcome(false);
+        })
+        .catch(() => {
+          setWelcomeMessage(getWelcomeMessage());
+          setIsLoadingWelcome(false);
+        });
+    } else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
       localStorage.setItem('userName', name);
@@ -353,12 +381,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return `${name}!\n\n${sunInsights[sunSign]}\n\n${numerologyInsights[lifePathNumber]}\n\nthe cards are ready whenever you are.`;
   };
 
-  // Typewriter effect
+  // Typewriter effect — waits for the API-generated welcome message
   useEffect(() => {
-    if (currentStep === 3) {
+    if (currentStep === 3 && welcomeMessage !== null) {
       setDisplayedText('');
       setIsTypingComplete(false);
-      const fullText = isMobile ? getWelcomeMessageMobile() : getWelcomeMessage();
+      const fullText = welcomeMessage;
       let currentIndex = 0;
       const typingInterval = setInterval(() => {
         if (currentIndex < fullText.length) {
@@ -371,7 +399,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       }, 30);
       return () => clearInterval(typingInterval);
     }
-  }, [currentStep, name, birthDate, isMobile]);
+  }, [currentStep, welcomeMessage]);
 
   // ── Drag helpers ─────────────────────────────────────────────────────────
   const addCascadeCard = (x: number, y: number) => {
@@ -560,16 +588,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
               <div className="text-center">
                 <h2
-                  className="text-5xl md:text-6xl text-[#E1EEFC]"
+                  className="text-5xl text-[#E1EEFC]"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   when were you born?
                 </h2>
                 <p
-                  className="text-xl md:text-2xl text-[#E1EEFC]/60 mt-0"
+                  className="text-2xl text-[#E1EEFC]/60 mt-0"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
-                  time moves differently depending on when you arrived
+                  an ai reads your vedic birth chart — time and location make it precise
                 </p>
               </div>
 
@@ -668,13 +696,25 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       case 3:
         return (
           <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
-            <div className="flex-1 w-full min-h-0 overflow-y-auto">
-              <p
-                className="text-[30px] text-[#E1EEFC] text-center whitespace-pre-line"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
-              >
-                {displayedText}
-              </p>
+            <div className="flex-1 w-full min-h-0 overflow-y-auto flex items-center justify-center">
+              {isLoadingWelcome ? (
+                <div className="flex gap-2 items-center justify-center">
+                  {[0, 1, 2].map(i => (
+                    <div
+                      key={i}
+                      className="w-2.5 h-2.5 rounded-full bg-[#E1EEFC]/50"
+                      style={{ animation: 'bounce 1.2s infinite', animationDelay: `${i * 0.2}s` }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p
+                  className="text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}
+                >
+                  {displayedText}
+                </p>
+              )}
             </div>
 
             <div
@@ -686,8 +726,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 alt="Card back"
                 className="rounded-2xl shadow-xl select-none"
                 style={{
-                  width: '140px',
-                  height: '210px',
+                  width: '110px',
+                  height: '165px',
                   objectFit: 'cover',
                   cursor: 'grab',
                   userSelect: 'none',
@@ -858,7 +898,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   <div className="flex flex-col items-center justify-center h-full gap-6">
                     <div className="text-center">
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
-                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>time moves differently depending on when you arrived</p>
+                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>an ai reads your vedic birth chart — time and location make it precise</p>
                     </div>
                     <div className="w-full max-w-2xl space-y-4">
                       <div className="flex gap-3">
@@ -922,15 +962,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 {/* Step 3 — typewriter message + drag card */}
                 {currentStep === 3 && (
                   <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
-                    <div className="flex-1 overflow-y-auto">
-                      <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
+                    <div className="flex-1 overflow-y-auto flex items-center justify-center w-full">
+                      {isLoadingWelcome ? (
+                        <div className="flex gap-3 items-center justify-center">
+                          {[0, 1, 2].map(i => (
+                            <div
+                              key={i}
+                              className="w-3 h-3 rounded-full bg-black/30"
+                              style={{ animation: 'bounce 1.2s infinite', animationDelay: `${i * 0.2}s` }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
+                      )}
                     </div>
                     <div
                       className="flex items-center gap-4 mb-8"
                       style={{ visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden' }}
                     >
                       <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
-                        style={{ width: '140px', height: '210px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
+                        style={{ width: '180px', height: '270px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
                         onMouseDown={handleMouseDown} draggable="false"
                       />
                       <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
@@ -945,32 +997,40 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </div>
 
       {/* Cascaded cards trail */}
-      {cascadedCards.map((card, index) => (
-        <img key={card.id} src="/card-back.png" alt="" className="rounded-2xl select-none"
-          draggable="false"
-          style={{
-            position: 'fixed', left: card.x - 70, top: card.y - 105,
-            width: '140px', height: '210px', objectFit: 'cover',
-            transform: `rotate(${card.rotation}deg)`,
-            animation: shouldCrumble ? 'sandDissolve 1.2s ease-out forwards' : 'none',
-            pointerEvents: 'none', zIndex: 9000 + index,
-            userSelect: 'none', WebkitUserSelect: 'none',
-          }}
-        />
-      ))}
+      {cascadedCards.map((card, index) => {
+        const cw = isMobile ? 110 : 140;
+        const ch = isMobile ? 165 : 210;
+        return (
+          <img key={card.id} src="/card-back.png" alt="" className="rounded-2xl select-none"
+            draggable="false"
+            style={{
+              position: 'fixed', left: card.x - cw / 2, top: card.y - ch / 2,
+              width: `${cw}px`, height: `${ch}px`, objectFit: 'cover',
+              transform: `rotate(${card.rotation}deg)`,
+              animation: shouldCrumble ? 'sandDissolve 1.2s ease-out forwards' : 'none',
+              pointerEvents: 'none', zIndex: 9000 + index,
+              userSelect: 'none', WebkitUserSelect: 'none',
+            }}
+          />
+        );
+      })}
 
       {/* Active dragging card */}
-      {isDragging && (
-        <img src="/card-back.png" alt="Dragging card" className="rounded-2xl shadow-2xl select-none"
-          draggable="false"
-          style={{
-            position: 'fixed', left: cardPosition.x - 70, top: cardPosition.y - 105,
-            width: '140px', height: '210px', objectFit: 'cover',
-            cursor: 'grabbing', zIndex: 10000, pointerEvents: 'none',
-            userSelect: 'none', WebkitUserSelect: 'none',
-          }}
-        />
-      )}
+      {isDragging && (() => {
+        const cw = isMobile ? 110 : 140;
+        const ch = isMobile ? 165 : 210;
+        return (
+          <img src="/card-back.png" alt="Dragging card" className="rounded-2xl shadow-2xl select-none"
+            draggable="false"
+            style={{
+              position: 'fixed', left: cardPosition.x - cw / 2, top: cardPosition.y - ch / 2,
+              width: `${cw}px`, height: `${ch}px`, objectFit: 'cover',
+              cursor: 'grabbing', zIndex: 10000, pointerEvents: 'none',
+              userSelect: 'none', WebkitUserSelect: 'none',
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }
