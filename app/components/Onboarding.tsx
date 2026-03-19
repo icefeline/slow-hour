@@ -25,7 +25,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Draggable card state
   const [isDragging, setIsDragging] = useState(false);
-  const [cardPosition, setCardPosition] = useState({ x: 0, y: 0 });
+  const dragCardRef = useRef<HTMLImageElement>(null);
+  const dragRafRef = useRef<number | null>(null);
   const [cascadedCards, setCascadedCards] = useState<Array<{ x: number; y: number; rotation: number; id: number }>>([]);
   const [cardIdCounter, setCardIdCounter] = useState(0);
   const [shouldCrumble, setShouldCrumble] = useState(false);
@@ -434,30 +435,50 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     if (!isTypingComplete) return;
     e.preventDefault();
     setIsDragging(true);
-    setCardPosition({ x: e.clientX, y: e.clientY });
     const rotation = Math.random() * 30 - 15;
     setCascadedCards([{ x: e.clientX, y: e.clientY, rotation, id: cardIdCounter }]);
     setCardIdCounter(c => c + 1);
+    requestAnimationFrame(() => {
+      if (dragCardRef.current) {
+        const cw = window.innerWidth < 768 ? 110 : 140;
+        const ch = window.innerWidth < 768 ? 165 : 210;
+        dragCardRef.current.style.transform = `translate(${e.clientX - cw / 2}px, ${e.clientY - ch / 2}px)`;
+      }
+    });
   };
 
   // Touch drag
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isTypingComplete) return;
-    e.preventDefault(); // Prevent iOS tap highlight / scale flash before drag
+    e.preventDefault();
     const touch = e.touches[0];
     setIsDragging(true);
-    setCardPosition({ x: touch.clientX, y: touch.clientY });
     const rotation = Math.random() * 30 - 15;
     setCascadedCards([{ x: touch.clientX, y: touch.clientY, rotation, id: cardIdCounter }]);
     setCardIdCounter(c => c + 1);
+    requestAnimationFrame(() => {
+      if (dragCardRef.current) {
+        const cw = window.innerWidth < 768 ? 110 : 140;
+        const ch = window.innerWidth < 768 ? 165 : 210;
+        dragCardRef.current.style.transform = `translate(${touch.clientX - cw / 2}px, ${touch.clientY - ch / 2}px)`;
+      }
+    });
   };
 
   // Global mouse listeners
   useEffect(() => {
     if (!isDragging) return;
     const handleMouseMove = (e: MouseEvent) => {
-      setCardPosition({ x: e.clientX, y: e.clientY });
       addCascadeCard(e.clientX, e.clientY);
+      if (dragRafRef.current !== null) return;
+      dragRafRef.current = requestAnimationFrame(() => {
+        dragRafRef.current = null;
+        if (dragCardRef.current) {
+          const cw = window.innerWidth < 768 ? 110 : 140;
+          const ch = window.innerWidth < 768 ? 165 : 210;
+          dragCardRef.current.style.transform = `translate(${e.clientX - cw / 2}px, ${e.clientY - ch / 2}px)`;
+        }
+      });
     };
     const handleMouseUp = () => completeDrag();
     window.addEventListener('mousemove', handleMouseMove);
@@ -474,8 +495,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault();
       const touch = e.touches[0];
-      setCardPosition({ x: touch.clientX, y: touch.clientY });
       addCascadeCard(touch.clientX, touch.clientY);
+      if (dragRafRef.current !== null) return;
+      dragRafRef.current = requestAnimationFrame(() => {
+        dragRafRef.current = null;
+        if (dragCardRef.current) {
+          const cw = window.innerWidth < 768 ? 110 : 140;
+          const ch = window.innerWidth < 768 ? 165 : 210;
+          dragCardRef.current.style.transform = `translate(${touch.clientX - cw / 2}px, ${touch.clientY - ch / 2}px)`;
+        }
+      });
     };
     const handleTouchEnd = () => completeDrag();
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -770,7 +799,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       case 3:
         return (
           <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
-            <div className="flex-1 w-full min-h-0 overflow-y-auto flex items-center justify-center">
+            <div className="flex-1 w-full min-h-0 overflow-y-auto flex items-start justify-start pt-6">
               {isLoadingWelcome ? (
                 <div className="flex gap-2 items-center justify-center">
                   {[0, 1, 2].map(i => (
@@ -993,7 +1022,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '720px',
+                          top: '680px',
                           transform: 'translateX(-50%) translateY(-50%)',
                           width: '481px',
                           fontFamily: 'var(--font-reenie-beanie), cursive',
@@ -1041,7 +1070,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
                 {/* Step 1 — name */}
                 {currentStep === 1 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-8">
+                  <div className="flex flex-col items-center justify-center h-full gap-8" style={{ position: 'relative' }}>
                     <div className="text-center">
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
                       <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
@@ -1061,12 +1090,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       aria-hidden={!canContinueFromName}
                       className="transition-opacity duration-200"
                       style={{
-                        display: 'flex', width: '185px', height: '60px',
+                        position: 'absolute',
+                        left: '50%',
+                        top: 'calc(50% + 344px)',
+                        transform: 'translateX(-50%) translateY(-50%)',
+                        display: 'flex', width: '208px', height: '68px',
                         justifyContent: 'center', alignItems: 'center',
                         borderRadius: '9999px',
                         fontFamily: 'var(--font-reenie-beanie), cursive',
-                        fontSize: '24px', fontWeight: 500,
+                        fontSize: '30px', fontWeight: 400,
                         background: '#172211', color: '#E1EEFC',
+                        border: 'none', cursor: 'pointer',
                         opacity: canContinueFromName ? 1 : 0,
                         pointerEvents: canContinueFromName ? 'auto' : 'none',
                       }}
@@ -1078,7 +1112,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
                 {/* Step 2 — birthdate */}
                 {currentStep === 2 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-6">
+                  <div className="flex flex-col items-center justify-center h-full gap-6" style={{ position: 'relative' }}>
                     <div className="text-center">
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
                       <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>an ai reads your vedic birth chart — time and location make it precise</p>
@@ -1132,12 +1166,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       aria-hidden={!canContinueFromBirthdate}
                       className="transition-opacity duration-200"
                       style={{
-                        display: 'flex', width: '185px', height: '60px',
+                        position: 'absolute',
+                        left: '50%',
+                        top: 'calc(50% + 344px)',
+                        transform: 'translateX(-50%) translateY(-50%)',
+                        display: 'flex', width: '208px', height: '68px',
                         justifyContent: 'center', alignItems: 'center',
                         borderRadius: '9999px',
                         fontFamily: 'var(--font-reenie-beanie), cursive',
-                        fontSize: '24px', fontWeight: 500,
+                        fontSize: '30px', fontWeight: 400,
                         background: '#172211', color: '#E1EEFC',
+                        border: 'none', cursor: 'pointer',
                         opacity: canContinueFromBirthdate ? 1 : 0,
                         pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
                       }}
@@ -1150,7 +1189,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 {/* Step 3 — typewriter message + drag card */}
                 {currentStep === 3 && (
                   <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
-                    <div className="flex-1 overflow-y-auto flex items-center justify-center w-full">
+                    <div className="flex-1 overflow-y-auto flex items-start justify-start pt-6 w-full">
                       {isLoadingWelcome ? (
                         <div className="flex gap-3 items-center justify-center">
                           {[0, 1, 2].map(i => (
@@ -1208,13 +1247,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         const cw = isMobile ? 110 : 140;
         const ch = isMobile ? 165 : 210;
         return (
-          <img src="/card-back.png" alt="Dragging card" className="rounded-2xl shadow-2xl select-none"
+          <img ref={dragCardRef} src="/card-back.png" alt="Dragging card" className="rounded-2xl shadow-2xl select-none"
             draggable="false"
             style={{
-              position: 'fixed', left: cardPosition.x - cw / 2, top: cardPosition.y - ch / 2,
+              position: 'fixed', left: 0, top: 0,
               width: `${cw}px`, height: `${ch}px`, objectFit: 'cover',
               cursor: 'grabbing', zIndex: 10000, pointerEvents: 'none',
               userSelect: 'none', WebkitUserSelect: 'none',
+              willChange: 'transform',
             }}
           />
         );
