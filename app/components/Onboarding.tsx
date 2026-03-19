@@ -514,53 +514,45 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div style={{
               position: 'relative',
               width: '85vw',
-              height: '87.2vw',
+              height: '90vw',
               marginLeft: 'auto',
               marginRight: 'auto',
               marginTop: '18vh',
               flexShrink: 0,
             }}>
-              {/* Glass text: "sl w / hour" — same font-size both lines, space where 'o' would be */}
-              {/* Glass light effect: drop-shadow simulates -45° directional light at 80% from upper-right */}
-              <p
+              {/* Glass text: "sl w / hour" — split for per-line letter-spacing */}
+              <div
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
-                  fontFamily: '"Apple LiSung", Georgia, "Times New Roman", serif',
-                  fontSize: '53.8vw',
+                  fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
                   fontWeight: 400,
-                  lineHeight: '38vw',
-                  letterSpacing: '-1.615vw',
                   textTransform: 'lowercase',
                   textAlign: 'center',
-                  /* Glass fill: solid 20% — matches Figma exactly */
                   WebkitTextFillColor: 'rgba(206, 241, 123, 0.20)',
                   color: 'rgba(206, 241, 123, 0.20)',
-                  /* Stroke: 80% — matches Figma */
-                  WebkitTextStroke: '1px rgba(206, 241, 123, 0.80)',
+                  WebkitTextStroke: '0.7px rgba(206, 241, 123, 0.80)',
                   margin: 0,
                   padding: 0,
-                  whiteSpace: 'pre',
                   userSelect: 'none',
                 } as React.CSSProperties}
               >
-                {'sl w\nhour'}
-              </p>
-              {/* Spiral — enlarged to overlap text on both sides */}
-              {/* Original centre: left:93+(153/2)=169.5px, top:83+(131/2)=148.5px in 390px ref */}
-              {/* New size: 62vw × 53vw → centre at same point → left=169.5-(121)=48.5px, top=148.5-(103.4)=45.1px */}
+                <span style={{ display: 'block', fontSize: '56.4vw', lineHeight: '44.9vw', letterSpacing: '-0.025em' }}>sl w</span>
+                <span style={{ display: 'block', fontSize: '56.4vw', lineHeight: '44.9vw', letterSpacing: '-0.03em' }}>hour</span>
+              </div>
+              {/* Spiral — sized to sit within the 'sl w' line, not touching 'hour' */}
               <img
                 src="/spiral-icon.svg"
                 alt=""
                 aria-hidden="true"
                 style={{
                   position: 'absolute',
-                  width: '66vw',
-                  height: '56.6vw',
-                  top: '4.5vw',
-                  left: '12.4vw',
+                  width: '58vw',
+                  height: '49.7vw',
+                  top: '10vw',
+                  left: '16vw',
                   pointerEvents: 'none',
                 }}
               />
@@ -960,30 +952,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         height: '460px',
                       }}>
                         {/* Glass text */}
-                        <p
+                        <div
                           style={{
                             position: 'absolute',
                             top: 0,
                             left: 0,
                             width: '100%',
-                            fontFamily: '"Apple LiSung", Georgia, "Times New Roman", serif',
-                            fontSize: '315px',
-                            fontWeight: 300,
-                            lineHeight: '225px',
-                            letterSpacing: '-9.4px',
+                            fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+                            fontWeight: 400,
                             textTransform: 'lowercase',
                             textAlign: 'center',
                             WebkitTextFillColor: 'rgba(23, 34, 17, 0.20)',
                             color: 'rgba(23, 34, 17, 0.20)',
-                            WebkitTextStroke: '1px rgba(23, 34, 17, 0.80)',
+                            WebkitTextStroke: '0.7px rgba(23, 34, 17, 0.80)',
                             margin: 0,
                             padding: 0,
-                            whiteSpace: 'pre',
                             userSelect: 'none',
                           } as React.CSSProperties}
                         >
-                          {'sl w\nhour'}
-                        </p>
+                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.025em' }}>sl w</span>
+                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.03em' }}>hour</span>
+                        </div>
                         {/* Spiral — #172211 fill + 2px stroke, mobile-scale (433×371px), centred in "o" gap */}
                         <img
                           src="/spiral-icon-desktop.svg"
