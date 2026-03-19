@@ -508,24 +508,106 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     switch (currentStep) {
       case 0:
         return (
-          <div className="flex flex-col items-center justify-center flex-1 gap-12 py-12">
-            <img
-              src="/slow-hour-logo.png"
-              alt="slow hour"
-              className="w-full max-w-xs md:max-w-md"
-              style={{ filter: 'brightness(0) invert(1)' }}
-            />
-            <button
-              onClick={handleNext}
-              className="px-10 py-3 rounded-full text-3xl transition-all duration-200"
+          <div className="flex flex-col flex-1">
+            {/* "slow hour + logo" group — 85vw wide (331px at 390px ref), centred, 18vh from top */}
+            {/* Text overflows the group edges — viewport clips symmetrically */}
+            <div style={{
+              position: 'relative',
+              width: '85vw',
+              height: '87.2vw',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginTop: '18vh',
+              flexShrink: 0,
+            }}>
+              {/* Glass text: "sl w / hour" — same font-size both lines, space where 'o' would be */}
+              {/* Glass light effect: drop-shadow simulates -45° directional light at 80% from upper-right */}
+              <p
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  fontFamily: '"Apple LiSung", Georgia, "Times New Roman", serif',
+                  fontSize: '53.8vw',
+                  fontWeight: 400,
+                  lineHeight: '38vw',
+                  letterSpacing: '-1.615vw',
+                  textTransform: 'lowercase',
+                  textAlign: 'center',
+                  /* Glass fill: solid 20% — matches Figma exactly */
+                  WebkitTextFillColor: 'rgba(206, 241, 123, 0.20)',
+                  color: 'rgba(206, 241, 123, 0.20)',
+                  /* Stroke: 80% — matches Figma */
+                  WebkitTextStroke: '1px rgba(206, 241, 123, 0.80)',
+                  margin: 0,
+                  padding: 0,
+                  whiteSpace: 'pre',
+                  userSelect: 'none',
+                } as React.CSSProperties}
+              >
+                {'sl w\nhour'}
+              </p>
+              {/* Spiral — enlarged to overlap text on both sides */}
+              {/* Original centre: left:93+(153/2)=169.5px, top:83+(131/2)=148.5px in 390px ref */}
+              {/* New size: 62vw × 53vw → centre at same point → left=169.5-(121)=48.5px, top=148.5-(103.4)=45.1px */}
+              <img
+                src="/spiral-icon.svg"
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  width: '66vw',
+                  height: '56.6vw',
+                  top: '4.5vw',
+                  left: '12.4vw',
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
+
+            {/* Subtitle */}
+            <p
+              className="text-center text-[#CEF17B]"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
-                background: '#CEF17B',
-                color: '#172211',
+                fontSize: '24px',
+                lineHeight: '24px',
+                fontWeight: 500,
+                padding: '0 24px',
+                marginTop: '20px',
               }}
             >
-              continue →
-            </button>
+              build your archive of daily perspectives.
+            </p>
+
+            {/* Spacer — pushes button to the bottom */}
+            <div className="flex-1" />
+
+            {/* Continue button */}
+            <div className="flex justify-center" style={{ padding: '0 20px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)' }}>
+              <button
+                onClick={handleNext}
+                className="transition-all duration-200"
+                style={{
+                  display: 'flex',
+                  width: '350px',
+                  maxWidth: '100%',
+                  height: '56px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '9999px',
+                  fontFamily: 'var(--font-reenie-beanie), cursive',
+                  fontSize: '24px',
+                  fontWeight: 500,
+                  background: '#CEF17B',
+                  color: '#172211',
+                  boxShadow: '0 4px 4px 0 rgba(0,0,0,0.25)',
+                }}
+              >
+                continue →
+              </button>
+            </div>
           </div>
         );
 
@@ -786,8 +868,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="absolute inset-0 bg-[#172211]/60" />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
-      <div className={`md:hidden relative z-10 flex flex-col px-5 h-[100dvh] ${currentStep === 3 ? 'overflow-hidden py-6' : 'py-8'}`}>
-        <div className="w-full max-w-sm mx-auto flex-1 flex flex-col">
+      <div className={`md:hidden relative z-10 flex flex-col h-[100dvh]
+        ${currentStep === 0 ? '' : 'px-5'}
+        ${currentStep === 3 ? 'overflow-hidden py-6' : currentStep === 0 ? '' : 'py-8'}`}>
+        <div className={`flex-1 flex flex-col ${currentStep === 0 ? 'w-full' : 'w-full max-w-sm mx-auto'}`}>
           {renderStepContent()}
         </div>
       </div>
@@ -843,21 +927,126 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 background: '#E1EEFC',
               }}
             >
+              {/* Cloud background — shown on all onboarding steps */}
+              <img
+                src="/onboarding-desktop-bg.png"
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: 0.2,
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
               {/* Desktop content uses original dark-on-light styling */}
-              <div className="h-full px-12 overflow-y-auto" style={{ color: '#172211' }}>
+              <div className={`h-full overflow-y-auto ${currentStep === 0 ? '' : 'px-12'}`} style={{ color: '#172211', position: 'relative', zIndex: 1 }}>
 
                 {/* Step 0 — welcome / logo */}
                 {currentStep === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-12">
-                    {/* Logo spans the full content-area width */}
-                    <img src="/slow-hour-logo.png" alt="slow hour" style={{ width: '100%' }} />
-                    <button
-                      onClick={handleNext}
-                      className="px-12 py-4 bg-black text-white rounded-full text-3xl"
-                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                    >
-                      continue →
-                    </button>
+                  <div className="flex flex-col h-full" style={{ position: 'relative' }}>
+                    {/* Content — flex column; font metrics from Figma ×1.1234 scale, spiral mobile-proportioned */}
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+                      {/* Logo group: relative container for text + spiral */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '153px',
+                        left: 0,
+                        right: 0,
+                        height: '460px',
+                      }}>
+                        {/* Glass text */}
+                        <p
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            fontFamily: '"Apple LiSung", Georgia, "Times New Roman", serif',
+                            fontSize: '315px',
+                            fontWeight: 300,
+                            lineHeight: '225px',
+                            letterSpacing: '-9.4px',
+                            textTransform: 'lowercase',
+                            textAlign: 'center',
+                            WebkitTextFillColor: 'rgba(23, 34, 17, 0.20)',
+                            color: 'rgba(23, 34, 17, 0.20)',
+                            WebkitTextStroke: '1px rgba(23, 34, 17, 0.80)',
+                            margin: 0,
+                            padding: 0,
+                            whiteSpace: 'pre',
+                            userSelect: 'none',
+                          } as React.CSSProperties}
+                        >
+                          {'sl w\nhour'}
+                        </p>
+                        {/* Spiral — #172211 fill + 2px stroke, mobile-scale (433×371px), centred in "o" gap */}
+                        <img
+                          src="/spiral-icon-desktop.svg"
+                          alt=""
+                          aria-hidden="true"
+                          style={{
+                            position: 'absolute',
+                            width: '385px',
+                            height: '330px',
+                            top: '25px',
+                            left: '147px',
+                            pointerEvents: 'none',
+                          }}
+                        />
+                      </div>
+                      {/* Subtitle: Figma position (661px from card top) */}
+                      <p
+                        style={{
+                          position: 'absolute',
+                          left: '50%',
+                          top: '661px',
+                          transform: 'translateX(-50%) translateY(-50%)',
+                          width: '481px',
+                          fontFamily: 'var(--font-reenie-beanie), cursive',
+                          fontSize: '36px',
+                          lineHeight: '27px',
+                          fontWeight: 400,
+                          textAlign: 'center',
+                          color: '#172211',
+                          margin: 0,
+                        }}
+                      >
+                        build your archive of daily perspectives.
+                      </p>
+                      {/* Button: Figma position (50% + 344px from card top) */}
+                      <div style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: 'calc(50% + 344px)',
+                        transform: 'translateX(-50%) translateY(-50%)',
+                      }}>
+                        <button
+                          onClick={handleNext}
+                          style={{
+                            display: 'flex',
+                            width: '208px',
+                            height: '68px',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: '9999px',
+                            fontFamily: 'var(--font-reenie-beanie), cursive',
+                            fontSize: '30px',
+                            fontWeight: 400,
+                            background: '#172211',
+                            color: '#E1EEFC',
+                            border: 'none',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          continue →
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -881,9 +1070,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       disabled={!canContinueFromName}
                       tabIndex={canContinueFromName ? 0 : -1}
                       aria-hidden={!canContinueFromName}
-                      className="px-8 py-3 bg-black text-white rounded-full text-xl transition-opacity duration-200"
+                      className="transition-opacity duration-200"
                       style={{
+                        display: 'flex', width: '185px', height: '60px',
+                        justifyContent: 'center', alignItems: 'center',
+                        borderRadius: '9999px',
                         fontFamily: 'var(--font-reenie-beanie), cursive',
+                        fontSize: '24px', fontWeight: 500,
+                        background: '#172211', color: '#E1EEFC',
                         opacity: canContinueFromName ? 1 : 0,
                         pointerEvents: canContinueFromName ? 'auto' : 'none',
                       }}
@@ -947,9 +1141,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       disabled={!canContinueFromBirthdate}
                       tabIndex={canContinueFromBirthdate ? 0 : -1}
                       aria-hidden={!canContinueFromBirthdate}
-                      className="px-8 py-3 bg-black text-white rounded-full text-xl transition-opacity duration-200"
+                      className="transition-opacity duration-200"
                       style={{
+                        display: 'flex', width: '185px', height: '60px',
+                        justifyContent: 'center', alignItems: 'center',
+                        borderRadius: '9999px',
                         fontFamily: 'var(--font-reenie-beanie), cursive',
+                        fontSize: '24px', fontWeight: 500,
+                        background: '#172211', color: '#E1EEFC',
                         opacity: canContinueFromBirthdate ? 1 : 0,
                         pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
                       }}
