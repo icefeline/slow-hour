@@ -551,7 +551,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   position: 'absolute',
                   width: '58vw',
                   height: '49.7vw',
-                  top: '10vw',
+                  top: '12vw',
                   left: '16vw',
                   pointerEvents: 'none',
                 }}
@@ -563,11 +563,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               className="text-center text-[#CEF17B]"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
-                fontSize: '24px',
-                lineHeight: '24px',
+                fontSize: '6.15vw',
+                lineHeight: '6.15vw',
                 fontWeight: 500,
-                padding: '0 24px',
-                marginTop: '20px',
+                padding: '0 6.15vw',
+                marginTop: '5.13vw',
               }}
             >
               build your archive of daily perspectives.
@@ -577,20 +577,20 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div className="flex-1" />
 
             {/* Continue button */}
-            <div className="flex justify-center" style={{ padding: '0 20px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)' }}>
+            <div className="flex justify-center" style={{ padding: '0 5.13vw', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14.4vw)' }}>
               <button
                 onClick={handleNext}
                 className="transition-all duration-200"
                 style={{
                   display: 'flex',
-                  width: '350px',
+                  width: '89.7vw',
                   maxWidth: '100%',
-                  height: '56px',
+                  height: '14.4vw',
                   justifyContent: 'center',
                   alignItems: 'center',
                   borderRadius: '9999px',
                   fontFamily: 'var(--font-reenie-beanie), cursive',
-                  fontSize: '24px',
+                  fontSize: '6.15vw',
                   fontWeight: 500,
                   background: '#CEF17B',
                   color: '#172211',
@@ -980,10 +980,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           aria-hidden="true"
                           style={{
                             position: 'absolute',
-                            width: '385px',
-                            height: '330px',
-                            top: '25px',
-                            left: '147px',
+                            width: '324px',
+                            height: '277px',
+                            top: '80px',
+                            left: '175px',
                             pointerEvents: 'none',
                           }}
                         />
@@ -993,7 +993,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '661px',
+                          top: '720px',
                           transform: 'translateX(-50%) translateY(-50%)',
                           width: '481px',
                           fontFamily: 'var(--font-reenie-beanie), cursive',
