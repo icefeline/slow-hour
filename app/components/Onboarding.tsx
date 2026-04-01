@@ -1032,15 +1032,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   <div className="flex flex-col h-full" style={{ position: 'relative' }}>
                     {/* Content — flex column; font metrics from Figma ×1.1234 scale, spiral mobile-proportioned */}
                     <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-                      {/* Logo group: relative container for text + spiral */}
+                      {/* Logo group: full width, overflow visible so text bleeds edges */}
                       <div style={{
                         position: 'absolute',
-                        top: '153px',
+                        top: '100px',
                         left: 0,
                         right: 0,
-                        height: '460px',
+                        height: '490px',
+                        overflow: 'visible',
                       }}>
-                        {/* Glass text */}
+                        {/* Glass text — bleeds off edges intentionally */}
                         <div
                           style={{
                             position: 'absolute',
@@ -1059,32 +1060,35 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             userSelect: 'none',
                           } as React.CSSProperties}
                         >
-                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
-                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.08em' }}>hour</span>
+                          <span style={{ display: 'block', fontSize: '300px', lineHeight: '240px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                          <span style={{ display: 'block', fontSize: '300px', lineHeight: '240px', letterSpacing: '-0.08em' }}>hour</span>
                         </div>
-                        {/* Spiral — #172211 fill + 2px stroke, mobile-scale (433×371px), centred in "o" gap */}
+                        {/* Spiral — overlaps both lines, shifted down and slightly right */}
                         <img
                           src="/spiral-icon-desktop.svg"
                           alt=""
                           aria-hidden="true"
                           style={{
                             position: 'absolute',
-                            width: '324px',
-                            height: '277px',
-                            top: '80px',
-                            left: '175px',
+                            width: '280px',
+                            height: '240px',
+                            top: '100px',
+                            left: '50%',
+                            transform: 'translateX(-58%)',
                             pointerEvents: 'none',
                           }}
                         />
                       </div>
-                      {/* Subtitle: 24px below logo group (153 + 460 + 24 = 637) */}
+                      {/* Subtitle: 24px below logo group (100 + 490 + 24 = 614) */}
                       <p
                         style={{
                           position: 'absolute',
-                          left: '50%',
-                          top: '637px',
-                          transform: 'translateX(-50%)',
-                          width: '481px',
+                          left: '20px',
+                          right: '20px',
+                          top: '614px',
+                          transform: 'none',
+                          width: 'auto',
+                          textAlign: 'center',
                           fontFamily: 'var(--font-reenie-beanie), cursive',
                           fontSize: '36px',
                           lineHeight: '27px',
