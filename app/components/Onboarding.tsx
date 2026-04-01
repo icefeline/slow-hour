@@ -553,25 +553,23 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       case 0:
         return (
           <div className="flex flex-col flex-1">
-            {/* "slow hour + logo" group — 85vw wide (331px at 390px ref), centred, 18vh from top */}
-            {/* Text overflows the group edges — viewport clips symmetrically */}
+            {/* Logo group — full viewport width, text overflows edges intentionally */}
             <div style={{
               position: 'relative',
-              width: '85vw',
-              height: '90vw',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '18vh',
+              width: '100%',
+              height: '82vw',
+              marginTop: '14vh',
               flexShrink: 0,
+              overflow: 'visible',
             }}>
-              {/* Glass text: "sl w / hour" — split for per-line letter-spacing */}
+              {/* Glass text: "sl  w / hour" — Gilda Display, 175px/145px lh, -8% ls */}
               <div
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
-                  fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+                  fontFamily: 'var(--font-gilda-display), "Gilda Display", serif',
                   fontWeight: 400,
                   textTransform: 'lowercase',
                   textAlign: 'center',
@@ -583,20 +581,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   userSelect: 'none',
                 } as React.CSSProperties}
               >
-                <span style={{ display: 'block', fontSize: '56.4vw', lineHeight: '44.9vw', letterSpacing: '-0.025em' }}>sl w</span>
-                <span style={{ display: 'block', fontSize: '56.4vw', lineHeight: '44.9vw', letterSpacing: '-0.03em' }}>hour</span>
+                <span style={{ display: 'block', fontSize: '175px', lineHeight: '145px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                <span style={{ display: 'block', fontSize: '175px', lineHeight: '145px', letterSpacing: '-0.08em' }}>hour</span>
               </div>
-              {/* Spiral — sized to sit within the 'sl w' line, not touching 'hour' */}
+              {/* Spiral — centered in viewport, sits in the gap between 'l' and 'w' */}
               <img
                 src="/spiral-icon.svg"
                 alt=""
                 aria-hidden="true"
                 style={{
                   position: 'absolute',
-                  width: '58vw',
-                  height: '49.7vw',
-                  top: '12vw',
-                  left: '16vw',
+                  width: '52vw',
+                  height: '44.5vw',
+                  top: '8vw',
+                  left: '50%',
+                  transform: 'translateX(-54%)',
                   pointerEvents: 'none',
                 }}
               />
@@ -610,8 +609,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 fontSize: '6.15vw',
                 lineHeight: '6.15vw',
                 fontWeight: 500,
-                padding: '0 6.15vw',
-                marginTop: '5.13vw',
+                padding: '0 20px',
+                marginTop: '24px',
               }}
             >
               build your archive of daily perspectives.
@@ -621,7 +620,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div className="flex-1" />
 
             {/* Continue button */}
-            <div className="flex justify-center" style={{ padding: '0 5.13vw', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14.4vw)' }}>
+            <div className="flex justify-center" style={{ padding: '0 20px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14.4vw)' }}>
               <button
                 onClick={handleNext}
                 className="transition-all duration-200"
@@ -649,8 +648,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 1:
         return (
-          <div className="flex flex-col items-center justify-center w-full flex-1 py-6">
-            <div className="flex flex-col items-center w-full gap-8">
+          <div className="flex flex-col w-full flex-1 py-6">
+            {/* Back button — pinned top-left */}
+            <button
+              onClick={() => setCurrentStep(0)}
+              className="self-start text-[#E1EEFC]/50 text-2xl mb-4"
+              style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              ← back
+            </button>
+            {/* Centered content */}
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl md:text-6xl text-[#E1EEFC]"
@@ -715,8 +723,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 2:
         return (
-          <div className="flex flex-col items-center justify-center w-full flex-1 py-6">
-            <div className="flex flex-col items-center w-full gap-8">
+          <div className="flex flex-col w-full flex-1 py-6">
+            {/* Back button — pinned top-left */}
+            <button
+              onClick={() => setCurrentStep(1)}
+              className="self-start text-[#E1EEFC]/50 text-2xl mb-4"
+              style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              ← back
+            </button>
+            {/* Centered content */}
+            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl text-[#E1EEFC]"
@@ -842,9 +859,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       case 3:
         return (
           <div className="flex-1 flex flex-col items-center justify-between py-3 gap-2">
-            <div className="flex-1 w-full min-h-0 overflow-y-auto flex items-start justify-start pt-6">
+            <div className="flex-1 w-full min-h-0 overflow-y-auto flex flex-col items-center justify-center pt-4">
               {isLoadingWelcome ? (
-                <div className="flex gap-2 items-center justify-center">
+                <div className="flex gap-2 items-center justify-center w-full">
                   {[0, 1, 2].map(i => (
                     <div
                       key={i}
@@ -855,8 +872,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 </div>
               ) : (
                 <p
-                  className="text-3xl text-[#E1EEFC] text-center whitespace-pre-line"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}
+                  className="w-full text-2xl text-[#E1EEFC] text-center whitespace-pre-line"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
                 >
                   {displayedText}
                 </p>
@@ -1030,7 +1047,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             top: 0,
                             left: 0,
                             width: '100%',
-                            fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+                            fontFamily: 'var(--font-gilda-display), "Gilda Display", serif',
                             fontWeight: 400,
                             textTransform: 'lowercase',
                             textAlign: 'center',
@@ -1042,8 +1059,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             userSelect: 'none',
                           } as React.CSSProperties}
                         >
-                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.025em' }}>sl w</span>
-                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.03em' }}>hour</span>
+                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                          <span style={{ display: 'block', fontSize: '315px', lineHeight: '251px', letterSpacing: '-0.08em' }}>hour</span>
                         </div>
                         {/* Spiral — #172211 fill + 2px stroke, mobile-scale (433×371px), centred in "o" gap */}
                         <img
@@ -1060,13 +1077,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           }}
                         />
                       </div>
-                      {/* Subtitle: Figma position (661px from card top) */}
+                      {/* Subtitle: 24px below logo group (153 + 460 + 24 = 637) */}
                       <p
                         style={{
                           position: 'absolute',
                           left: '50%',
-                          top: '680px',
-                          transform: 'translateX(-50%) translateY(-50%)',
+                          top: '637px',
+                          transform: 'translateX(-50%)',
                           width: '481px',
                           fontFamily: 'var(--font-reenie-beanie), cursive',
                           fontSize: '36px',
@@ -1114,6 +1131,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 {/* Step 1 — name */}
                 {currentStep === 1 && (
                   <div className="flex flex-col items-center justify-center h-full gap-8" style={{ position: 'relative' }}>
+                    <button
+                      onClick={() => setCurrentStep(0)}
+                      style={{ position: 'absolute', top: '24px', left: 0, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
+                    >
+                      ← back
+                    </button>
+                  <div className="flex flex-col items-center justify-center flex-1 gap-8" style={{ position: 'relative' }}>
                     <div className="text-center">
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
                       <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
@@ -1121,7 +1145,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     <input
                       type="text" value={name} onChange={(e) => setName(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-                      className="w-full max-w-md px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                      className="w-full max-w-2xl px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
                       style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
                       autoFocus
                     />
@@ -1151,11 +1175,19 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       continue →
                     </button>
                   </div>
+                  </div>
                 )}
 
                 {/* Step 2 — birthdate */}
                 {currentStep === 2 && (
                   <div className="flex flex-col items-center justify-center h-full gap-6" style={{ position: 'relative' }}>
+                    <button
+                      onClick={() => setCurrentStep(1)}
+                      style={{ position: 'absolute', top: '24px', left: 0, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
+                    >
+                      ← back
+                    </button>
+                  <div className="flex flex-col items-center justify-center flex-1 gap-6" style={{ position: 'relative' }}>
                     <div className="text-center">
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
                       <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>an ai reads your vedic birth chart — time and location make it precise</p>
@@ -1227,12 +1259,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       continue →
                     </button>
                   </div>
+                  </div>
                 )}
 
                 {/* Step 3 — typewriter message + drag card */}
                 {currentStep === 3 && (
                   <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
-                    <div className="flex-1 overflow-y-auto flex items-start justify-start pt-6 w-full">
+                    <div className="flex-1 overflow-y-auto flex items-center justify-center pt-6 w-full">
                       {isLoadingWelcome ? (
                         <div className="flex gap-3 items-center justify-center">
                           {[0, 1, 2].map(i => (
