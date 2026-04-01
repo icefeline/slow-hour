@@ -1070,9 +1070,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           aria-hidden="true"
                           style={{
                             position: 'absolute',
-                            width: '280px',
-                            height: '240px',
-                            top: '100px',
+                            width: '360px',
+                            height: '308px',
+                            top: '80px',
                             left: '50%',
                             transform: 'translateX(-46%)',
                             pointerEvents: 'none',
