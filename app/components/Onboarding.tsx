@@ -35,6 +35,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   // Device scale for MacBook / smaller-viewport desktop layout
   const [deviceScale, setDeviceScale] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   // Location geocode feedback
   const [locationResolved, setLocationResolved] = useState<string | null>(null);
@@ -52,6 +53,20 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const handler = () => {
+      setKeyboardHeight(Math.max(0, window.innerHeight - vv.height - vv.offsetTop));
+    };
+    vv.addEventListener('resize', handler);
+    vv.addEventListener('scroll', handler);
+    return () => {
+      vv.removeEventListener('resize', handler);
+      vv.removeEventListener('scroll', handler);
+    };
   }, []);
 
   // Compute the scale so the device frame + content area always fit within the viewport
@@ -634,9 +649,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 1:
         return (
-          <div className="flex flex-col items-center w-full flex-1 py-6">
-            {/* flex-1 centers the content vertically in the remaining space */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
+          <div className="flex flex-col items-center justify-center w-full flex-1 py-6">
+            <div className="flex flex-col items-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl md:text-6xl text-[#E1EEFC]"
@@ -664,17 +678,32 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               />
             </div>
 
-            {/* Button sits at the bottom — opacity toggles to avoid layout shift */}
+            {/* Spacer so content isn't hidden behind the fixed button */}
+            <div className="h-20 shrink-0" />
+
+            {/* Fixed bottom button — floats above keyboard when open */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromName}
               tabIndex={canContinueFromName ? 0 : -1}
               aria-hidden={!canContinueFromName}
-              className="w-full md:w-auto md:px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
+                position: 'fixed',
+                left: '20px',
+                right: '20px',
+                bottom: keyboardHeight > 0
+                  ? `${keyboardHeight + 8}px`
+                  : 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
+                transition: 'bottom 0.15s ease-out, opacity 0.2s ease-in-out',
+                padding: '12px',
+                borderRadius: '9999px',
                 fontFamily: 'var(--font-reenie-beanie), cursive',
+                fontSize: '1.5rem',
                 background: '#CEF17B',
                 color: '#172211',
+                border: 'none',
+                cursor: 'pointer',
+                zIndex: 50,
                 opacity: canContinueFromName ? 1 : 0,
                 pointerEvents: canContinueFromName ? 'auto' : 'none',
               }}
@@ -686,9 +715,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 2:
         return (
-          <div className="flex flex-col items-center w-full flex-1 py-6">
-            {/* flex-1 centers the content vertically; errors expand the group but button stays at bottom */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
+          <div className="flex flex-col items-center justify-center w-full flex-1 py-6">
+            <div className="flex flex-col items-center w-full gap-8">
               <div className="text-center">
                 <h2
                   className="text-5xl text-[#E1EEFC]"
@@ -776,17 +804,32 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
             </div>
 
-            {/* Button sits at the bottom — opacity toggles to avoid layout shift */}
+            {/* Spacer so content isn't hidden behind the fixed button */}
+            <div className="h-20 shrink-0" />
+
+            {/* Fixed bottom button — floats above keyboard when open */}
             <button
               onClick={handleNext}
               disabled={!canContinueFromBirthdate}
               tabIndex={canContinueFromBirthdate ? 0 : -1}
               aria-hidden={!canContinueFromBirthdate}
-              className="w-full md:w-auto md:px-10 py-3 rounded-full text-2xl transition-opacity duration-200"
               style={{
+                position: 'fixed',
+                left: '20px',
+                right: '20px',
+                bottom: keyboardHeight > 0
+                  ? `${keyboardHeight + 8}px`
+                  : 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
+                transition: 'bottom 0.15s ease-out, opacity 0.2s ease-in-out',
+                padding: '12px',
+                borderRadius: '9999px',
                 fontFamily: 'var(--font-reenie-beanie), cursive',
+                fontSize: '1.5rem',
                 background: '#CEF17B',
                 color: '#172211',
+                border: 'none',
+                cursor: 'pointer',
+                zIndex: 50,
                 opacity: canContinueFromBirthdate ? 1 : 0,
                 pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
               }}
@@ -798,7 +841,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 3:
         return (
-          <div className="flex flex-col items-center justify-between h-full py-3 gap-2">
+          <div className="flex-1 flex flex-col items-center justify-between py-3 gap-2">
             <div className="flex-1 w-full min-h-0 overflow-y-auto flex items-start justify-start pt-6">
               {isLoadingWelcome ? (
                 <div className="flex gap-2 items-center justify-center">
