@@ -952,7 +952,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className={`md:hidden relative z-10 flex flex-col h-[100dvh]
         ${currentStep === 0 ? '' : 'px-5'}
         ${currentStep === 3 ? 'overflow-hidden py-6' : currentStep === 0 ? '' : 'py-8'}`}>
-        <div className={`flex-1 flex flex-col ${currentStep === 0 ? 'w-full' : 'w-full max-w-sm mx-auto'}`}>
+        <div className="flex-1 flex flex-col w-full">
           {renderStepContent()}
         </div>
       </div>
@@ -1074,7 +1074,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             height: '240px',
                             top: '100px',
                             left: '50%',
-                            transform: 'translateX(-58%)',
+                            transform: 'translateX(-46%)',
                             pointerEvents: 'none',
                           }}
                         />
