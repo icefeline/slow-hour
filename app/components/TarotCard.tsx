@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
 import { getCardIcon } from './card-icons';
 import { ActiveInsight } from './ActiveInsight';
+import CardSlotReveal from './CardSlotReveal';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
 import type { ActiveTransit } from '@/lib/types/astrology';
 
@@ -12,6 +13,7 @@ interface TarotCardProps {
   card: TarotCardType;
   isReversed: boolean;
   isRevealed: boolean;
+  animateReveal?: boolean;
   userName?: string;
   cardDate?: string; // YYYY-MM-DD of when the card was drawn; defaults to today
 }
@@ -113,7 +115,7 @@ function convertToTransitData(transit: ActiveTransit): TransitData {
   };
 }
 
-export default function TarotCard({ card, isReversed, isRevealed, userName, cardDate }: TarotCardProps) {
+export default function TarotCard({ card, isReversed, isRevealed, animateReveal, userName, cardDate }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
@@ -128,6 +130,12 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
   const [insightError, setInsightError] = useState<'error' | null>(null);
   const [isRateLimited, setIsRateLimited] = useState(false);
   const isFirstMount = useRef(true);
+
+  // Slot reveal animation — slotDone flips true when reel finishes
+  const [slotDone, setSlotDone] = useState(false);
+  const handleSlotComplete = useCallback(() => setSlotDone(true), []);
+  const showSlot = !!animateReveal && isRevealed && !slotDone;
+
 
   // Reset insight + error when card or date changes, then try loading from cache for the new card/date
   useEffect(() => {
@@ -276,24 +284,23 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
     <div className="w-full mx-auto">
       {/* Card Back/Front */}
       <div className="relative mb-16 md:mb-8">
-        <div className="aspect-[2/3] w-72 md:w-96 mx-auto rounded-2xl overflow-visible relative">
+        <div data-card-image className="aspect-[2/3] w-72 md:w-96 mx-auto rounded-2xl overflow-visible relative">
           {isRevealed ? (
             // Card Front - Actual card image
-            <div className={`relative w-full h-full rounded-2xl overflow-hidden transition-all duration-1000 transform-gpu ${
+            <div className={`relative w-full h-full rounded-2xl overflow-hidden transform-gpu ${
               isReversed ? 'rotate-180' : ''
             }`}>
               <img
                 src={`/cards/${getCardFilename(card.id, card.name)}.png`}
                 alt={card.name}
-                className="w-full h-full object-cover shadow-xl animate-sand-reveal"
+                className="w-full h-full object-cover shadow-xl"
                 onError={(e) => {
-                  // Fallback to SVG if PNG doesn't exist
                   e.currentTarget.src = card.imagePath;
                 }}
               />
             </div>
           ) : (
-            // Card Back - Use the actual card back design
+            // Card Back
             <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl">
               <img
                 src="/card-back.png"
@@ -301,6 +308,15 @@ export default function TarotCard({ card, isReversed, isRevealed, userName, card
                 className="w-full h-full object-cover"
               />
             </div>
+          )}
+
+          {/* Slot reel overlay — renders on top while animating */}
+          {showSlot && (
+            <CardSlotReveal
+              selectedCardSrc={`/cards/${getCardFilename(card.id, card.name)}.png`}
+              isReversed={isReversed}
+              onComplete={handleSlotComplete}
+            />
           )}
         </div>
 

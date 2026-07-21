@@ -195,14 +195,9 @@ input.rounded-3xl:focus-within {
   100% { opacity: 0; filter: blur(10px); }
 }
 
-/* Sand reveal — warm grain that clears to show the card */
-@keyframes sandReveal {
-  0%   { opacity: 0; filter: brightness(2) sepia(0.8) blur(10px); }
-  35%  { opacity: 0.7; filter: brightness(1.4) sepia(0.4) blur(3px); }
-  70%  { opacity: 0.95; filter: brightness(1.1) sepia(0.1) blur(0.5px); }
-  100% { opacity: 1; filter: none; }
-}
 
-.animate-sand-reveal {
-  animation: sandReveal 1.5s ease-out forwards;
+/* Continuous slow spin for scattered tarot cards */
+@keyframes cardDrift {
+  from { transform: rotateZ(0deg); }
+  to   { transform: rotateZ(360deg); }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TarotCard from './components/TarotCard';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
@@ -9,6 +9,114 @@ import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
 type View = 'card' | 'year';
+
+const SCATTER_CARD_IMAGES = [
+  '/cards/major-0-fool.png',
+  '/cards/major-1-magician.png',
+  '/cards/major-2-high-priestess.png',
+  '/cards/major-3-empress.png',
+  '/cards/major-4-emperor.png',
+  '/cards/major-5-hierophant.png',
+  '/cards/major-6-lovers.png',
+  '/cards/major-7-chariot.png',
+  '/cards/major-8-strength.png',
+  '/cards/major-9-hermit.png',
+  '/cards/major-10-wheel-of-fortune.png',
+  '/cards/major-11-justice.png',
+  '/cards/major-12-hanged-man.png',
+  '/cards/major-13-death.png',
+  '/cards/major-14-temperance.png',
+  '/cards/major-15-devil.png',
+  '/cards/major-16-tower.png',
+  '/cards/major-17-star.png',
+  '/cards/major-18-moon.png',
+  '/cards/major-19-sun.png',
+  '/cards/major-20-judgement.png',
+  '/cards/major-21-world.png',
+  '/cards/cups-ace.png',
+  '/cards/cups-2.png',
+  '/cards/cups-3.png',
+  '/cards/cups-4.png',
+  '/cards/cups-5.png',
+  '/cards/cups-6.png',
+  '/cards/cups-7.png',
+  '/cards/cups-8.png',
+  '/cards/cups-9.png',
+  '/cards/cups-10.png',
+  '/cards/cups-page.png',
+  '/cards/cups-knight.png',
+  '/cards/cups-queen.png',
+  '/cards/cups-king.png',
+  '/cards/wands-ace.png',
+  '/cards/wands-2.png',
+  '/cards/wands-3.png',
+  '/cards/wands-4.png',
+  '/cards/wands-5.png',
+  '/cards/wands-6.png',
+  '/cards/wands-7.png',
+  '/cards/wands-8.png',
+  '/cards/wands-9.png',
+  '/cards/wands-10.png',
+  '/cards/wands-page.png',
+  '/cards/wands-knight.png',
+  '/cards/wands-queen.png',
+  '/cards/wands-king.png',
+  '/cards/swords-ace.png',
+  '/cards/swords-2.png',
+  '/cards/swords-3.png',
+  '/cards/swords-4.png',
+  '/cards/swords-5.png',
+  '/cards/swords-6.png',
+  '/cards/swords-7.png',
+  '/cards/swords-8.png',
+  '/cards/swords-9.png',
+  '/cards/swords-10.png',
+  '/cards/swords-page.png',
+  '/cards/swords-knight.png',
+  '/cards/swords-queen.png',
+  '/cards/swords-king.png',
+  '/cards/pentacles-ace.png',
+  '/cards/pentacles-2.png',
+  '/cards/pentacles-3.png',
+  '/cards/pentacles-4.png',
+  '/cards/pentacles-5.png',
+  '/cards/pentacles-6.png',
+  '/cards/pentacles-7.png',
+  '/cards/pentacles-8.png',
+  '/cards/pentacles-9.png',
+  '/cards/pentacles-10.png',
+  '/cards/pentacles-page.png',
+  '/cards/pentacles-knight.png',
+  '/cards/pentacles-queen.png',
+  '/cards/pentacles-king.png',
+];
+
+const buildShuffleData = () => {
+  // Gentle clockwise revolve
+  const revolveRad = (72 * Math.PI) / 180;
+  const cos = Math.cos(revolveRad);
+  const sin = Math.sin(revolveRad);
+
+  return SCATTER_CARD_IMAGES.map(() => {
+    // ~20% of cards stay near centre — fills the hole in the middle
+    const isCenter = Math.random() < 0.2;
+    const tx = isCenter ? (Math.random() - 0.5) * 400 : (Math.random() - 0.5) * 1800;
+    const ty = isCenter ? (Math.random() - 0.5) * 300 : (Math.random() - 0.5) * 1200;
+    const tz = 0; // no depth scaling — all cards same size
+    const isReversed = Math.random() > 0.5;
+    const spinDuration = 5 + Math.random() * 7;
+    const spinReverse = Math.random() > 0.5;
+    return {
+      tx, ty, tz,
+      rtx: tx * cos - ty * sin,
+      rty: tx * sin + ty * cos,
+      rotateX: 0,
+      rotateY: 0,
+      rotateZ: isReversed ? 180 + (Math.random() - 0.5) * 40 : (Math.random() - 0.5) * 60,
+      spinDuration, spinReverse,
+    };
+  });
+};
 
 // Use local calendar date (not UTC) so midnight in user's timezone triggers the new card
 function localDateString(): string {
@@ -34,6 +142,36 @@ export default function Home() {
   const [dateString, setDateString] = useState('');
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [viewingPastCard, setViewingPastCard] = useState(false);
+
+  // Shuffle animation — single boolean so React never re-renders mid-animation
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [scatterFading, setScatterFading] = useState(false);
+  const shuffleData = useRef<Array<{ tx: number; ty: number; tz: number; rtx: number; rty: number; rotateX: number; rotateY: number; rotateZ: number; spinDuration: number; spinReverse: boolean }>>([]);
+  const convergeTarget = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const cardAnchorRef = useRef<HTMLDivElement>(null);
+  const shuffledImages = useRef<string[]>([...SCATTER_CARD_IMAGES]);
+  const [pendingAutoReveal, setPendingAutoReveal] = useState(false);
+  const [animateReveal, setAnimateReveal] = useState(false);
+  // Direct DOM refs — JS drives all transforms so React can't interrupt transitions
+  const cardRefsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const spinnerRefsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const animateCardsRef = useRef<(() => void) | null>(null);
+
+  // JS-driven group rotation (avoids CSS animation restart on speed change)
+  const groupRotRef = useRef<HTMLDivElement>(null);
+  const groupAngleRef = useRef(0);
+  const rafIdRef = useRef<number | null>(null);
+  const lastTsRef = useRef<number | null>(null);
+  const speedRef = useRef(0);
+  const targetSpeedRef = useRef(0);
+
+  // Fire animateCardsRef after React commits the overlay DOM (refs are populated)
+  useEffect(() => {
+    if (!isAnimating || !animateCardsRef.current) return;
+    const fn = animateCardsRef.current;
+    animateCardsRef.current = null;
+    requestAnimationFrame(() => requestAnimationFrame(() => fn()));
+  }, [isAnimating]);
 
   useEffect(() => {
     // Check if onboarding has been completed
@@ -91,7 +229,7 @@ export default function Home() {
 
       if (lastDrawDate === today && wasRevealed) {
         setCurrentView('card');
-        setIsRevealed(true);
+        setPendingAutoReveal(true); // play deck scatter → reveal
       } else if (autoReveal) {
         // Auto-reveal after onboarding (first time only)
         setCurrentView('card');
@@ -143,8 +281,118 @@ export default function Home() {
   };
 
 
+  const runScatterAnimation = (onComplete: () => void) => {
+    // Ensure card is face-down during scatter — prevents flash of revealed card
+    setIsRevealed(false);
+    // Measure the card IMAGE specifically (not the full TarotCard component which includes text below)
+    const cardEl = cardAnchorRef.current?.querySelector('[data-card-image]') as HTMLElement | null;
+    const measureEl = cardEl ?? cardAnchorRef.current;
+    if (measureEl) {
+      const rect = measureEl.getBoundingClientRect();
+      convergeTarget.current = {
+        x: rect.left + rect.width / 2 - window.innerWidth / 2,
+        y: rect.top + rect.height / 2 - window.innerHeight / 2,
+      };
+    }
+    // Fisher-Yates shuffle so different cards appear on top each time
+    const imgs = [...SCATTER_CARD_IMAGES];
+    for (let i = imgs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [imgs[i], imgs[j]] = [imgs[j], imgs[i]];
+    }
+    shuffledImages.current = imgs;
+    shuffleData.current = buildShuffleData();
+    // Start JS-driven group rotation loop
+    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    groupAngleRef.current = 0;
+    speedRef.current = 0;
+    targetSpeedRef.current = 55;
+    lastTsRef.current = null;
+
+    const tick = (ts: number) => {
+      if (lastTsRef.current !== null) {
+        const dt = Math.min((ts - lastTsRef.current) / 1000, 0.05);
+        const lerpFactor = targetSpeedRef.current === 0 ? 5 : (speedRef.current > targetSpeedRef.current ? 1.5 : 3);
+        speedRef.current += (targetSpeedRef.current - speedRef.current) * Math.min(dt * lerpFactor, 1);
+        groupAngleRef.current += speedRef.current * dt;
+        if (groupRotRef.current) groupRotRef.current.style.transform = `rotateZ(${groupAngleRef.current}deg)`;
+      }
+      lastTsRef.current = ts;
+      rafIdRef.current = requestAnimationFrame(tick);
+    };
+    rafIdRef.current = requestAnimationFrame(tick);
+
+    // Store animation logic — useEffect will call it after React commits the overlay
+    animateCardsRef.current = () => {
+      const n = shuffledImages.current.length;
+
+      // Phase 1: burst scatter — set transition + transform directly on each card DOM element
+      cardRefsRef.current.forEach((el, i) => {
+        if (!el) return;
+        const data = shuffleData.current[i];
+        if (!data) return;
+        el.style.opacity = '1';
+        el.style.transition = 'transform 1.8s cubic-bezier(0.12, 1, 0.2, 1)';
+        el.style.transform = `translate3d(${data.tx}px, ${data.ty}px, ${data.tz}px) rotateX(${data.rotateX}deg) rotateY(${data.rotateY}deg) rotateZ(${data.rotateZ}deg)`;
+      });
+      // Keep individual card spins running — part of one continuous motion
+      spinnerRefsRef.current.forEach((el, i) => {
+        if (!el) return;
+        const data = shuffleData.current[i];
+        if (!data) return;
+        el.style.animation = `cardDrift ${data.spinDuration.toFixed(1)}s linear infinite ${data.spinReverse ? 'reverse' : 'normal'}`;
+      });
+
+      // Slow group rotation after burst
+      setTimeout(() => { targetSpeedRef.current = 10; }, 700);
+
+      // Phase 2: converge — compute local target using inverse group rotation so cards
+      // converge to the correct SCREEN position even while the group is still rotating
+      setTimeout(() => {
+        const rad = (groupAngleRef.current * Math.PI) / 180;
+        const cx = convergeTarget.current.x;
+        const cy = convergeTarget.current.y;
+        const lx = cx * Math.cos(rad) + cy * Math.sin(rad);
+        const ly = -cx * Math.sin(rad) + cy * Math.cos(rad);
+
+        // Decelerate group rotation smoothly
+        targetSpeedRef.current = 0;
+
+        cardRefsRef.current.forEach((el, i) => {
+          if (!el) return;
+          const data = shuffleData.current[i];
+          if (!data) return;
+          const deckFan = (i / n - 0.5) * 14;
+          const deckRz = Math.abs(data.rotateZ) > 90 ? 180 + deckFan : deckFan;
+          el.style.transition = 'transform 2.2s cubic-bezier(0.4, 0, 0.2, 1)';
+          el.style.transform = `translate3d(${lx}px, ${ly}px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(${deckRz}deg)`;
+        });
+        // Stop per-card spin for clean deck formation
+        spinnerRefsRef.current.forEach(el => { if (el) el.style.animation = 'none'; });
+
+        // Cover fades in over the converging scatter while card reveals underneath
+        setTimeout(() => { setScatterFading(true); onComplete(); }, 300);
+        setTimeout(() => {
+          setIsAnimating(false);
+          setScatterFading(false);
+          if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+        }, 2800);
+      }, 2200);
+    };
+
+    setIsAnimating(true);
+  };
+
+  // Auto-reveal animation for returning users: scatter → revolve right → converge → reveal
+  useEffect(() => {
+    if (!pendingAutoReveal || !card) return;
+    setPendingAutoReveal(false);
+    setIsRevealed(true);
+  }, [pendingAutoReveal, card]);
+
   const handleRevealCard = () => {
     setIsRevealed(true);
+    setAnimateReveal(true);
     const today = localDateString();
     localStorage.setItem('lastDrawDate', today);
     localStorage.setItem('cardRevealed', 'true');
@@ -344,6 +592,15 @@ export default function Home() {
                 >
                   🔄
                 </button>
+                <button
+                  onClick={() => runScatterAnimation(() => {})}
+                  disabled={isAnimating}
+                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all disabled:opacity-40"
+                  title="Preview scatter animation"
+                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                >
+                  ✦
+                </button>
               </div>
             )}
           </div>
@@ -369,21 +626,25 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Card Display */}
-            <TarotCard
-              card={card}
-              isReversed={isReversed}
-              isRevealed={isRevealed}
-              userName={localStorage.getItem('userName') || undefined}
-              cardDate={dateString}
-            />
+            {/* Card Display — ref wraps TarotCard so getBoundingClientRect gives exact card position */}
+            <div ref={cardAnchorRef}>
+              <TarotCard
+                card={card}
+                isReversed={isReversed}
+                isRevealed={isRevealed}
+                animateReveal={animateReveal}
+                userName={localStorage.getItem('userName') || undefined}
+                cardDate={dateString}
+              />
+            </div>
 
             {/* Reveal Button */}
             {!isRevealed && (
               <div className="text-center mt-16">
                 <button
                   onClick={handleRevealCard}
-                  className="px-8 py-3 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 shadow-lg"
+                  disabled={isAnimating}
+                  className="px-8 py-3 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 shadow-lg disabled:opacity-60"
                   style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   reveal card
@@ -392,6 +653,40 @@ export default function Home() {
                   take a moment to centre yourself
                 </p>
               </div>
+            )}
+
+            {/* Shuffle Animation Overlay — transforms driven entirely by JS refs, not React state */}
+            {isAnimating && (
+              <>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(23, 34, 17, 0.85)', zIndex: 99, pointerEvents: 'none' }} />
+                <div style={{ position: 'fixed', inset: 0, zIndex: 100, pointerEvents: 'none', perspective: '420px', perspectiveOrigin: '50% 38%' }}>
+                  <div ref={groupRotRef} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {shuffledImages.current.map((src, i) => {
+                      const data = shuffleData.current[i] ?? { rotateZ: 0 };
+                      const deckFan = (i / shuffledImages.current.length - 0.5) * 14;
+                      const deckRz = Math.abs(data.rotateZ) > 90 ? 180 + deckFan : deckFan;
+                      return (
+                        <div
+                          key={`${src}-${i}`}
+                          ref={el => {
+                            cardRefsRef.current[i] = el;
+                            // Set initial transform via ref (not JSX style) so React re-renders can't reset it
+                            if (el) el.style.transform = `translate3d(${convergeTarget.current.x}px, ${convergeTarget.current.y}px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(${deckRz}deg)`;
+                          }}
+                          style={{ position: 'absolute', width: 'clamp(200px, 28vw, 320px)', aspectRatio: '2/3', zIndex: i }}
+                        >
+                          <div ref={el => { spinnerRefsRef.current[i] = el; }} style={{ width: '100%', height: '100%' }}>
+                            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', display: 'block' }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Cover overlay — fades IN while card reveals underneath */}
+                <div style={{ position: 'fixed', inset: 0, zIndex: 101, pointerEvents: 'none', background: '#172211',
+                  opacity: scatterFading ? 1 : 0, transition: scatterFading ? 'opacity 1.4s ease-in' : 'none' }} />
+              </>
             )}
 
             {/* Reflection Area */}
