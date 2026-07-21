@@ -126,6 +126,11 @@ daily-tarot-app/
 - [x] Multi-step flow: welcome → name → birth date → birth time (optional) → birth location (optional)
 - [x] All data saved to localStorage
 - [x] Auto-reveals first card after onboarding complete
+- [x] Vedic-native welcome message — nakshatra + moon rashi + varied greetings, Claude-generated (`/api/welcome-insight`)
+- [x] Splash screen redesign — Instrument Serif logo, Gilda Display headings, spiral icon, desktop bleed layout with 20px padding
+- [x] Responsive polish pass — mobile keyboard-aware buttons, smooth drag, typewriting-from-top, consistent button position, new background video/image, mobile name field width fix, desktop spiral sizing (360px)
+- [x] Back buttons added to onboarding steps
+- [ ] *(uncommitted)* `CardSlotReveal.tsx` — slot-machine style reveal animation cycling through card images before landing on the drawn card
 
 ### PWA
 - [x] `manifest.json` with name, icons, theme colour, display: standalone
@@ -135,15 +140,24 @@ daily-tarot-app/
 - [x] `apple-mobile-web-app-status-bar-style: black-translucent`
 
 ### Infrastructure
-- [x] Rate limiting: 5 req/IP/24h on `/api/calculate-transit` (Upstash Redis middleware)
+- [x] Rate limiting: per-route Upstash Redis limiters — 10/24h `calculate-transit`, 3/24h `welcome-insight`, 10/hr `geocode-check` (was a single 1000/24h limiter)
 - [x] Vercel Analytics (cookieless, enabled in dashboard)
 - [x] Privacy policy at `/privacy` — covers localStorage, Anthropic, Vercel Analytics
 - [x] Privacy policy link in app footer (dimmed, hover reveals)
 - [x] Past card insight caching fixed: uses draw date as cache key, not today's date
+- [ ] *(uncommitted, from 2026-03-18 security audit — see [`.claude/security-backlog.md`](.claude/security-backlog.md))* Input sanitization (`lib/utils/validate.ts`) + validation wired into `calculate-transit`, `welcome-insight`, `geocode-check`
+- [ ] *(uncommitted)* IP resolution switched from spoofable `x-forwarded-for` to `x-real-ip`
+- [ ] *(uncommitted)* Security headers added in `next.config.js` (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+- [ ] *(uncommitted)* `geocode-check` now guards against malformed Nominatim responses and sanitizes output before sending to client
 
 ---
 
 ## 🗺 Roadmap / Pending Tasks
+
+### Immediate — before next deploy
+- [ ] **Commit + push pending security fixes** — 9 files modified, 4 untracked (`validate.ts`, `CardSlotReveal.tsx`, security backlog doc, new bg assets). Local `main` is also 11 commits ahead of `origin/main` from the onboarding polish work — needs a push.
+- [ ] **Rotate Anthropic + Upstash API keys** — flagged critical in the 2026-03-18 audit, still open (see backlog #1)
+- [ ] **Resolve remaining security backlog items** — #10 Vercel Analytics contradicts "no tracking" privacy copy, #11 no server-side caching for Nominatim geocode calls, #12 partial reset doesn't clear `slow-hour-memory`
 
 ### High Priority
 - [ ] **Push notifications** — daily "your card is ready" reminder via Web Push API. Biggest retention driver for a daily habit app. Works as PWA, no App Store needed.
