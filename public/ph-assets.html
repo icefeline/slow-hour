@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slow hour — Product Hunt Assets</title>
+<link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0e1a0e;
+    font-family: 'Reenie Beanie', cursive;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px;
+    align-items: center;
+  }
+
+  .label {
+    color: #CEF17B;
+    font-size: 14px;
+    font-family: monospace;
+    margin-bottom: 8px;
+    opacity: 0.7;
+    text-align: center;
+  }
+
+  /* ── THUMBNAIL 240×240 ── */
+  .thumb {
+    width: 240px;
+    height: 240px;
+    background: #172211;
+    border-radius: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+  .thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 30%, rgba(206,241,123,0.08) 0%, transparent 70%);
+  }
+  .thumb img {
+    width: 100%;
+    filter: brightness(0) invert(1);
+  }
+
+  /* ── GALLERY 1270×760 ── */
+  .slide {
+    width: 1270px;
+    height: 760px;
+    background: #172211;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* Shared noise/grain texture overlay */
+  .slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.4;
+  }
+
+  /* Phone frame component */
+  .phone {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-shell {
+    width: 240px;
+    height: 490px;
+    background: #1a2a1a;
+    border-radius: 36px;
+    border: 2px solid rgba(255,255,255,0.12);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .phone-shell::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 22px;
+    background: #0e1a0e;
+    border-radius: 0 0 14px 14px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 40% 20%, #2a4a2a 0%, #172211 50%, #0e1a0e 100%);
+  }
+
+  /* ── SLIDE 1: Hero ── */
+  .s1 { }
+  .s1 .left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+  .s1 .tagchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(206,241,123,0.12);
+    border: 1px solid rgba(206,241,123,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    color: #CEF17B;
+    font-size: 20px;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+  .s1 .logo-img {
+    width: 360px;
+    filter: brightness(0) invert(1);
+    margin-bottom: 28px;
+  }
+  .s1 .tagline {
+    font-size: 30px;
+    color: rgba(225,238,252,0.65);
+    line-height: 1.4;
+    max-width: 380px;
+  }
+  .s1 .right {
+    width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+    gap: 24px;
+  }
+  .s1 .bg-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(206,241,123,0.06) 0%, transparent 65%);
+    z-index: 1;
+  }
+
+  /* ── SLIDE 2: Personalised ── */
+  .s2 {
+    background: linear-gradient(135deg, #172211 0%, #1a2e1a 50%, #172211 100%);
+  }
+  .s2-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    gap: 40px;
+    position: relative;
+    z-index: 2;
+  }
+  .s2-headline {
+    font-size: 72px;
+    color: #E1EEFC;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .s2-sub {
+    font-size: 30px;
+    color: rgba(225,238,252,0.55);
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.4;
+  }
+  .s2-phones {
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+  }
+  .s2-phones .phone-shell:nth-child(2) {
+    transform: translateY(-20px);
+  }
+
+  /* ── SLIDE 3: The Card ── */
+  .s3-left {
+    width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    padding: 60px;
+  }
+  .card-img-wrap {
+    position: relative;
+  }
+  .card-img-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -30px;
+    background: radial-gradient(ellipse, rgba(206,241,123,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .card-img {
+    width: 220px;
+    height: 340px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+  }
+  .card-img-back {
+    position: absolute;
+    width: 180px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 14px;
+    top: 30px;
+    right: -60px;
+    opacity: 0.5;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    transform: rotate(8deg);
+  }
+  .s3-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 80px 80px 40px;
+    position: relative;
+    z-index: 2;
+    gap: 24px;
+  }
+  .eyebrow {
+    font-size: 22px;
+    color: #CEF17B;
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+  }
+  .big-headline {
+    font-size: 64px;
+    color: #E1EEFC;
+    line-height: 1.1;
+  }
+  .body-text {
+    font-size: 26px;
+    color: rgba(225,238,252,0.55);
+    line-height: 1.5;
+    max-width: 420px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    background: #CEF17B;
+    color: #172211;
+    border-radius: 100px;
+    padding: 10px 28px;
+    font-size: 26px;
+    width: fit-content;
+    margin-top: 8px;
+  }
+
+  /* ── SLIDE 4: Year view ── */
+  .s4-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 40px 80px 80px;
+    position: relative;
+    z-index: 2;
+    gap: 24px;
+  }
+  .s4-right {
+    width: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Mini year grid in CSS */
+  .year-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    width: 420px;
+  }
+  .day-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+  }
+  .day-cell.has-card {
+    background: rgba(206,241,123,0.15);
+    border: 1px solid rgba(206,241,123,0.2);
+  }
+  .day-cell.today {
+    background: #CEF17B;
+    box-shadow: 0 0 12px rgba(206,241,123,0.4);
+  }
+  .day-cell.past {
+    background: rgba(225,238,252,0.08);
+  }
+  .month-label {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    color: rgba(225,238,252,0.4);
+    font-family: 'Reenie Beanie', cursive;
+    padding: 6px 0 2px;
+    font-size: 18px;
+  }
+
+  /* Global bg glow elements */
+  .glow-tl {
+    position: absolute;
+    top: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(ellipse, rgba(206,241,123,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .glow-br {
+    position: absolute;
+    bottom: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(ellipse, rgba(225,238,252,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- THUMBNAIL 240×240 -->
+<div class="label">THUMBNAIL — 240×240 (screenshot this)</div>
+<div class="thumb">
+  <img src="/slow-hour-logo.png" alt="slow hour">
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SLIDE 1: HERO -->
+<!-- ─────────────────────────────────────────── -->
+<div class="label">SLIDE 1 — 1270×760</div>
+<div class="slide s1">
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+
+  <div class="left">
+    <div class="tagchip">✦ daily tarot</div>
+    <img class="logo-img" src="/slow-hour-logo.png" alt="slow hour">
+    <p class="tagline">one card a day. built around your chart. no noise.</p>
+  </div>
+
+  <div class="right">
+    <div class="bg-glow"></div>
+    <!-- Phone 1: splash -->
+    <div class="phone-shell" style="transform: rotate(-4deg) translateY(10px);">
+      <div class="phone-screen">
+        <div class="phone-bg"></div>
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px;">
+          <img src="/slow-hour-logo.png" style="width:160px;filter:brightness(0) invert(1);">
+          <div style="background:#CEF17B;color:#172211;border-radius:100px;padding:8px 22px;font-size:22px;">continue →</div>
+        </div>
+      </div>
+    </div>
+    <!-- Phone 2: card reveal -->
+    <div class="phone-shell" style="transform: rotate(3deg) translateY(-15px);">
+      <div class="phone-screen">
+        <div class="phone-bg"></div>
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;">
+          <div style="color:#CEF17B;font-size:16px;opacity:0.7;padding-top:10px;">monday, 9 march</div>
+          <img src="/cards/world.png" style="width:140px;height:210px;object-fit:cover;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.5);" onerror="this.src='/card-back.png'">
+          <div style="background:#CEF17B;color:#172211;border-radius:100px;padding:6px 18px;font-size:18px;margin-top:4px;">reveal card</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SLIDE 2: BUILT AROUND YOU -->
+<!-- ─────────────────────────────────────────── -->
+<div class="label">SLIDE 2 — 1270×760</div>
+<div class="slide s2">
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+
+  <div class="s2-center">
+    <div>
+      <div class="s2-headline">built around you.</div>
+      <div class="s2-sub" style="margin-top:16px;">your sun sign, moon sign, rising — and the cards respond to all of it.</div>
+    </div>
+
+    <div class="s2-phones">
+      <!-- Name step -->
+      <div class="phone-shell">
+        <div class="phone-screen">
+          <div class="phone-bg"></div>
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px 16px;width:100%;">
+            <div style="text-align:center;margin-top:20px;">
+              <div style="font-size:28px;color:#E1EEFC;line-height:1.2;">what's your name?</div>
+              <div style="font-size:17px;color:rgba(225,238,252,0.5);margin-top:4px;">the one that feels most like you</div>
+            </div>
+            <div style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:12px;text-align:center;font-size:24px;color:rgba(225,238,252,0.4);">your name</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Birthdate step -->
+      <div class="phone-shell">
+        <div class="phone-screen">
+          <div class="phone-bg"></div>
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 14px;width:100%;">
+            <div style="text-align:center;margin-top:16px;">
+              <div style="font-size:24px;color:#E1EEFC;line-height:1.2;">when were you born?</div>
+              <div style="font-size:14px;color:rgba(225,238,252,0.5);margin-top:4px;">time moves differently</div>
+            </div>
+            <div style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:16px;padding:10px;text-align:center;font-size:20px;color:#E1EEFC;">15/03/1992</div>
+            <div style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:10px;text-align:center;font-size:18px;color:rgba(225,238,252,0.4);">hh:mm (optional)</div>
+            <div style="width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:10px;text-align:center;font-size:18px;color:rgba(225,238,252,0.4);">city, country (optional)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome message step -->
+      <div class="phone-shell">
+        <div class="phone-screen">
+          <div class="phone-bg"></div>
+          <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:24px 18px;width:100%;height:100%;">
+            <div style="font-size:22px;color:#E1EEFC;line-height:1.6;flex:1;padding-top:20px;">luna!<br><br>more tender than the confidence suggests.<br><br>you need to be seen when you're soft, not just when you're shining.</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;padding-bottom:16px;">
+              <img src="/card-back.png" style="width:52px;height:78px;object-fit:cover;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);">
+              <div style="font-size:14px;color:rgba(225,238,252,0.5);">drag me to begin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SLIDE 3: THE CARD -->
+<!-- ─────────────────────────────────────────── -->
+<div class="label">SLIDE 3 — 1270×760</div>
+<div class="slide">
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+
+  <div class="s3-left">
+    <div class="card-img-wrap">
+      <img class="card-img-back" src="/card-back.png" alt="">
+      <img class="card-img" src="/cards/world.png" alt="The World" onerror="this.src='/card-back.png'">
+    </div>
+  </div>
+
+  <div class="s3-right">
+    <div class="eyebrow">✦ your daily pull</div>
+    <div class="big-headline">one card.<br>one honest<br>reading.</div>
+    <div class="body-text">no generic horoscopes. your card is interpreted through your birth chart, right now.</div>
+    <div class="pill">try slow hour →</div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SLIDE 4: DAILY RITUAL -->
+<!-- ─────────────────────────────────────────── -->
+<div class="label">SLIDE 4 — 1270×760</div>
+<div class="slide">
+  <div class="glow-tl"></div>
+  <div class="glow-br"></div>
+
+  <div class="s4-left">
+    <div class="eyebrow">✦ track your year</div>
+    <div class="big-headline" style="font-size:58px;">a daily practice<br>that adds up.</div>
+    <div class="body-text">every card you pull is logged. look back at patterns across weeks, months, a whole year.</div>
+    <div style="display:flex;gap:16px;margin-top:8px;">
+      <div style="background:rgba(206,241,123,0.1);border:1px solid rgba(206,241,123,0.2);border-radius:20px;padding:12px 20px;color:#CEF17B;font-size:22px;">free to use</div>
+      <div style="background:rgba(225,238,252,0.06);border:1px solid rgba(225,238,252,0.12);border-radius:20px;padding:12px 20px;color:rgba(225,238,252,0.6);font-size:22px;">no account needed</div>
+    </div>
+  </div>
+
+  <div class="s4-right">
+    <!-- CSS year calendar suggestion -->
+    <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
+      <!-- Month: January -->
+      <div style="color:rgba(225,238,252,0.35);font-size:20px;font-family:'Reenie Beanie',cursive;margin-bottom:2px;">january</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;">
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+      </div>
+      <!-- Month: February -->
+      <div style="color:rgba(225,238,252,0.35);font-size:20px;font-family:'Reenie Beanie',cursive;margin-top:8px;margin-bottom:2px;">february</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;">
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+      </div>
+      <!-- Month: March (partial, current) -->
+      <div style="color:rgba(225,238,252,0.35);font-size:20px;font-family:'Reenie Beanie',cursive;margin-top:8px;margin-bottom:2px;">march</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;">
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(225,238,252,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(206,241,123,0.18);border:1px solid rgba(206,241,123,0.25);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:#CEF17B;box-shadow:0 0 10px rgba(206,241,123,0.5);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+        <div style="aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height:40px;"></div>
+</body>
+</html>
