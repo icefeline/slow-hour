@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
+import { sanitizeOutput } from '@/lib/utils/validate';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q');
 
-  if (!q || q.trim().length < 2) {
+  if (!q || q.trim().length < 2 || q.trim().length > 200) {
     return NextResponse.json({ found: null });
   }
 
@@ -24,30 +25,31 @@ export async function GET(request: Request) {
 
     const data = await res.json();
 
-    if (data && data.length > 0) {
-      const address = data[0].address ?? {};
-      const city =
-        address.city ||
-        address.town ||
-        address.village ||
-        address.municipality ||
-        address.county ||
-        '';
-      const country = address.country || '';
-
-      if (city && country) {
-        return NextResponse.json({ found: `${city.toLowerCase()}, ${country.toLowerCase()}` });
-      }
-      if (country) {
-        return NextResponse.json({ found: country.toLowerCase() });
-      }
-      // fallback: first two parts of display_name
-      const parts = (data[0].display_name as string).split(',');
-      const simplified = parts.slice(0, 2).map((p: string) => p.trim()).join(', ').toLowerCase();
-      return NextResponse.json({ found: simplified });
+    if (!Array.isArray(data) || data.length === 0) {
+      return NextResponse.json({ found: '' });
     }
 
-    return NextResponse.json({ found: '' });
+    const address = data[0].address ?? {};
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.municipality ||
+      address.county ||
+      '';
+    const country = address.country || '';
+
+    if (city && country) {
+      return NextResponse.json({ found: sanitizeOutput(`${city.toLowerCase()}, ${country.toLowerCase()}`) });
+    }
+    if (country) {
+      return NextResponse.json({ found: sanitizeOutput(country.toLowerCase()) });
+    }
+    // fallback: first two parts of display_name
+    const displayName = typeof data[0].display_name === 'string' ? data[0].display_name : '';
+    const parts = displayName.split(',');
+    const simplified = parts.slice(0, 2).map((p: string) => p.trim()).join(', ').toLowerCase();
+    return NextResponse.json({ found: sanitizeOutput(simplified) });
   } catch {
     return NextResponse.json({ found: null });
   }

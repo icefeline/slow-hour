@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { calculateNatalChart, calculateActiveTransits, getDominantTransit } from '@/lib/utils/astrology-calculator';
 import { getCardArchetype, cardArchetypes } from '@/lib/data/card-archetypes';
+import { sanitizeText, isValidDate, isValidTime } from '@/lib/utils/validate';
 
 
 const HOUSE_THEMES: Record<number, string> = {
@@ -178,14 +179,29 @@ Return only valid JSON, no markdown, no extra text.`;
 
 export async function POST(request: Request) {
   try {
-    const { birthDate, birthTime, birthLocation, seed, cardId, isReversed, memoryNotes, recentCards } = await request.json();
+    const body = await request.json();
+    const { birthDate, birthTime, birthLocation, seed, cardId, isReversed, memoryNotes, recentCards } = body;
 
-    if (!birthDate) {
+    if (!birthDate || !isValidDate(birthDate)) {
       return NextResponse.json(
-        { error: 'Birth date is required' },
+        { error: 'Invalid birth date' },
         { status: 400 }
       );
     }
+
+    const sanitizedBirthTime = birthTime ? sanitizeText(birthTime, 5) : null;
+    if (sanitizedBirthTime && !isValidTime(sanitizedBirthTime)) {
+      return NextResponse.json({ error: 'Invalid birth time' }, { status: 400 });
+    }
+
+    const sanitizedLocation = sanitizeText(birthLocation, 200);
+    const sanitizedCardId = sanitizeText(cardId, 50);
+    const sanitizedMemoryNotes = Array.isArray(memoryNotes)
+      ? memoryNotes.slice(0, 10).map((n: unknown) => sanitizeText(n, 200))
+      : [];
+    const sanitizedRecentCards = Array.isArray(recentCards)
+      ? recentCards.slice(0, 10).map((c: unknown) => sanitizeText(c, 50))
+      : [];
 
     // Parse birth date
     const [day, month, year] = birthDate.split('/').map(Number);
@@ -194,8 +210,8 @@ export async function POST(request: Request) {
     // Calculate natal chart (positions are now sidereal — Lahiri ayanamsa applied)
     const natalChart = await calculateNatalChart(
       parsedBirthDate,
-      birthTime || undefined,
-      birthLocation || undefined
+      sanitizedBirthTime || undefined,
+      sanitizedLocation || undefined
     );
 
     if (!natalChart) {
@@ -209,7 +225,7 @@ export async function POST(request: Request) {
     const activeTransits = await calculateActiveTransits(natalChart);
 
     // Get the most relevant transit for this card (affinity-weighted, seed for tie-breaking)
-    const dominantTransit = getDominantTransit(activeTransits, seed, cardId);
+    const dominantTransit = getDominantTransit(activeTransits, seed, sanitizedCardId);
 
     if (!dominantTransit) {
       return NextResponse.json(
@@ -224,18 +240,18 @@ export async function POST(request: Request) {
 
     // Generate Claude insight (with memory context if available)
     const claudeInsight = await generateClaudeInsight(
-      cardId,
+      sanitizedCardId,
       isReversed || false,
       dominantTransit.transitingPlanet,
       dominantTransit.natalPlanet,
       dominantTransit.aspect,
       dominantTransit.phase,
       dominantTransit.house,
-      Array.isArray(memoryNotes) ? memoryNotes : [],
-      Array.isArray(recentCards) ? recentCards : [],
+      sanitizedMemoryNotes,
+      sanitizedRecentCards,
       sunSign,
-      !!birthTime,
-      !!birthLocation
+      !!sanitizedBirthTime,
+      !!sanitizedLocation
     );
 
     return NextResponse.json({

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { sanitizeText, isValidDate } from '@/lib/utils/validate';
 
 // ── 27 Nakshatras ─────────────────────────────────────────────────────────────
 // In Vedic astrology the janma nakshatra (birth lunar mansion) is the most
@@ -134,21 +135,26 @@ const GREETING_BY_PLANET: Record<string, string[]> = {
 
 export async function POST(request: Request) {
   try {
-    const { name, birthDate, birthTime, birthLocation } = await request.json();
+    const body = await request.json();
+    const { name, birthDate, birthTime, birthLocation } = body;
 
-    if (!birthDate) {
-      return NextResponse.json({ error: 'Birth date required' }, { status: 400 });
+    if (!birthDate || !isValidDate(birthDate)) {
+      return NextResponse.json({ error: 'Invalid birth date' }, { status: 400 });
     }
+
+    const sanitizedName     = sanitizeText(name, 100) || 'friend';
+    const sanitizedLocation = sanitizeText(birthLocation, 200);
+    const sanitizedTime     = sanitizeText(birthTime, 5);
+    const hasBirthTime      = sanitizedTime.length >= 4;
+    const hasBirthLocation  = sanitizedLocation.length >= 2;
 
     const nakshatra   = getNakshatraApprox(birthDate);
     const moonRashi   = getMoonRashiApprox(birthDate);
     const lifePath    = getLifePathNumber(birthDate);
-    const hasBirthTime     = !!birthTime?.trim();
-    const hasBirthLocation = !!(birthLocation?.trim().length >= 2);
 
     // Pick a greeting candidate set for this nakshatra's ruling planet
     const greetingOptions = GREETING_BY_PLANET[nakshatra.planet] ?? ['{name}.'];
-    const greetingHint = greetingOptions.map(g => g.replace('{name}', name)).join(' / ');
+    const greetingHint = greetingOptions.map(g => g.replace('{name}', sanitizedName)).join(' / ');
 
     const dataNote = hasBirthTime && hasBirthLocation
       ? `full Jyotish context available (date, time, location) — nakshatra and moon rashi can be calculated precisely; lagna is determinable`
@@ -186,7 +192,7 @@ Voice (non-negotiable):
 - No questions
 
 About this person:
-Name: ${name}
+Name: ${sanitizedName}
 Janma nakshatra quality: ${nakshatra.quality}
 Nakshatra ruling planet theme: ${DASHA_THEMES[nakshatra.planet]}
 Janma rashi (moon sign) quality: ${MOON_RASHI_QUALITIES[moonRashi]}
