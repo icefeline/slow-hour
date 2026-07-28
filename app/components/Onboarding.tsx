@@ -6,6 +6,37 @@ interface OnboardingProps {
   onComplete: () => void;
 }
 
+/**
+ * Collapse a part-typed date down to at most 8 digits (ddmmyyyy).
+ *
+ * A typed "/" means "this segment is finished", so a single-digit day or month
+ * is zero-padded. Stripping separators instead shifts every later digit, which
+ * turned "7/7/1993" into "77/19/93" — 8 chars, so it never hit the 10-char
+ * length the continue button checks and never hit the 8-digit length the
+ * validator checks either, leaving no button and no error.
+ */
+function toDateDigits(value: string): string {
+  if (!value.includes('/')) return value.replace(/\D/g, '').slice(0, 8);
+  const segments = value.split('/');
+  const day = (segments[0] ?? '').replace(/\D/g, '');
+  const month = (segments[1] ?? '').replace(/\D/g, '');
+  const year = (segments[2] ?? '').replace(/\D/g, '');
+  const paddedDay = day.length === 1 ? `0${day}` : day;
+  // only pad the month once the user has moved past it (i.e. a year segment exists)
+  const paddedMonth = segments.length > 2 && month.length === 1 ? `0${month}` : month;
+  return `${paddedDay}${paddedMonth}${year}`.slice(0, 8);
+}
+
+/** Same idea for time: "9:30" would otherwise become "93:0". */
+function toTimeDigits(value: string): string {
+  if (!value.includes(':')) return value.replace(/\D/g, '').slice(0, 4);
+  const segments = value.split(':');
+  const hour = (segments[0] ?? '').replace(/\D/g, '');
+  const minute = (segments[1] ?? '').replace(/\D/g, '');
+  const paddedHour = hour.length === 1 ? `0${hour}` : hour;
+  return `${paddedHour}${minute}`.slice(0, 4);
+}
+
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [name, setName] = useState('');
@@ -127,7 +158,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
 
   const handleDateChange = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, '');
+    // People type dates both as "07/07/1993" and "7/7/1993". Treat a typed "/" as
+    // "this segment is done" and zero-pad it, rather than stripping it — stripping
+    // silently repacked "7/7/1993" into "77/19/93", which never reaches 10 chars,
+    // so neither the error nor the continue button ever appeared.
+    const digitsOnly = toDateDigits(value);
     if (digitsOnly === '') { setBirthDate(''); setDateError(''); return; }
     let formatted = digitsOnly;
     if (digitsOnly.length >= 2) formatted = digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2);
@@ -148,7 +183,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const handleTimeChange = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, '');
+    const digitsOnly = toTimeDigits(value);
     if (digitsOnly === '') { setBirthTime(''); setTimeError(''); return; }
     let formatted = digitsOnly;
     if (digitsOnly.length >= 2) formatted = digitsOnly.slice(0, 2) + ':' + digitsOnly.slice(2, 4);
