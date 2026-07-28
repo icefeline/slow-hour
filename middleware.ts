@@ -48,21 +48,29 @@ export async function middleware(request: NextRequest) {
   if (!limiter) return NextResponse.next();
 
   const ip = getIp(request);
-  const { success, limit, remaining, reset } = await limiter.limit(ip);
 
-  if (!success) {
-    return new NextResponse(
-      JSON.stringify({ error: 'too many requests — come back tomorrow.' }),
-      {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-RateLimit-Limit': limit.toString(),
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': reset.toString(),
-        },
-      }
-    );
+  // If Upstash is unreachable (outage, network blip), fail open rather than
+  // taking the whole route down — a rate limiter should never be a single
+  // point of failure for the app.
+  try {
+    const { success, limit, remaining, reset } = await limiter.limit(ip);
+
+    if (!success) {
+      return new NextResponse(
+        JSON.stringify({ error: 'too many requests — come back tomorrow.' }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toString(),
+          },
+        }
+      );
+    }
+  } catch (error) {
+    console.error('Rate limiter unreachable, failing open:', error);
   }
 
   return NextResponse.next();
