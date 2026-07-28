@@ -62,7 +62,7 @@ export default function NotificationSettings() {
         scheduleNotification(notificationTime);
 
         // Show test notification
-        new Notification('Slow Hour ✨', {
+        new Notification('Slow Garden ✨', {
           body: 'notifications are on! you\'re all set',
           tag: 'setup',
           requireInteraction: false,
@@ -103,7 +103,7 @@ export default function NotificationSettings() {
 
     const timeoutId = setTimeout(() => {
       if (Notification.permission === 'granted') {
-        new Notification('Slow Hour ✨', {
+        new Notification('Slow Garden ✨', {
           body: getRandomMessage(),
           tag: 'daily-card',
           requireInteraction: false,
@@ -155,7 +155,7 @@ export default function NotificationSettings() {
       const message = getRandomMessage();
       console.log('Using message:', message);
 
-      const notification = new Notification('Slow Hour ✨', {
+      const notification = new Notification('Slow Garden ✨', {
         body: message,
         tag: 'test-' + Date.now(),
         requireInteraction: false,

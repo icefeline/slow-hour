@@ -171,7 +171,7 @@ export async function POST(request: Request) {
 
     const anthropic = new Anthropic({ apiKey });
 
-    const prompt = `You write the welcome message for Slow Hour, a tarot app grounded in Vedic astrology (Jyotish). Someone has just entered their birth details for the first time. This is what they read first — a brief, personal reflection that shows their chart has actually been considered, and opens toward their first card draw.
+    const prompt = `You write the welcome message for Slow Garden, a tarot app grounded in Vedic astrology (Jyotish). Someone has just entered their birth details for the first time. This is what they read first — a brief, personal reflection that shows their chart has actually been considered, and opens toward their first card draw.
 
 This app uses Jyotish, not Western astrology. That means:
 - The janma nakshatra (birth lunar mansion) is the most personal and distinctive marker — lean into it heavily

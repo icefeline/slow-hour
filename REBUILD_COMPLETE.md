@@ -1,8 +1,8 @@
-# Slow Hour - Rebuild Complete ✓
+# Slow Garden - Rebuild Complete ✓
 
 ## What Was Rebuilt
 
-Your Slow Hour tarot app has been successfully rebuilt with the dark green theme and all the features from your recovery instructions.
+Your Slow Garden tarot app has been successfully rebuilt with the dark green theme and all the features from your recovery instructions.
 
 ## ✅ Completed Features
 
@@ -10,7 +10,7 @@ Your Slow Hour tarot app has been successfully rebuilt with the dark green theme
 - [x] **Dark Green Color Scheme** (#172211 background, #CEF17B lime accent, #E1EEFC text)
 - [x] **Reenie Beanie Font** - Applied throughout the app
 - [x] **Onboarding Component** with 4 screens:
-  - Screen 0: "slow hour" logo with exact pixel measurements
+  - Screen 0: "slow garden" logo with exact pixel measurements
   - Screen 1: Name input
   - Screen 2: Birthdate selection
   - Screen 3: "Why one card each day?" explanation
@@ -34,7 +34,7 @@ Your Slow Hour tarot app has been successfully rebuilt with the dark green theme
 
 ### Spiral Logo (`/public/spiral-logo.png`)
 
-The onboarding Screen 0 references `/spiral-logo.png` for the "o" in "slow hour". This file does NOT currently exist in the `/public` directory.
+The onboarding Screen 0 references `/spiral-logo.png` for the "o" in "slow garden". This file does NOT currently exist in the `/public` directory.
 
 **To add it:**
 1. Place your `spiral-logo.png` file in `/public/spiral-logo.png`
@@ -66,7 +66,7 @@ The development server is already running at:
 
 To test:
 1. Open http://localhost:3000 in your browser
-2. You should see the onboarding with the "slow hour" logo
+2. You should see the onboarding with the "slow garden" logo
 3. Complete onboarding to see the daily card draw
 
 ## 📋 Testing Checklist

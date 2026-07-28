@@ -1,4 +1,4 @@
-# Security Backlog — slow hour
+# Security Backlog — slow garden
 
 > Audited 2026-03-18. Fix in priority order.
 > Updated 2026-07-21: 7 of 12 items fixed in the working tree — **not yet committed or pushed.**

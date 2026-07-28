@@ -1,6 +1,6 @@
 # /push
 
-Commit all staged and unstaged changes, then push to the slow hour GitHub repo.
+Commit all staged and unstaged changes, then push to the slow garden GitHub repo.
 
 ## steps
 

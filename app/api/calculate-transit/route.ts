@@ -98,7 +98,7 @@ ${recentCards.length > 0 ? `\nCards drawn recently: ${recentCards.join(', ')}` :
     ? `Birth location was not provided. House cusps are estimated. Use the transit planet energies but treat the house activation lightly.`
     : '';
 
-  const prompt = `${memoryContext}You write the personalised synthesis for a tarot app called Slow Hour. This is the "what this could mean for you" section — the part that makes the reading feel like it was written specifically for this person.
+  const prompt = `${memoryContext}You write the personalised synthesis for a tarot app called Slow Garden. This is the "what this could mean for you" section — the part that makes the reading feel like it was written specifically for this person.
 
 The app exists to help people see themselves more clearly, not to tell them what to do or think. The best insight doesn't hand them a conclusion — it holds up a mirror at exactly the right angle so they can find the thing themselves. Think less therapist, more that one friend who says the true thing gently and then lets you sit with it.
 

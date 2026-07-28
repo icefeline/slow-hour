@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
           the short version
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
-          slow hour stores your data in your browser — not on our servers. we
+          slow garden stores your data in your browser — not on our servers. we
           don&apos;t sell it, share it, or use it to advertise to you. the only time
           your data leaves your device is to generate your daily reading, and
           that request is handled by anthropic&apos;s claude ai.
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
           third-party services
         </h2>
         <p className="mb-4" style={{ fontSize: '22px', lineHeight: '1.6' }}>
-          slow hour uses two external services:
+          slow garden uses two external services:
         </p>
         <ul className="list-disc pl-6 space-y-3" style={{ fontSize: '22px', lineHeight: '1.6' }}>
           <li>
@@ -93,7 +93,7 @@ export default function PrivacyPolicy() {
           cookies
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
-          slow hour does not use tracking cookies. vercel analytics is
+          slow garden does not use tracking cookies. vercel analytics is
           cookieless by design.
         </p>
       </section>

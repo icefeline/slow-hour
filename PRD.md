@@ -1,4 +1,4 @@
-# slow hour — product requirements document
+# slow garden — product requirements document
 
 **Status:** active development
 **Last updated:** March 2026
@@ -7,7 +7,7 @@
 
 ## 1. overview
 
-slow hour is a personal daily tarot app. It is quiet by design — no notifications by default, no social features, no streaks or gamification. Its core premise is that a single card, drawn once a day and reflected on, is more valuable than a feature-rich experience.
+slow garden is a personal daily tarot app. It is quiet by design — no notifications by default, no social features, no streaks or gamification. Its core premise is that a single card, drawn once a day and reflected on, is more valuable than a feature-rich experience.
 
 The app targets people who already have some relationship with tarot or self-reflection practices, and who are worn out by tools that demand attention rather than rewarding presence.
 
@@ -17,9 +17,9 @@ The app targets people who already have some relationship with tarot or self-ref
 
 Most tarot apps are built around volume: large card libraries, spread generators, extensive card descriptions, sharing features. They treat tarot as content.
 
-slow hour treats tarot as a practice. The problem it solves is simple: people who want a daily ritual card draw have no app that gets out of the way and lets that moment be what it is.
+slow garden treats tarot as a practice. The problem it solves is simple: people who want a daily ritual card draw have no app that gets out of the way and lets that moment be what it is.
 
-Secondary problem: reflective journaling apps are often too structured (prompts, categories, word counts). slow hour gives you a blank field after your card and nothing else.
+Secondary problem: reflective journaling apps are often too structured (prompts, categories, word counts). slow garden gives you a blank field after your card and nothing else.
 
 ---
 
@@ -58,7 +58,7 @@ A multi-step flow that runs once on first open.
 
 | Step | Content |
 |---|---|
-| 0 | slow hour logo + "continue" — sets the tone |
+| 0 | slow garden logo + "continue" — sets the tone |
 | 1 | Name input — "what's your name? the one that feels most like you" |
 | 2 | Birthdate, birth time (optional), birth location (optional) |
 | 3 | Personalised welcome message (typewritten), then drag a card to begin |
@@ -138,7 +138,7 @@ Two-button top nav: **today** and **year**. Fixed to the top of the viewport wit
 
 ## 9. roadmap
 
-Items below are possibilities, not commitments. slow hour should stay small.
+Items below are possibilities, not commitments. slow garden should stay small.
 
 ### near-term
 - [ ] PWA / add-to-home-screen support so it feels native on mobile
@@ -161,7 +161,7 @@ Items below are possibilities, not commitments. slow hour should stay small.
 
 ## 10. success metrics
 
-slow hour is not optimised for growth metrics. Success looks like:
+slow garden is not optimised for growth metrics. Success looks like:
 
 - Users who open it daily without needing a notification
 - Low support burden (nothing to break, nothing to log in to)

@@ -1,4 +1,4 @@
-# slow hour
+# slow garden
 
 A quiet daily tarot app. One card a day, a space to reflect, a year to look back on.
 
@@ -6,7 +6,7 @@ A quiet daily tarot app. One card a day, a space to reflect, a year to look back
 
 ## what it is
 
-slow hour is a personal tarot companion built for people who want a moment of stillness each day — not a rushed reading, not a feed, just a single card and whatever it surfaces.
+slow garden is a personal tarot companion built for people who want a moment of stillness each day — not a rushed reading, not a feed, just a single card and whatever it surfaces.
 
 You draw once a day. You can write a reflection. At the end of the year, you have a quiet archive of where you've been.
 
@@ -17,7 +17,7 @@ You draw once a day. You can write a reflection. At the end of the year, you hav
 - **daily card** — one tarot card per day, seeded to your birthdate for a touch of personalisation. upright or reversed.
 - **reflection** — a freeform space to write after your draw. no prompts, no structure.
 - **year view** — a full-year calendar of every card you've drawn. scrollable on mobile, a minimal column grid on desktop.
-- **personalised onboarding** — slow hour asks for your name, birthdate (and optionally birth time and location) and writes you a short welcome message based on your sun sign, moon sign, and rising — or just your sun and life path number if that's all you share.
+- **personalised onboarding** — slow garden asks for your name, birthdate (and optionally birth time and location) and writes you a short welcome message based on your sun sign, moon sign, and rising — or just your sun and life path number if that's all you share.
 - **drag to begin** — after the welcome message, you drag a card to start. a small ritual.
 - **works on mobile and desktop** — fully responsive. desktop shows a device frame; mobile is full screen.
 

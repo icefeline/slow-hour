@@ -16,7 +16,7 @@
       className="text-lg text-center text-black/60"
       style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
     >
-      this will be the name slow hour uses to refer to you
+      this will be the name slow garden uses to refer to you
     </p>
 
     <input
@@ -46,7 +46,7 @@
       className="text-lg text-center text-black/60 mb-8"
       style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
     >
-      slow hour may surprise you with a birthday gift
+      slow garden may surprise you with a birthday gift
     </p>
 
     <div className="flex gap-4 w-full max-w-md">

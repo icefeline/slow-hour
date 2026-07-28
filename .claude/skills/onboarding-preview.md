@@ -6,7 +6,7 @@ Reset the app to a fresh state and walk through the full onboarding flow.
 
 1. Take a screenshot of the current app state for reference
 
-2. Clear all slow hour localStorage keys by running in the browser console:
+2. Clear all slow garden localStorage keys by running in the browser console:
    ```js
    Object.keys(localStorage)
      .filter(k => k.startsWith('slow-hour'))
@@ -15,7 +15,7 @@ Reset the app to a fresh state and walk through the full onboarding flow.
    ```
    Use `preview_eval` to run this.
 
-3. Take a screenshot — should show the splash screen with the slow hour logo and "continue →" button
+3. Take a screenshot — should show the splash screen with the slow garden logo and "continue →" button
 
 4. Walk through each onboarding screen in sequence:
    - Splash → name entry

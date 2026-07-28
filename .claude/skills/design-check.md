@@ -1,6 +1,6 @@
 # /design-check
 
-Verify that a component follows the slow hour design system.
+Verify that a component follows the slow garden design system.
 
 ## steps
 
@@ -30,7 +30,7 @@ Verify that a component follows the slow hour design system.
 ### copy / tone
 - [ ] All visible UI text is lowercase
 - [ ] No "you will", "you should", "you need to" — check static strings
-- [ ] Labels feel like slow hour ("what this could mean for you", "try this") not generic ("insights", "recommendations")
+- [ ] Labels feel like slow garden ("what this could mean for you", "try this") not generic ("insights", "recommendations")
 
 ### responsiveness
 - [ ] Mobile layout tested first

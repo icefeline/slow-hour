@@ -528,7 +528,7 @@ export default function Home() {
               className="text-[#E1EEFC]"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
             >
-              slow hour
+              slow garden
             </span>
           </div>
 

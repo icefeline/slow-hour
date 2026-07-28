@@ -97,7 +97,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                   fontWeight: 400
                 }}
               >
-                hey! thank you so much for using slow hour. if this has meant something to you, a small contribution goes directly toward keeping it running :-)
+                hey! thank you so much for using slow garden. if this has meant something to you, a small contribution goes directly toward keeping it running :-)
 
               </p>
               <div className="mt-5 flex flex-col gap-3">
@@ -235,7 +235,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                     {transitExplanation.phaseMeaning.toLowerCase()}
                   </p>
                   <p className="mt-4 pt-3 border-t border-[#172211]/20 text-[#172211]/50">
-                    slow hour reads using the vedic sidereal system. your placements may differ from your western horoscope — that&apos;s expected.
+                    slow garden reads using the vedic sidereal system. your placements may differ from your western horoscope — that&apos;s expected.
                   </p>
                 </div>
               )}

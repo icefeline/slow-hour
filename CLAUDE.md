@@ -1,6 +1,6 @@
-# CLAUDE.md — slow hour
+# CLAUDE.md — slow garden
 
-slow hour is a meditative daily tarot app for self-reflection. not prediction, not advice — it helps you notice what's already moving in you. one card per day, personalised to your natal chart and current astrological transits, with a short AI-generated insight and a "try this" prompt for quiet attention.
+slow garden is a meditative daily tarot app for self-reflection. not prediction, not advice — it helps you notice what's already moving in you. one card per day, personalised to your natal chart and current astrological transits, with a short AI-generated insight and a "try this" prompt for quiet attention.
 
 ---
 
@@ -39,9 +39,13 @@ slow hour is a meditative daily tarot app for self-reflection. not prediction, n
 never use raw hex values in components — use Tailwind classes mapped to these. if a colour isn't in the design system, ask before adding it.
 
 ### typography
+- **Instrument Serif (italic)** — the "slow garden" wordmark on the splash screen only
 - **Reenie Beanie** — handwritten feel, used for headings, card names, UI labels
 - **VT323** — monospace pixel font, used for the year calendar view
 - body text inherits system sans; keep it minimal
+
+the splash wordmark is sized in `vw` on mobile and in px against the 647px device-frame
+screen on desktop, using the same proportions on both — keep them in sync if you change one.
 
 ### motion
 - card reveal is the centrepiece animation — don't compete with it
