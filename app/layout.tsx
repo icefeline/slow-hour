@@ -23,6 +23,7 @@ const vt323 = VT323({
 
 const instrumentSerif = Instrument_Serif({
   weight: '400',
+  style: ['normal', 'italic'],
   subsets: ['latin'],
   variable: '--font-instrument-serif',
 });
@@ -34,13 +35,13 @@ const gildaDisplay = Gilda_Display({
 });
 
 export const metadata: Metadata = {
-  title: "slow hour",
+  title: "slow garden",
   description: "one card. one moment. one day.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "slow hour",
+    title: "slow garden",
   },
   other: {
     "mobile-web-app-capable": "yes",
@@ -61,7 +62,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="slow hour" />
+        <meta name="apple-mobile-web-app-title" content="slow garden" />
       </head>
       <body className={`${reenieBeanie.variable} ${vt323.variable} ${instrumentSerif.variable} ${gildaDisplay.variable} antialiased`}>
         {children}

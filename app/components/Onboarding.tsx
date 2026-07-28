@@ -547,29 +547,56 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     border: '2px solid rgba(239, 68, 68, 0.6)',
   } as const;
 
+  // ── Field error row — icon + message, only takes up space when shown ──────
+  const FieldError = ({ message, variant }: { message: string; variant: 'dark' | 'light' }) => (
+    <div className="flex items-center gap-2 mt-2 px-1">
+      <span
+        style={{
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          width: '16px', height: '16px', minWidth: '16px', borderRadius: '50%',
+          background: '#dc2626', color: '#fff', fontSize: '11px', fontWeight: 700, lineHeight: 1,
+        }}
+      >
+        !
+      </span>
+      <p
+        className={variant === 'dark' ? 'text-red-400 text-sm' : 'text-red-600 text-base'}
+        style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+      >
+        {message}
+      </p>
+    </div>
+  );
+
   // ── Step content (MOBILE) ──────────────────────────────────────────────────────────
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return (
           <div className="flex flex-col flex-1">
-            {/* Logo group — full viewport width, text overflows edges intentionally */}
+            {/*
+              Logo group — every dimension is in vw so the wordmark scales with the
+              viewport instead of being pinned to a fixed px size. Height is exactly
+              two line-heights, so the gap to the subtitle below is only the subtitle's
+              own margin (nothing extra baked into this box).
+            */}
             <div style={{
               position: 'relative',
               width: '100%',
-              height: '82vw',
+              height: '67.2vw',
               marginTop: '14vh',
               flexShrink: 0,
               overflow: 'visible',
             }}>
-              {/* Glass text: "sl  w / hour" — Gilda Display, 175px/145px lh, -8% ls */}
+              {/* Glass text: "sl  w / garden" — Instrument Serif italic, -8% ls */}
               <div
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
-                  fontFamily: 'var(--font-gilda-display), "Gilda Display", serif',
+                  fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+                  fontStyle: 'italic',
                   fontWeight: 400,
                   textTransform: 'lowercase',
                   textAlign: 'center',
@@ -581,21 +608,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   userSelect: 'none',
                 } as React.CSSProperties}
               >
-                <span style={{ display: 'block', fontSize: '175px', lineHeight: '145px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
-                <span style={{ display: 'block', fontSize: '175px', lineHeight: '145px', letterSpacing: '-0.08em' }}>hour</span>
+                <span style={{ display: 'block', fontSize: '42vw', lineHeight: '33.6vw', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                <span style={{ display: 'block', fontSize: '42vw', lineHeight: '33.6vw', letterSpacing: '-0.08em' }}>garden</span>
               </div>
-              {/* Spiral — centered in viewport, sits in the gap between 'l' and 'w' */}
+              {/* Spiral — sits in the gap between 'l' and 'w', standing in for the 'o' */}
               <img
                 src="/spiral-icon.svg"
                 alt=""
                 aria-hidden="true"
                 style={{
                   position: 'absolute',
-                  width: '52vw',
-                  height: '44.5vw',
-                  top: '8vw',
+                  width: '38vw',
+                  height: '32.55vw',
+                  top: '10.1vw',
                   left: '50%',
-                  transform: 'translateX(-54%)',
+                  transform: 'translateX(-50%)',
                   pointerEvents: 'none',
                 }}
               />
@@ -610,7 +637,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 lineHeight: '6.15vw',
                 fontWeight: 500,
                 padding: '0 20px',
-                marginTop: '24px',
+                /* 17vw clears the italic 'g' descender, which hangs ~10vw below the
+                   logo group's box, and leaves the same visual gap as desktop */
+                marginTop: '17vw',
               }}
             >
               build your archive of daily perspectives.
@@ -637,7 +666,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   fontWeight: 500,
                   background: '#CEF17B',
                   color: '#172211',
-                  boxShadow: '0 4px 4px 0 rgba(0,0,0,0.25)',
                 }}
               >
                 continue →
@@ -657,8 +685,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             >
               ← back
             </button>
-            {/* Centered content */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
+            {/* Content — top-aligned with the same 9vh offset as step 2, so both pages'
+                headers sit at the same height and neither shifts when errors appear */}
+            <div className="flex-1 flex flex-col items-center justify-start w-full gap-8 pt-[9vh]">
               <div className="text-center">
                 <h2
                   className="text-5xl md:text-6xl text-[#E1EEFC]"
@@ -732,8 +761,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             >
               ← back
             </button>
-            {/* Centered content */}
-            <div className="flex-1 flex flex-col items-center justify-center w-full gap-8">
+            {/* Content — 9vh offset centres this page's block in the available space while
+                staying top-anchored, so the heading never shifts when fields grow below */}
+            <div className="flex-1 flex flex-col items-center justify-start w-full gap-8 overflow-y-auto pt-[9vh]">
               <div className="text-center">
                 <h2
                   className="text-5xl text-[#E1EEFC]"
@@ -745,12 +775,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   className="text-2xl text-[#E1EEFC]/60 mt-0"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
-                  an ai reads your vedic birth chart — time and location make it precise
+                  slow garden reads your vedic chart, but no pressure to share details!
                 </p>
               </div>
 
-              <div className="w-full flex flex-col gap-4">
-                {/* Date — full width */}
+              {/* Fields — one per row, close together; an error only pushes the rows below it down */}
+              <div className="w-full flex flex-col gap-3">
                 <div>
                   <input
                     type="text"
@@ -768,61 +798,52 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
                     style={dateError ? inputErrorStyle : inputStyle}
                   />
-                  {dateError && (
-                    <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>
+                  {dateError && <FieldError message={dateError} variant="dark" />}
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    placeholder="hh:mm (optional)"
+                    value={birthTime}
+                    onChange={(e) => handleTimeChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Backspace' && birthTime.length > 0) {
+                        e.preventDefault();
+                        handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
+                      }
+                    }}
+                    maxLength={5}
+                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    style={timeError ? inputErrorStyle : inputStyle}
+                  />
+                  {timeError && <FieldError message={timeError} variant="dark" />}
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    placeholder="city, country (optional)"
+                    value={birthLocation}
+                    onChange={(e) => handleLocationChange(e.target.value)}
+                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
+                    style={locationError ? inputErrorStyle : inputStyle}
+                  />
+                  {locationError && <FieldError message={locationError} variant="dark" />}
+                  {!locationError && locationChecking && (
+                    <p className="text-[#E1EEFC]/40 text-base mt-2 px-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
+                  )}
+                  {!locationError && !locationChecking && locationResolved !== null && (
+                    <p className={`text-base mt-2 px-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                      {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
+                    </p>
                   )}
                 </div>
-
-                {/* Time + Location — stacked on mobile, side by side on md+ */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="hh:mm (optional)"
-                      value={birthTime}
-                      onChange={(e) => handleTimeChange(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Backspace' && birthTime.length > 0) {
-                          e.preventDefault();
-                          handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
-                        }
-                      }}
-                      maxLength={5}
-                      className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                      style={timeError ? inputErrorStyle : inputStyle}
-                    />
-                    {timeError && (
-                      <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>
-                    )}
-                  </div>
-
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="city, country (optional)"
-                      value={birthLocation}
-                      onChange={(e) => handleLocationChange(e.target.value)}
-                      className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                      style={locationError ? inputErrorStyle : inputStyle}
-                    />
-                    {locationError && (
-                      <p className="text-red-400 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>
-                    )}
-                    {!locationError && locationChecking && (
-                      <p className="text-[#E1EEFC]/40 text-base mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
-                    )}
-                    {!locationError && !locationChecking && locationResolved !== null && (
-                      <p className={`text-base mt-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                        {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
-                      </p>
-                    )}
-                  </div>
-                </div>
               </div>
-            </div>
 
-            {/* Spacer so content isn't hidden behind the fixed button */}
-            <div className="h-20 shrink-0" />
+              {/* Spacer so content isn't hidden behind the fixed button */}
+              <div className="h-20 shrink-0" />
+            </div>
 
             {/* Fixed bottom button — floats above keyboard when open */}
             <button
@@ -858,19 +879,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 3:
         return (
-          <div className="flex-1 flex flex-col items-center justify-between py-3 gap-2">
-            <div className="flex-1 w-full min-h-0 overflow-y-auto flex flex-col items-center justify-center pt-4">
-              {isLoadingWelcome ? (
-                <div className="flex gap-2 items-center justify-center w-full">
-                  {[0, 1, 2].map(i => (
-                    <div
-                      key={i}
-                      className="w-2.5 h-2.5 rounded-full bg-[#E1EEFC]/50"
-                      style={{ animation: 'bounce 1.2s infinite', animationDelay: `${i * 0.2}s` }}
-                    />
-                  ))}
-                </div>
-              ) : (
+          <div className="relative flex-1 flex flex-col items-center justify-between py-3 gap-2">
+            {/* Loading — absolute overlay so the circle centres on the whole screen,
+                not just the text area above the (space-occupying) card */}
+            {isLoadingWelcome && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[#E1EEFC]/60 animate-pulse" />
+              </div>
+            )}
+            <div className="flex-1 w-full min-h-0 overflow-y-auto pt-4">
+              {!isLoadingWelcome && (
                 <p
                   className="w-full text-2xl text-[#E1EEFC] text-center whitespace-pre-line"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
@@ -889,8 +907,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 alt="Card back"
                 className="rounded-2xl shadow-xl select-none"
                 style={{
-                  width: '110px',
-                  height: '165px',
+                  width: '150px',
+                  height: '225px',
                   objectFit: 'cover',
                   cursor: 'grab',
                   userSelect: 'none',
@@ -962,8 +980,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         {/*
           Outer sizing box: gives the flex container real dimensions (scaled) so
           centering works correctly without relying on the absolutely-positioned children.
+          translateX compensates for the screen being off-center within the 801px frame
+          artwork (the frame's screen cutout sits left of canvas-center to make room for
+          the fanned deck) — without it, flex centers the artwork but the readable
+          header/fields inside the screen end up left-of-viewport-center. Using a transform
+          (not margin) so the shift is exact — margin gets half-absorbed by flex centering.
         */}
-        <div style={{ position: 'relative', width: `${801 * deviceScale}px`, height: `${1000 * deviceScale}px` }}>
+        <div style={{ position: 'relative', width: `${801 * deviceScale}px`, height: `${1000 * deviceScale}px`, transform: `translateX(${67.935 * deviceScale}px)` }}>
           {/*
             Inner natural-size container scaled via transform.
             Both the device frame image and the content area live here at their natural
@@ -1038,7 +1061,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         top: '100px',
                         left: 0,
                         right: 0,
-                        height: '490px',
+                        height: '435px',
                         overflow: 'visible',
                       }}>
                         {/* Glass text — bleeds off edges intentionally */}
@@ -1048,7 +1071,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             top: 0,
                             left: 0,
                             width: '100%',
-                            fontFamily: 'var(--font-gilda-display), "Gilda Display", serif',
+                            fontFamily: 'var(--font-instrument-serif), "Instrument Serif", serif',
+                            fontStyle: 'italic',
                             fontWeight: 400,
                             textTransform: 'lowercase',
                             textAlign: 'center',
@@ -1060,32 +1084,33 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             userSelect: 'none',
                           } as React.CSSProperties}
                         >
-                          <span style={{ display: 'block', fontSize: '300px', lineHeight: '240px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
-                          <span style={{ display: 'block', fontSize: '300px', lineHeight: '240px', letterSpacing: '-0.08em' }}>hour</span>
+                          <span style={{ display: 'block', fontSize: '272px', lineHeight: '217px', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                          <span style={{ display: 'block', fontSize: '272px', lineHeight: '217px', letterSpacing: '-0.08em' }}>garden</span>
                         </div>
-                        {/* Spiral — overlaps both lines, shifted down and slightly right */}
+                        {/* Spiral — sits in the gap between 'l' and 'w', standing in for the 'o' */}
                         <img
                           src="/spiral-icon-desktop.svg"
                           alt=""
                           aria-hidden="true"
                           style={{
                             position: 'absolute',
-                            width: '360px',
-                            height: '308px',
-                            top: '80px',
+                            width: '246px',
+                            height: '210px',
+                            top: '65px',
                             left: '50%',
-                            transform: 'translateX(-46%)',
+                            transform: 'translateX(-50%)',
                             pointerEvents: 'none',
                           }}
                         />
                       </div>
-                      {/* Subtitle: 24px below logo group (100 + 490 + 24 = 614) */}
+                      {/* Subtitle: 110px below the logo group — clears the italic 'g'
+                          descender, matching the mobile 17vw gap (100 + 435 + 110 = 645) */}
                       <p
                         style={{
                           position: 'absolute',
                           left: '20px',
                           right: '20px',
-                          top: '614px',
+                          top: '645px',
                           transform: 'none',
                           width: 'auto',
                           textAlign: 'center',
@@ -1093,7 +1118,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           fontSize: '36px',
                           lineHeight: '27px',
                           fontWeight: 400,
-                          textAlign: 'center',
                           color: '#172211',
                           margin: 0,
                         }}
@@ -1134,26 +1158,33 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
                 {/* Step 1 — name */}
                 {currentStep === 1 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-8" style={{ position: 'relative' }}>
+                  <div className="h-full w-full" style={{ position: 'relative' }}>
+                    {/* Back button — fixed position, matches step 2 */}
                     <button
                       onClick={() => setCurrentStep(0)}
-                      style={{ position: 'absolute', top: '24px', left: 0, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
+                      style={{ position: 'absolute', top: '24px', left: 0, zIndex: 10, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
                     >
                       ← back
                     </button>
-                  <div className="flex flex-col items-center justify-center flex-1 gap-8" style={{ position: 'relative' }}>
-                    <div className="text-center">
+
+                    {/* Heading — shared fixed top with step 2 (see step 2 for how 220px is derived) */}
+                    <div className="text-center" style={{ position: 'absolute', top: '220px', left: '50%', transform: 'translateX(-50%)', width: '90%' }}>
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
                       <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
                     </div>
-                    <input
-                      type="text" value={name} onChange={(e) => setName(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-                      className="w-full max-w-2xl px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                      style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
-                      autoFocus
-                    />
-                    {/* Always rendered — opacity toggles to avoid layout shift */}
+
+                    {/* Field — same wrapper width/offset as step 2's fields, so input sizes and positions match */}
+                    <div className="w-full max-w-2xl" style={{ position: 'absolute', top: '350px', left: '50%', transform: 'translateX(-50%)' }}>
+                      <input
+                        type="text" value={name} onChange={(e) => setName(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                        className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
+                        autoFocus
+                      />
+                    </div>
+
+                    {/* Continue button — pinned to the bottom of this fixed-height step, matches step 2 */}
                     <button
                       onClick={handleNext}
                       disabled={!canContinueFromName}
@@ -1163,8 +1194,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       style={{
                         position: 'absolute',
                         left: '50%',
-                        top: 'calc(50% + 344px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
+                        bottom: '76px',
+                        transform: 'translateX(-50%)',
                         display: 'flex', width: '208px', height: '68px',
                         justifyContent: 'center', alignItems: 'center',
                         borderRadius: '9999px',
@@ -1179,65 +1210,77 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       continue →
                     </button>
                   </div>
-                  </div>
                 )}
 
                 {/* Step 2 — birthdate */}
                 {currentStep === 2 && (
-                  <div className="flex flex-col items-center justify-center h-full gap-6" style={{ position: 'relative' }}>
+                  <div className="h-full w-full" style={{ position: 'relative' }}>
+                    {/* Back button — fixed position, unaffected by field growth below */}
                     <button
                       onClick={() => setCurrentStep(1)}
-                      style={{ position: 'absolute', top: '24px', left: 0, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
+                      style={{ position: 'absolute', top: '24px', left: 0, zIndex: 10, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
                     >
                       ← back
                     </button>
-                  <div className="flex flex-col items-center justify-center flex-1 gap-6" style={{ position: 'relative' }}>
-                    <div className="text-center">
+
+                    {/*
+                      Heading — fixed top offset, never moves. 220px centres this page's
+                      content block (heading + 3 fields = 412px tall in the 909px screen)
+                      while leaving room for the ~102px the fields grow when all three
+                      errors show, so the block still clears the continue button at 765px.
+                      Step 1 reuses the same offsets so both pages' headers and fields align.
+                    */}
+                    <div className="text-center" style={{ position: 'absolute', top: '220px', left: '50%', transform: 'translateX(-50%)', width: '90%' }}>
                       <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
-                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>an ai reads your vedic birth chart — time and location make it precise</p>
+                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>slow garden reads your vedic chart, but no pressure to share details!</p>
                     </div>
-                    <div className="w-full max-w-2xl space-y-4">
-                      <div className="flex gap-3">
-                        <div className="flex-1">
-                          <input type="text" placeholder="dd/mm/yyyy" value={birthDate}
-                            onChange={(e) => handleDateChange(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
-                              if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
-                            }}
-                            maxLength={10}
-                            className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                            style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                          />
-                          {dateError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{dateError}</p>}
-                        </div>
-                        <div className="flex-1">
-                          <input type="text" placeholder="hh:mm" value={birthTime}
-                            onChange={(e) => handleTimeChange(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
-                            maxLength={5}
-                            className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                            style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                          />
-                          {timeError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{timeError}</p>}
-                        </div>
+
+                    {/* Fields — one per row, close together; an error only pushes the rows below it down. Fixed top offset so the heading and button above/below never shift. */}
+                    <div className="w-full max-w-2xl" style={{ position: 'absolute', top: '350px', left: '50%', transform: 'translateX(-50%)' }}>
+                      <div>
+                        <input type="text" placeholder="dd/mm/yyyy" value={birthDate}
+                          onChange={(e) => handleDateChange(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                            if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
+                          }}
+                          maxLength={10}
+                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                        />
+                        {dateError && <FieldError message={dateError} variant="light" />}
                       </div>
-                      <input type="text" placeholder="city, country (optional)" value={birthLocation}
-                        onChange={(e) => handleLocationChange(e.target.value)}
-                        className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                      />
-                      {locationError && <p className="text-red-600 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>{locationError}</p>}
-                      {!locationError && locationChecking && (
-                        <p className="text-black/40 text-lg mt-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
-                      )}
-                      {!locationError && !locationChecking && locationResolved !== null && (
-                        <p className={`text-lg mt-1 text-center ${locationResolved ? 'text-green-700/80' : 'text-black/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                          {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
-                        </p>
-                      )}
+
+                      <div className="mt-3">
+                        <input type="text" placeholder="hh:mm (optional)" value={birthTime}
+                          onChange={(e) => handleTimeChange(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
+                          maxLength={5}
+                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                        />
+                        {timeError && <FieldError message={timeError} variant="light" />}
+                      </div>
+
+                      <div className="mt-3">
+                        <input type="text" placeholder="city, country (optional)" value={birthLocation}
+                          onChange={(e) => handleLocationChange(e.target.value)}
+                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
+                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
+                        />
+                        {locationError && <FieldError message={locationError} variant="light" />}
+                        {!locationError && locationChecking && (
+                          <p className="text-black/40 text-lg mt-2 px-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
+                        )}
+                        {!locationError && !locationChecking && locationResolved !== null && (
+                          <p className={`text-lg mt-2 px-1 text-center ${locationResolved ? 'text-green-700/80' : 'text-black/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                            {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    {/* Always rendered — opacity toggles to avoid layout shift */}
+
+                    {/* Continue button — pinned to the bottom of this fixed-height step, unaffected by field growth above */}
                     <button
                       onClick={handleNext}
                       disabled={!canContinueFromBirthdate}
@@ -1247,8 +1290,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       style={{
                         position: 'absolute',
                         left: '50%',
-                        top: 'calc(50% + 344px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
+                        bottom: '76px',
+                        transform: 'translateX(-50%)',
                         display: 'flex', width: '208px', height: '68px',
                         justifyContent: 'center', alignItems: 'center',
                         borderRadius: '9999px',
@@ -1263,24 +1306,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       continue →
                     </button>
                   </div>
-                  </div>
                 )}
 
                 {/* Step 3 — typewriter message + drag card */}
                 {currentStep === 3 && (
-                  <div className="flex flex-col items-center justify-between h-full py-16 gap-8">
-                    <div className="flex-1 overflow-y-auto flex items-center justify-center pt-6 w-full">
-                      {isLoadingWelcome ? (
-                        <div className="flex gap-3 items-center justify-center">
-                          {[0, 1, 2].map(i => (
-                            <div
-                              key={i}
-                              className="w-3 h-3 rounded-full bg-black/30"
-                              style={{ animation: 'bounce 1.2s infinite', animationDelay: `${i * 0.2}s` }}
-                            />
-                          ))}
-                        </div>
-                      ) : (
+                  <div className="relative flex flex-col items-center justify-between h-full py-16 gap-8">
+                    {/* Loading — absolute overlay so the circle centres on the whole card,
+                        not just the text area above the (space-occupying) card image */}
+                    {isLoadingWelcome && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-black/40 animate-pulse" />
+                      </div>
+                    )}
+                    {/* overflow-y-auto with no vertical centering — centering here would push the top of long
+                        messages above the scrollable range and clip it against the card's overflow-hidden edge */}
+                    <div className="flex-1 overflow-y-auto pt-6 w-full">
+                      {!isLoadingWelcome && (
                         <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
                       )}
                     </div>
