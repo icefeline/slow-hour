@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import AsciiFlower from './AsciiFlower';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -919,7 +920,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 not just the text area above the (space-occupying) card */}
             {isLoadingWelcome && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-[#E1EEFC]/60 animate-pulse" />
+                <AsciiFlower fontSize={16} color="rgba(225, 238, 252, 0.7)" label="reading your chart" />
               </div>
             )}
             <div className="flex-1 w-full min-h-0 overflow-y-auto pt-4">
@@ -974,7 +975,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
-          <div className="w-12 h-12 border-4 border-[#CEF17B]/30 border-t-[#CEF17B] rounded-full animate-spin" />
+          <AsciiFlower fontSize={22} color="#CEF17B" label="preparing your reading" />
           <p className="text-3xl text-[#CEF17B]" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             preparing your reading...
           </p>
@@ -1350,7 +1351,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         not just the text area above the (space-occupying) card image */}
                     {isLoadingWelcome && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 rounded-full bg-black/40 animate-pulse" />
+                        {/* larger than mobile's 16 because the whole desktop frame is
+                            scaled down by deviceScale — this keeps the bloom at the
+                            same ~45% of the screen width on both */}
+                        <AsciiFlower fontSize={28} color="rgba(23, 34, 17, 0.55)" label="reading your chart" />
                       </div>
                     )}
                     {/* overflow-y-auto with no vertical centering — centering here would push the top of long
