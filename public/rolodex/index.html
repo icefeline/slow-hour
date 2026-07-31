@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="All 78 cards of the slow garden tarot deck on a spinning 3D rolodex. Flip through them, or spin for a random draw.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://slow-hour.vercel.app/rolodex">
+<meta property="og:title" content="Tarot Rolodex">
+<meta property="og:description" content="All 78 cards of the slow garden tarot deck on a spinning 3D rolodex. Flip through them, or spin for a random draw.">
+<meta property="og:image" content="https://slow-hour.vercel.app/rolodex/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tarot Rolodex">
+<meta name="twitter:description" content="All 78 cards of the slow garden tarot deck on a spinning 3D rolodex. Flip through them, or spin for a random draw.">
+<meta name="twitter:image" content="https://slow-hour.vercel.app/rolodex/og.jpg">
 <title>Tarot Rolodex</title>
 <script type="importmap">
 {
@@ -30,7 +43,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#14161a"/><g transform="translate(50 52)"><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#f4f2ee" transform="rotate(-14)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#e8e4da" transform="rotate(0)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#cfd4da" transform="rotate(14)"/><circle cx="0" cy="0" r="7" fill="#14161a" stroke="#cfd4da" stroke-width="2"/></g></svg>
 </template>
 <three-d-stage name="tarot-rolodex" background="#f4f2ee"></three-d-stage>
-<script src="./three-d-stage.js"></script>
+<script src="/rolodex/three-d-stage.js"></script>
 <script type="module">
 import * as THREE from 'three';
 
@@ -165,7 +178,7 @@ const loader = new THREE.TextureLoader();
 const faceMats = await Promise.all(DECK.map(async (name, i) => {
   const mat = new THREE.MeshStandardMaterial({ name: 'face_' + name, color: 0xffffff, roughness: 0.78, metalness: 0.0 });
   try {
-    const tex = await loader.loadAsync('cards/' + String(i).padStart(2, '0') + '.webp');
+    const tex = await loader.loadAsync('/rolodex/cards/' + String(i).padStart(2, '0') + '.webp');
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
     mat.map = tex;
@@ -175,7 +188,7 @@ const faceMats = await Promise.all(DECK.map(async (name, i) => {
 
 const backMat = new THREE.MeshStandardMaterial({ name: 'card_back', color: 0xffffff, roughness: 0.78, metalness: 0.0 });
 try {
-  const backTex = await loader.loadAsync('cards/back.webp');
+  const backTex = await loader.loadAsync('/rolodex/cards/back.webp');
   backTex.colorSpace = THREE.SRGBColorSpace;
   backTex.anisotropy = 4;
   backMat.map = backTex;
