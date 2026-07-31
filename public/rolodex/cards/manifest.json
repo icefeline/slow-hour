@@ -1,0 +1,392 @@
+[
+ {
+  "i": 0,
+  "src": "cards/00.webp",
+  "name": "major-0-fool"
+ },
+ {
+  "i": 1,
+  "src": "cards/01.webp",
+  "name": "major-1-magician"
+ },
+ {
+  "i": 2,
+  "src": "cards/02.webp",
+  "name": "major-2-high-priestess"
+ },
+ {
+  "i": 3,
+  "src": "cards/03.webp",
+  "name": "major-3-empress"
+ },
+ {
+  "i": 4,
+  "src": "cards/04.webp",
+  "name": "major-4-emperor"
+ },
+ {
+  "i": 5,
+  "src": "cards/05.webp",
+  "name": "major-5-hierophant"
+ },
+ {
+  "i": 6,
+  "src": "cards/06.webp",
+  "name": "major-6-lovers"
+ },
+ {
+  "i": 7,
+  "src": "cards/07.webp",
+  "name": "major-7-chariot"
+ },
+ {
+  "i": 8,
+  "src": "cards/08.webp",
+  "name": "major-8-strength"
+ },
+ {
+  "i": 9,
+  "src": "cards/09.webp",
+  "name": "major-9-hermit"
+ },
+ {
+  "i": 10,
+  "src": "cards/10.webp",
+  "name": "major-10-wheel-of -ortune"
+ },
+ {
+  "i": 11,
+  "src": "cards/11.webp",
+  "name": "major-11-justice"
+ },
+ {
+  "i": 12,
+  "src": "cards/12.webp",
+  "name": "major-12-the-hanged-man"
+ },
+ {
+  "i": 13,
+  "src": "cards/13.webp",
+  "name": "major-13-death"
+ },
+ {
+  "i": 14,
+  "src": "cards/14.webp",
+  "name": "major-14-temperance"
+ },
+ {
+  "i": 15,
+  "src": "cards/15.webp",
+  "name": "major-15-devil"
+ },
+ {
+  "i": 16,
+  "src": "cards/16.webp",
+  "name": "major-16-tower"
+ },
+ {
+  "i": 17,
+  "src": "cards/17.webp",
+  "name": "major-17-star"
+ },
+ {
+  "i": 18,
+  "src": "cards/18.webp",
+  "name": "major-18-moon"
+ },
+ {
+  "i": 19,
+  "src": "cards/19.webp",
+  "name": "major-19-sun"
+ },
+ {
+  "i": 20,
+  "src": "cards/20.webp",
+  "name": "major-20-judgement"
+ },
+ {
+  "i": 21,
+  "src": "cards/21.webp",
+  "name": "major-21-world"
+ },
+ {
+  "i": 22,
+  "src": "cards/22.webp",
+  "name": "wands-1-ace"
+ },
+ {
+  "i": 23,
+  "src": "cards/23.webp",
+  "name": "wands-2-two"
+ },
+ {
+  "i": 24,
+  "src": "cards/24.webp",
+  "name": "wands-3-three"
+ },
+ {
+  "i": 25,
+  "src": "cards/25.webp",
+  "name": "wands-4-four"
+ },
+ {
+  "i": 26,
+  "src": "cards/26.webp",
+  "name": "wands-5-five"
+ },
+ {
+  "i": 27,
+  "src": "cards/27.webp",
+  "name": "wands-6-six"
+ },
+ {
+  "i": 28,
+  "src": "cards/28.webp",
+  "name": "wands-7-seven"
+ },
+ {
+  "i": 29,
+  "src": "cards/29.webp",
+  "name": "wands-8-eight"
+ },
+ {
+  "i": 30,
+  "src": "cards/30.webp",
+  "name": "wands-9-nine"
+ },
+ {
+  "i": 31,
+  "src": "cards/31.webp",
+  "name": "wands-10-ten"
+ },
+ {
+  "i": 32,
+  "src": "cards/32.webp",
+  "name": "wands-11-page"
+ },
+ {
+  "i": 33,
+  "src": "cards/33.webp",
+  "name": "wands-12-knight"
+ },
+ {
+  "i": 34,
+  "src": "cards/34.webp",
+  "name": "wands-13-queen"
+ },
+ {
+  "i": 35,
+  "src": "cards/35.webp",
+  "name": "wands-14-king"
+ },
+ {
+  "i": 36,
+  "src": "cards/36.webp",
+  "name": "cups-1-ace"
+ },
+ {
+  "i": 37,
+  "src": "cards/37.webp",
+  "name": "cups-2-two"
+ },
+ {
+  "i": 38,
+  "src": "cards/38.webp",
+  "name": "cups-3-three"
+ },
+ {
+  "i": 39,
+  "src": "cards/39.webp",
+  "name": "cups-4-four"
+ },
+ {
+  "i": 40,
+  "src": "cards/40.webp",
+  "name": "cups-5-five"
+ },
+ {
+  "i": 41,
+  "src": "cards/41.webp",
+  "name": "cups-6-six"
+ },
+ {
+  "i": 42,
+  "src": "cards/42.webp",
+  "name": "cups-7-seven"
+ },
+ {
+  "i": 43,
+  "src": "cards/43.webp",
+  "name": "cups-8-eight"
+ },
+ {
+  "i": 44,
+  "src": "cards/44.webp",
+  "name": "cups-9-nine"
+ },
+ {
+  "i": 45,
+  "src": "cards/45.webp",
+  "name": "cups-10-ten"
+ },
+ {
+  "i": 46,
+  "src": "cards/46.webp",
+  "name": "cups-11-page"
+ },
+ {
+  "i": 47,
+  "src": "cards/47.webp",
+  "name": "cups-12-knight"
+ },
+ {
+  "i": 48,
+  "src": "cards/48.webp",
+  "name": "cups-13-queen"
+ },
+ {
+  "i": 49,
+  "src": "cards/49.webp",
+  "name": "cups-14-king"
+ },
+ {
+  "i": 50,
+  "src": "cards/50.webp",
+  "name": "swords-1-ace"
+ },
+ {
+  "i": 51,
+  "src": "cards/51.webp",
+  "name": "swords-2-two"
+ },
+ {
+  "i": 52,
+  "src": "cards/52.webp",
+  "name": "swords-3-three"
+ },
+ {
+  "i": 53,
+  "src": "cards/53.webp",
+  "name": "swords-4-four"
+ },
+ {
+  "i": 54,
+  "src": "cards/54.webp",
+  "name": "swords-5-five"
+ },
+ {
+  "i": 55,
+  "src": "cards/55.webp",
+  "name": "swords-6-six"
+ },
+ {
+  "i": 56,
+  "src": "cards/56.webp",
+  "name": "swords-7-seven"
+ },
+ {
+  "i": 57,
+  "src": "cards/57.webp",
+  "name": "swords-8-eight"
+ },
+ {
+  "i": 58,
+  "src": "cards/58.webp",
+  "name": "swords-9-nine"
+ },
+ {
+  "i": 59,
+  "src": "cards/59.webp",
+  "name": "swords-10-ten"
+ },
+ {
+  "i": 60,
+  "src": "cards/60.webp",
+  "name": "swords-11-page"
+ },
+ {
+  "i": 61,
+  "src": "cards/61.webp",
+  "name": "swords-12-knight"
+ },
+ {
+  "i": 62,
+  "src": "cards/62.webp",
+  "name": "swords-13-queen"
+ },
+ {
+  "i": 63,
+  "src": "cards/63.webp",
+  "name": "swords-14-king"
+ },
+ {
+  "i": 64,
+  "src": "cards/64.webp",
+  "name": "pentacles-1-ace"
+ },
+ {
+  "i": 65,
+  "src": "cards/65.webp",
+  "name": "pentacles-2-two"
+ },
+ {
+  "i": 66,
+  "src": "cards/66.webp",
+  "name": "pentacles-3-three"
+ },
+ {
+  "i": 67,
+  "src": "cards/67.webp",
+  "name": "pentacles-4-four"
+ },
+ {
+  "i": 68,
+  "src": "cards/68.webp",
+  "name": "pentacles-5-five"
+ },
+ {
+  "i": 69,
+  "src": "cards/69.webp",
+  "name": "pentacles-6-six"
+ },
+ {
+  "i": 70,
+  "src": "cards/70.webp",
+  "name": "pentacles-7-seven"
+ },
+ {
+  "i": 71,
+  "src": "cards/71.webp",
+  "name": "pentacles-8-eight"
+ },
+ {
+  "i": 72,
+  "src": "cards/72.webp",
+  "name": "pentacles-9-nine"
+ },
+ {
+  "i": 73,
+  "src": "cards/73.webp",
+  "name": "pentacles-10-ten"
+ },
+ {
+  "i": 74,
+  "src": "cards/74.webp",
+  "name": "pentacles-11-page"
+ },
+ {
+  "i": 75,
+  "src": "cards/75.webp",
+  "name": "pentacles-12-knight"
+ },
+ {
+  "i": 76,
+  "src": "cards/76.webp",
+  "name": "pentacles-13-queen"
+ },
+ {
+  "i": 77,
+  "src": "cards/77.webp",
+  "name": "pentacles-14-king"
+ }
+]

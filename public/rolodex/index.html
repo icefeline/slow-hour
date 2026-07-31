@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tarot Rolodex</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  three-d-stage:not(:defined) { visibility: hidden; }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#14161a"/><g transform="translate(50 52)"><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#f4f2ee" transform="rotate(-14)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#e8e4da" transform="rotate(0)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#cfd4da" transform="rotate(14)"/><circle cx="0" cy="0" r="7" fill="#14161a" stroke="#cfd4da" stroke-width="2"/></g></svg>
+</template>
+<three-d-stage name="tarot-rolodex" background="#f4f2ee"></three-d-stage>
+<script src="./three-d-stage.js"></script>
+<script type="module">
+import * as THREE from 'three';
+
+const stage = document.querySelector('three-d-stage');
+await stage.ready;
+
+const M = {
+  steel_shell:   new THREE.MeshStandardMaterial({ name: 'steel_shell', color: 0x8b98a5, roughness: 0.42, metalness: 0.25 }),
+  chrome:        new THREE.MeshStandardMaterial({ name: 'chrome', color: 0xeef1f4, roughness: 0.16, metalness: 0.55 }),
+  dial_black:    new THREE.MeshStandardMaterial({ name: 'dial_black', color: 0x14161a, roughness: 0.24, metalness: 0.15 }),
+  rubber_foot:   new THREE.MeshStandardMaterial({ name: 'rubber_foot', color: 0x3a3d40, roughness: 0.95, metalness: 0.0 }),
+  parchment:     new THREE.MeshStandardMaterial({ name: 'parchment', color: 0xe6dcc4, roughness: 0.85, metalness: 0.0 }),
+  parchment_pale:new THREE.MeshStandardMaterial({ name: 'parchment_pale', color: 0xf2ece0, roughness: 0.85, metalness: 0.0 }),
+  tarot_back:    new THREE.MeshStandardMaterial({ name: 'tarot_back', color: 0x2f3d63, roughness: 0.6, metalness: 0.05 }),
+  accent_card:   new THREE.MeshStandardMaterial({ name: 'accent_card', color: 0xb5442c, roughness: 0.7, metalness: 0.0 }),
+};
+
+const model = new THREE.Group();
+model.name = 'tarot_rolodex';
+
+/* ---------- chrome tube frame: one continuous bent rail, rubber sleeves ---------- */
+const AXLE_Y = 0.162, AXLE_R = 0.011;
+const TUBE_R = 0.0085;
+
+function railPoints(side) {
+  return [
+    new THREE.Vector3(side * 0.084, AXLE_Y, 0),
+    new THREE.Vector3(side * 0.086, 0.140, 0.032),
+    new THREE.Vector3(side * 0.096, 0.098, 0.078),
+    new THREE.Vector3(side * 0.122, 0.052, 0.112),
+    new THREE.Vector3(side * 0.146, 0.016, 0.132),
+    new THREE.Vector3(side * 0.120, TUBE_R + 0.001, 0.148),
+    new THREE.Vector3(side * 0.062, TUBE_R + 0.001, 0.154),
+  ];
+}
+const railPath = [
+  ...railPoints(1).slice().reverse(),
+  new THREE.Vector3(0, TUBE_R + 0.001, 0.156),
+  ...railPoints(-1).slice(0, 6),
+].filter(Boolean);
+// order: right axle end → down → across the front → up → left axle end
+const framePts = [...railPoints(1)].concat([new THREE.Vector3(0, TUBE_R + 0.001, 0.156)], railPoints(-1).slice().reverse());
+const frameCurve = new THREE.CatmullRomCurve3(framePts, false, 'catmullrom', 0.4);
+const frame = new THREE.Mesh(new THREE.TubeGeometry(frameCurve, 220, TUBE_R, 24, false), M.chrome);
+frame.name = 'tube_frame';
+model.add(frame);
+
+// rubber sleeves gripping the rail at the front corners
+for (const side of [-1, 1]) {
+  const t = 0.5 - side * 0.235;
+  const p = frameCurve.getPointAt(t);
+  const tan = frameCurve.getTangentAt(t);
+  const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(TUBE_R + 0.0011, TUBE_R + 0.0011, 0.042, 32), M.rubber_foot);
+  sleeve.name = side < 0 ? 'sleeve_left' : 'sleeve_right';
+  sleeve.position.copy(p);
+  sleeve.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan.clone().normalize());
+  model.add(sleeve);
+}
+
+/* ---------- spindle + dials ---------- */
+const axle = new THREE.Mesh(new THREE.CylinderGeometry(AXLE_R, AXLE_R, 0.262, 40), M.chrome);
+axle.name = 'spindle';
+axle.rotation.z = Math.PI / 2;
+axle.position.y = AXLE_Y;
+model.add(axle);
+
+function knob(side) {
+  const g = new THREE.Group();
+  g.name = side < 0 ? 'dial_left' : 'dial_right';
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.030, 72), M.dial_black);
+  body.name = g.name + '_body';
+  body.rotation.z = Math.PI / 2;
+  g.add(body);
+  const face = new THREE.Mesh(new THREE.SphereGeometry(0.052, 48, 32, 0, Math.PI * 2, 0, Math.PI / 2), M.dial_black);
+  face.name = g.name + '_face';
+  face.scale.y = 0.22;
+  face.rotation.z = side < 0 ? Math.PI / 2 : -Math.PI / 2;
+  face.position.x = side * 0.015;
+  g.add(face);
+  // moulded grip ribs radiating across the outer face
+  const ribGeo = new THREE.BoxGeometry(0.010, 0.005, 0.034);
+  for (let i = 0; i < 8; i++) {
+    const rib = new THREE.Mesh(ribGeo, M.chrome);
+    rib.name = g.name + '_rib_' + (i + 1);
+    const a = (i / 8) * Math.PI * 2;
+    rib.position.set(side * 0.029, Math.cos(a) * 0.037, Math.sin(a) * 0.037);
+    rib.rotation.x = -a;
+    g.add(rib);
+  }
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.0135, 0.0135, 0.010, 40), M.dial_black);
+  hub.name = g.name + '_hub';
+  hub.rotation.z = Math.PI / 2;
+  hub.position.x = side * 0.026;
+  g.add(hub);
+  g.position.set(side * 0.104, AXLE_Y, 0);
+  return g;
+}
+model.add(knob(-1), knob(1));
+
+// inner carrier wheels the cards hang from
+for (const side of [-1, 1]) {
+  const w = new THREE.Mesh(new THREE.CylinderGeometry(0.030, 0.030, 0.005, 48), M.dial_black);
+  w.name = side < 0 ? 'carrier_wheel_left' : 'carrier_wheel_right';
+  w.rotation.z = Math.PI / 2;
+  w.position.set(side * 0.046, AXLE_Y, 0);
+  model.add(w);
+}
+
+/* ---------- the card fan: one tarot image per card ---------- */
+const DECK = ["major-0-fool","major-1-magician","major-2-high-priestess","major-3-empress","major-4-emperor","major-5-hierophant","major-6-lovers","major-7-chariot","major-8-strength","major-9-hermit","major-10-wheel-of-fortune","major-11-justice","major-12-the-hanged-man","major-13-death","major-14-temperance","major-15-devil","major-16-tower","major-17-star","major-18-moon","major-19-sun","major-20-judgement","major-21-world","wands-1-ace","wands-2-two","wands-3-three","wands-4-four","wands-5-five","wands-6-six","wands-7-seven","wands-8-eight","wands-9-nine","wands-10-ten","wands-11-page","wands-12-knight","wands-13-queen","wands-14-king","cups-1-ace","cups-2-two","cups-3-three","cups-4-four","cups-5-five","cups-6-six","cups-7-seven","cups-8-eight","cups-9-nine","cups-10-ten","cups-11-page","cups-12-knight","cups-13-queen","cups-14-king","swords-1-ace","swords-2-two","swords-3-three","swords-4-four","swords-5-five","swords-6-six","swords-7-seven","swords-8-eight","swords-9-nine","swords-10-ten","swords-11-page","swords-12-knight","swords-13-queen","swords-14-king","pentacles-1-ace","pentacles-2-two","pentacles-3-three","pentacles-4-four","pentacles-5-five","pentacles-6-six","pentacles-7-seven","pentacles-8-eight","pentacles-9-nine","pentacles-10-ten","pentacles-11-page","pentacles-12-knight","pentacles-13-queen","pentacles-14-king"];
+
+const CARD_W = 0.078, CARD_H = 0.117, CARD_T = 0.0013, CARD_R = 0.004;
+function roundedCard() {
+  const s = new THREE.Shape();
+  const w = CARD_W / 2, hh = CARD_H / 2, r = CARD_R;
+  s.moveTo(-w + r, -hh);
+  s.lineTo(w - r, -hh);
+  s.quadraticCurveTo(w, -hh, w, -hh + r);
+  s.lineTo(w, hh - r);
+  s.quadraticCurveTo(w, hh, w - r, hh);
+  s.lineTo(-w + r, hh);
+  s.quadraticCurveTo(-w, hh, -w, hh - r);
+  s.lineTo(-w, -hh + r);
+  s.quadraticCurveTo(-w, -hh, -w + r, -hh);
+  return s;
+}
+const cardGeo = new THREE.ExtrudeGeometry(roundedCard(), { depth: CARD_T, bevelEnabled: false, curveSegments: 4 });
+cardGeo.translate(0, 0, -CARD_T / 2);
+const faceGeo = new THREE.PlaneGeometry(CARD_W, CARD_H);
+
+const loader = new THREE.TextureLoader();
+const faceMats = await Promise.all(DECK.map(async (name, i) => {
+  const mat = new THREE.MeshStandardMaterial({ name: 'face_' + name, color: 0xffffff, roughness: 0.78, metalness: 0.0 });
+  try {
+    const tex = await loader.loadAsync('cards/' + String(i).padStart(2, '0') + '.webp');
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    mat.map = tex;
+  } catch (e) { mat.color.set(0xe6dcc4); }
+  return mat;
+}));
+
+const backMat = new THREE.MeshStandardMaterial({ name: 'card_back', color: 0xffffff, roughness: 0.78, metalness: 0.0 });
+try {
+  const backTex = await loader.loadAsync('cards/back.webp');
+  backTex.colorSpace = THREE.SRGBColorSpace;
+  backTex.anisotropy = 4;
+  backMat.map = backTex;
+} catch (e) { backMat.color.set(0x2f3d63); }
+
+const RADIAL = AXLE_R + 0.007 + CARD_H / 2;
+const fan = new THREE.Group();
+fan.name = 'card_fan';
+
+function makeCard(i, theta, extra) {
+  const pivot = new THREE.Group();
+  pivot.name = 'pivot_' + DECK[i];
+  pivot.rotation.x = theta;
+  const card = new THREE.Mesh(cardGeo, M.parchment_pale);
+  card.name = 'card_' + DECK[i];
+  card.position.y = RADIAL + extra;
+  card.rotation.y = Math.sin(i * 1.9) * 0.01;
+  const face = new THREE.Mesh(faceGeo, faceMats[i]);
+  face.name = 'face_' + DECK[i];
+  face.position.z = CARD_T / 2 + 0.0004;
+  card.add(face);
+  const back = new THREE.Mesh(faceGeo, backMat);
+  back.name = 'back_' + DECK[i];
+  back.position.z = -(CARD_T / 2 + 0.0004);
+  back.rotation.y = Math.PI;
+  card.add(back);
+  pivot.add(card);
+  fan.add(pivot);
+  return pivot;
+}
+
+const STEP = (Math.PI * 2) / DECK.length;
+const pivots = [];
+for (let i = 0; i < DECK.length; i++) pivots.push(makeCard(i, i * STEP, (i % 3 === 0 ? 0.0012 : 0)));
+
+fan.position.y = AXLE_Y;
+model.add(fan);
+
+stage.setObject(model);
+
+/* ---------- rolodex flipping ---------- */
+const READ = -0.62;              // angle at which a card stands open to the viewer
+const GAP = 0.62;                // how far the stack parts around the open card
+const REACH = 1.5;               // angular falloff of the parting
+let selected = 0;
+let angle = READ, target = READ; // fan.rotation.x
+
+function wrap(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
+
+function labelFor(name) {
+  const p = name.split('-');
+  if (p[0] === 'major') return p[1] + ' \u00b7 ' + p.slice(2).join(' ');
+  return p.slice(2).join(' ') + ' of ' + p[0];
+}
+
+function layout() {
+  fan.rotation.x = angle;
+  for (let i = 0; i < pivots.length; i++) {
+    const d = wrap(i * STEP + angle - READ);   // signed distance from the reading slot
+    const f = Math.max(0, 1 - Math.abs(d) / REACH);
+    pivots[i].rotation.x = i * STEP + Math.sign(d) * GAP * f * f;
+  }
+}
+
+function select(n) {
+  const count = DECK.length;
+  selected = ((n % count) + count) % count;
+  target = READ - selected * STEP;
+  // take the short way round
+  while (target - angle > Math.PI) target -= Math.PI * 2;
+  while (angle - target > Math.PI) target += Math.PI * 2;
+  label.textContent = labelFor(DECK[selected]);
+}
+
+/* a wheel-of-fortune spin: several fast turns, then a long slow settle onto one card */
+let spin = null;
+function startSpin() {
+  if (spin) return;
+  const count = DECK.length;
+  let n = Math.floor(Math.random() * count);
+  if (n === selected) n = (n + 17) % count;
+  const turns = 4 + Math.floor(Math.random() * 3);
+  let end = READ - n * STEP;
+  while (end > angle - turns * Math.PI * 2) end -= Math.PI * 2;
+  spin = { from: angle, to: end, t0: performance.now(), dur: 4200 + Math.random() * 900, land: n };
+  label.textContent = 'spinning\u2026';
+  spinBtn.disabled = true;
+  spinBtn.style.opacity = '.45';
+}
+
+(function tick() {
+  requestAnimationFrame(tick);
+  if (spin) {
+    const p = Math.min(1, (performance.now() - spin.t0) / spin.dur);
+    const e = 1 - Math.pow(1 - p, 4.2);                 // fast off the line, long tail
+    angle = spin.from + (spin.to - spin.from) * e;
+    layout();
+    if (p >= 1) {
+      const land = spin.land;
+      spin = null;
+      spinBtn.disabled = false;
+      spinBtn.style.opacity = '1';
+      selected = land;
+      target = angle;
+      label.textContent = labelFor(DECK[land]);
+    }
+    return;
+  }
+  const d = target - angle;
+  if (Math.abs(d) > 1e-4) { angle += d * 0.12; layout(); }
+})();
+
+/* ---------- flip controls ---------- */
+const bar = document.createElement('div');
+bar.style.cssText = 'position:fixed;left:50%;bottom:74px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;font:500 13px/1.2 ui-sans-serif,system-ui,sans-serif;color:#2c2e31;background:rgba(255,255,255,.82);backdrop-filter:blur(6px);border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:8px 10px;box-shadow:0 6px 20px rgba(0,0,0,.10);user-select:none';
+function btn(txt, fn) {
+  const b = document.createElement('button');
+  b.textContent = txt;
+  b.style.cssText = 'width:30px;height:30px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;color:#2c2e31;font:600 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer';
+  b.onclick = fn;
+  return b;
+}
+const spinBtn = document.createElement('button');
+spinBtn.textContent = 'Spin';
+spinBtn.style.cssText = 'height:30px;padding:0 14px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#2c2e31;color:#fff;font:600 12px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.04em;cursor:pointer';
+spinBtn.onclick = startSpin;
+
+const label = document.createElement('span');
+label.style.cssText = 'min-width:190px;text-align:center;letter-spacing:.02em;text-transform:capitalize';
+bar.append(btn('\u2039', () => select(selected - 1)), label, btn('\u203a', () => select(selected + 1)), spinBtn);
+document.body.appendChild(bar);
+addEventListener('keydown', e => {
+  if (e.key === ' ') { e.preventDefault(); startSpin(); return; }
+  if (spin) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') select(selected + 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') select(selected - 1);
+});
+
+select(0);
+layout();
+</script>
+</body>
+</html>
