@@ -105,7 +105,9 @@
       bottom: 16px;
       max-width: 60%;
       font: 400 12px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: rgba(26, 25, 21, 0.55);
+      /* legible over a photographic background, not just the pale default */
+      color: var(--stage-note-color, rgba(26, 25, 21, 0.55));
+      text-shadow: var(--stage-note-shadow, none);
       user-select: none;
     }
     .err {

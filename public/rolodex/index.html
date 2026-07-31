@@ -34,15 +34,19 @@
 }
 </script>
 <style>
-  html, body { margin: 0; height: 100%; }
+  html, body { margin: 0; height: 100%; background: #1d2a17; }
   three-d-stage:not(:defined) { visibility: hidden; }
+  three-d-stage {
+    --stage-note-color: rgba(255, 255, 255, 0.78);
+    --stage-note-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
 </style>
 </head>
 <body>
 <template id="__bundler_thumbnail">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#14161a"/><g transform="translate(50 52)"><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#f4f2ee" transform="rotate(-14)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#e8e4da" transform="rotate(0)"/><rect x="-13" y="-22" width="26" height="38" rx="3" fill="#cfd4da" transform="rotate(14)"/><circle cx="0" cy="0" r="7" fill="#14161a" stroke="#cfd4da" stroke-width="2"/></g></svg>
 </template>
-<three-d-stage name="tarot-rolodex" background="#f4f2ee"></three-d-stage>
+<three-d-stage name="tarot-rolodex" background="#1d2a17 url('/rolodex/grass.webp') center/cover no-repeat"></three-d-stage>
 <script src="/rolodex/three-d-stage.js"></script>
 <script type="module">
 import * as THREE from 'three';
