@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { sanitizeText, isValidDate } from '@/lib/utils/validate';
+import { calculateNatalChart } from '@/lib/utils/astrology-calculator';
 
 // ── 27 Nakshatras ─────────────────────────────────────────────────────────────
 // In Vedic astrology the janma nakshatra (birth lunar mansion) is the most
@@ -69,29 +70,7 @@ const MOON_RASHI_QUALITIES: Record<string, string> = {
 
 // ── Calculations ───────────────────────────────────────────────────────────────
 
-function getNakshatraApprox(dateStr: string): typeof NAKSHATRAS[0] {
-  const [day, month, year] = dateStr.split('/').map(Number);
-  const date = new Date(year, month - 1, day);
-  // Approximate: moon spends ~1 day per nakshatra (sidereal cycle 27.3217 days / 27)
-  // Reference anchor: 2000-01-01 moon was in Punarvasu (index 6) — approximate
-  const REF_DATE = new Date(2000, 0, 1);
-  const REF_NAKSHATRA = 6; // Punarvasu
-  const daysDiff = (date.getTime() - REF_DATE.getTime()) / 86400000;
-  const idx = ((Math.floor(daysDiff) + REF_NAKSHATRA) % 27 + 27) % 27;
-  return NAKSHATRAS[idx];
-}
 
-function getMoonRashiApprox(dateStr: string): string {
-  const [day, month, year] = dateStr.split('/').map(Number);
-  const date = new Date(year, month - 1, day);
-  // Moon moves ~1 rashi per 2.28 days. Reference: 2000-01-01 moon ≈ Gemini (index 2)
-  const REF_DATE = new Date(2000, 0, 1);
-  const REF_RASHI = 2; // Gemini
-  const daysDiff = (date.getTime() - REF_DATE.getTime()) / 86400000;
-  const rashis = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
-  const idx = ((Math.floor(daysDiff / 2.28) + REF_RASHI) % 12 + 12) % 12;
-  return rashis[idx];
-}
 
 function getLifePathNumber(dateStr: string): number {
   const digits = dateStr.replace(/\//g, '').split('').map(Number);
@@ -148,21 +127,39 @@ export async function POST(request: Request) {
     const hasBirthTime      = sanitizedTime.length >= 4;
     const hasBirthLocation  = sanitizedLocation.length >= 2;
 
-    const nakshatra   = getNakshatraApprox(birthDate);
-    const moonRashi   = getMoonRashiApprox(birthDate);
-    const lifePath    = getLifePathNumber(birthDate);
+    // Compute the real chart. The janma nakshatra and moon rashi come from the
+    // sidereal Moon at birth, not from a date estimate — the Moon's speed varies
+    // enough that a fixed-rate approximation lands on the wrong nakshatra more
+    // often than the right one.
+    const [day, month, year] = birthDate.split('/').map(Number);
+    const natalChart = await calculateNatalChart(
+      new Date(year, month - 1, day),
+      hasBirthTime ? sanitizedTime : undefined,
+      hasBirthLocation ? sanitizedLocation : undefined,
+    );
+
+    if (!natalChart) {
+      return NextResponse.json({ error: 'Could not calculate chart' }, { status: 500 });
+    }
+
+    const nakshatra = NAKSHATRAS[natalChart.nakshatra.index];
+    const moonRashi = natalChart.moonSign;
+    const lifePath  = getLifePathNumber(birthDate);
 
     // Pick a greeting candidate set for this nakshatra's ruling planet
     const greetingOptions = GREETING_BY_PLANET[nakshatra.planet] ?? ['{name}.'];
     const greetingHint = greetingOptions.map(g => g.replace('{name}', sanitizedName)).join(' / ');
 
+    // nakshatraCertain is false only when no birth time was given AND the Moon
+    // crossed a nakshatra boundary that day — so "no birth time" does not
+    // automatically mean "uncertain".
     const dataNote = hasBirthTime && hasBirthLocation
-      ? `full Jyotish context available (date, time, location) — nakshatra and moon rashi can be calculated precisely; lagna is determinable`
+      ? `full Jyotish context (date, time, location) — janma nakshatra, moon rashi and lagna all exact`
       : hasBirthTime
-      ? `birth time provided — nakshatra and moon rashi more precise; lagna estimated`
-      : hasBirthLocation
-      ? `location provided, no birth time — nakshatra approximate (moon moves ~1/day); no lagna`
-      : `birth date only — nakshatra and moon rashi are approximate anchors`;
+      ? `birth time given — janma nakshatra and moon rashi exact; lagna approximate without location`
+      : natalChart.nakshatraCertain
+      ? `no birth time, but the Moon stayed in one nakshatra all that day — janma nakshatra and moon rashi are still exact; no lagna`
+      : `no birth time, and the Moon changed nakshatra that day — treat the janma nakshatra as the likelier of two; no lagna`;
 
     const apiKey = process.env.SLOW_HOUR_ANTHROPIC_KEY;
     if (!apiKey) {

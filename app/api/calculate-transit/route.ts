@@ -38,6 +38,8 @@ async function generateClaudeInsight(
   memoryNotes: string[],
   recentCards: string[],
   sunSign: string,
+  moonSign: string,
+  nakshatraName: string,
   hasBirthTime: boolean,
   hasBirthLocation: boolean
 ): Promise<ClaudeInsight | null> {
@@ -117,7 +119,9 @@ Voice (these matter):
 ${dataNote ? `Data note: ${dataNote}` : ''}
 
 About this person:
-- Sun sign (sidereal): ${sunSign} — this colours how they move through everything
+- Janma nakshatra: ${nakshatraName} — fixed at birth, the deepest layer of how they are built
+- Moon sign / janma rashi (sidereal): ${moonSign} — in Jyotish this is the primary sign, how they actually feel and process
+- Sun sign (sidereal): ${sunSign} — secondary here; the outward-facing self, not the core
 - Card drawn: ${cardName} (${orientation})
 - Card themes: ${coreThemes}
 - Emotional tone of this card: ${emotionalTone}
@@ -250,6 +254,8 @@ export async function POST(request: Request) {
       sanitizedMemoryNotes,
       sanitizedRecentCards,
       sunSign,
+      natalChart.moonSign,
+      natalChart.nakshatra.name,
       !!sanitizedBirthTime,
       !!sanitizedLocation
     );

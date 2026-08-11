@@ -29,8 +29,19 @@ export interface House {
 
 export interface UserChart {
   sunSign: ZodiacSign;
+  /** Janma rashi — the primary sign in Jyotish. */
   moonSign: ZodiacSign;
+  /** Lagna. Only meaningful when a birth time was given. */
   risingSign: ZodiacSign;
+  /** Janma nakshatra — fixed at birth, the anchor for dasha and most reading. */
+  nakshatra: {
+    index: number;
+    name: string;
+    lord: string;
+    pada: number;
+  };
+  /** False when no birth time was given and the Moon changed nakshatra that day. */
+  nakshatraCertain: boolean;
   birthDate: Date;
   birthTime: string;
   birthLocation: {

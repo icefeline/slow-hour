@@ -5,6 +5,9 @@ export const mockUserChart: UserChart = {
   sunSign: 'cancer',
   moonSign: 'pisces',
   risingSign: 'virgo',
+  // revati is the pisces-spanning nakshatra, so this stays internally consistent
+  nakshatra: { index: 26, name: 'revati', lord: 'mercury', pada: 2 },
+  nakshatraCertain: true,
   birthDate: new Date('1990-07-15'),
   birthTime: '14:30',
   birthLocation: {

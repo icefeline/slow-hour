@@ -45,6 +45,51 @@ function getLahiriAyanamsa(date: Date): number {
   return 23.85129 + yearsDiff * 0.013972;
 }
 
+/** The 27 nakshatras, in order from 0° sidereal Aries. */
+export const NAKSHATRA_NAMES = [
+  'ashwini', 'bharani', 'krittika', 'rohini', 'mrigashira', 'ardra',
+  'punarvasu', 'pushya', 'ashlesha', 'magha', 'purva phalguni', 'uttara phalguni',
+  'hasta', 'chitra', 'swati', 'vishakha', 'anuradha', 'jyeshtha',
+  'mula', 'purva ashadha', 'uttara ashadha', 'shravana', 'dhanishtha', 'shatabhisha',
+  'purva bhadrapada', 'uttara bhadrapada', 'revati',
+] as const;
+
+/** Vimshottari dasha lords, cycling every 9 nakshatras from Ashwini. */
+const NAKSHATRA_LORDS = [
+  'ketu', 'venus', 'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury',
+] as const;
+
+/** Each nakshatra spans 13°20', each of its four padas 3°20'. */
+const NAKSHATRA_SPAN = 360 / 27;
+
+export interface Nakshatra {
+  index: number;
+  name: string;
+  /** Vimshottari dasha lord — the planet whose period runs first. */
+  lord: string;
+  /** Quarter of the nakshatra, 1–4. */
+  pada: number;
+}
+
+/**
+ * The nakshatra containing a given sidereal longitude.
+ *
+ * For a natal Moon this is the janma nakshatra — fixed at birth, and the anchor
+ * for Vimshottari dasha and most of classical Jyotish. It never changes, so it
+ * is computed once from birth data rather than tracked over time.
+ */
+export function getNakshatra(siderealLongitude: number): Nakshatra {
+  const lon = ((siderealLongitude % 360) + 360) % 360;
+  const index = Math.floor(lon / NAKSHATRA_SPAN);
+  const pada = Math.floor((lon % NAKSHATRA_SPAN) / (NAKSHATRA_SPAN / 4)) + 1;
+  return {
+    index,
+    name: NAKSHATRA_NAMES[index],
+    lord: NAKSHATRA_LORDS[index % 9],
+    pada,
+  };
+}
+
 /**
  * Convert a tropical ecliptic longitude to sidereal by subtracting the ayanamsa.
  */
@@ -312,10 +357,42 @@ export async function calculateNatalChart(
       theme: houseThemes[i]
     }));
 
+    // Janma nakshatra — the nakshatra the Moon occupied at birth. Fixed for life
+    // and the primary reference in Jyotish, so it is derived from the real
+    // sidereal Moon rather than estimated from the date.
+    const nakshatra = getNakshatra(positions.moon!);
+
+    // The Moon covers ~13° a day, so it can change nakshatra (13°20') within a
+    // single date. With no birth time we assumed noon, which may be the wrong
+    // side of a boundary — check whether the whole day sits in one nakshatra so
+    // callers can tell a certain reading from a probable one.
+    let nakshatraCertain = true;
+    if (!birthTime) {
+      const dayStart = new Date(birthDate);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(birthDate);
+      dayEnd.setHours(23, 59, 0, 0);
+
+      const startMoon = applyAyanamsaToPositions(
+        calculatePlanetaryPositions(dayStart, observer),
+        getLahiriAyanamsa(dayStart),
+      ).moon!;
+      const endMoon = applyAyanamsaToPositions(
+        calculatePlanetaryPositions(dayEnd, observer),
+        getLahiriAyanamsa(dayEnd),
+      ).moon!;
+
+      nakshatraCertain =
+        getNakshatra(startMoon).index === getNakshatra(endMoon).index;
+    }
+
     return {
       sunSign: getZodiacSign(positions.sun),   // sidereal sun sign
-      moonSign: getZodiacSign(positions.moon), // sidereal moon sign
-      risingSign: getZodiacSign(ascendant),    // sidereal rising sign
+      moonSign: getZodiacSign(positions.moon), // sidereal moon sign — janma rashi
+      risingSign: getZodiacSign(ascendant),    // sidereal rising sign — lagna
+      nakshatra,
+      /** False when no birth time was given and the Moon crossed a boundary that day. */
+      nakshatraCertain,
       birthDate,
       birthTime: birthTime || '12:00',
       birthLocation: location,
