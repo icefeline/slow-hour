@@ -35,6 +35,9 @@ const gildaDisplay = Gilda_Display({
 });
 
 export const metadata: Metadata = {
+  // Required for Open Graph: without it Next emits relative image paths, which
+  // most link scrapers refuse to resolve, so the preview silently shows nothing.
+  metadataBase: new URL("https://slowww.garden"),
   title: "slow garden",
   description: "one card. one moment. one day.",
   manifest: "/manifest.json",
@@ -42,6 +45,19 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "slow garden",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "slow garden",
+    title: "slow garden",
+    description: "one card. one moment. one day.",
+    url: "/",
+    // the image itself comes from app/opengraph-image.tsx
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "slow garden",
+    description: "one card. one moment. one day.",
   },
   other: {
     "mobile-web-app-capable": "yes",
