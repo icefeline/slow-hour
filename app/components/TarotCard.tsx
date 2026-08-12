@@ -155,21 +155,53 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
     setIsRateLimited(false);
   }, [card.id, cardDate]);
 
-  const SUPPORT_THRESHOLD = 2; // show message on 3rd new fetch
-  const getDrawCount = () => parseInt(localStorage.getItem('slow-hour-draw-count') || '0');
-  const incrementDrawCount = () => localStorage.setItem('slow-hour-draw-count', String(getDrawCount() + 1));
-  const hasSupportBeenAcknowledged = () => localStorage.getItem('slow-hour-support-ack') === 'true';
-  const acknowledgeSupportMessage = () => localStorage.setItem('slow-hour-support-ack', 'true');
+  /*
+   * The free quota: 3 personalised readings per person.
+   *
+   * Counted as distinct DAYS that consumed a reading, not as fetches — a retry
+   * after an error, or re-opening the same day, must not burn quota. A day is
+   * recorded only once its reading actually arrives.
+   *
+   * This is per-user and therefore client-side. It is bypassable by clearing
+   * storage; that is a deliberate trade, since the alternative (an IP limit)
+   * punishes everyone behind a shared network. Cost abuse is bounded by the
+   * abuse guards in middleware.ts instead.
+   */
+  const FREE_READING_DAYS = 3;
+  const READING_DAYS_KEY = 'slow-garden-reading-days';
 
-  const fetchInsight = async (skipSupportCheck = false) => {
-    // Client-side: show support message on 3rd+ fresh draw (before API call)
-    if (!skipSupportCheck && !hasSupportBeenAcknowledged()) {
-      const count = getDrawCount();
-      if (count >= SUPPORT_THRESHOLD) {
-        setIsRateLimited(true);
-        return;
-      }
-      incrementDrawCount();
+  const getReadingDays = (): string[] => {
+    try {
+      const raw = localStorage.getItem(READING_DAYS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const recordReadingDay = (day: string) => {
+    try {
+      const days = getReadingDays();
+      if (days.includes(day)) return;
+      localStorage.setItem(READING_DAYS_KEY, JSON.stringify([...days, day]));
+    } catch {
+      // storage unavailable — the reading still shows, we just cannot count it
+    }
+  };
+
+  /** Days already paid for stay readable; only a NEW day can exhaust the quota. */
+  const hasQuotaFor = (day: string): boolean => {
+    const days = getReadingDays();
+    return days.includes(day) || days.length < FREE_READING_DAYS;
+  };
+
+  const fetchInsight = async () => {
+    const readingDay = cardDate ?? todayKey();
+
+    if (!hasQuotaFor(readingDay)) {
+      setIsRateLimited(true);
+      return;
     }
 
     setIsGenerating(true);
@@ -245,6 +277,8 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
         setGeneratedInsight(freshInsight);
         saveCachedInsight(card.id, freshInsight, cardDate);
+        // Only now — a failed or errored request must not cost the user a day.
+        recordReadingDay(readingDay);
 
         saveMemory(
           memory,
@@ -433,7 +467,6 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
               }}
               isLoading={isGenerating}
               isRateLimited={isRateLimited}
-              onContinue={() => { acknowledgeSupportMessage(); fetchInsight(true); }}
             />
           )}
 

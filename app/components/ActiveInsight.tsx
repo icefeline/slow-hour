@@ -10,7 +10,6 @@ interface ActiveInsightProps {
   userName?: string;
   isLoading?: boolean;
   isRateLimited?: boolean;
-  onContinue?: () => void;
   transitExplanation?: {
     transitingPlanet: string;
     transitingPlanetMeaning: string;
@@ -22,7 +21,7 @@ interface ActiveInsightProps {
   };
 }
 
-export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userName, isLoading: externalLoading, isRateLimited, onContinue, transitExplanation }: ActiveInsightProps) {
+export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userName, isLoading: externalLoading, isRateLimited, transitExplanation }: ActiveInsightProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [internalLoading, setInternalLoading] = useState(true);
   const [dots, setDots] = useState('');
@@ -114,17 +113,6 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
                 >
                   buy me a coffee →
                 </a>
-                <button
-                  onClick={onContinue}
-                  className="inline-block text-left text-[#172211]/60 hover:text-[#172211] transition-colors"
-                  style={{
-                    fontSize: 'clamp(16px, 2.5vw, 21px)',
-                    fontFamily: 'var(--font-vt323), monospace',
-                    fontWeight: 400
-                  }}
-                >
-                  show me my reading
-                </button>
               </div>
             </div>
           ) : (

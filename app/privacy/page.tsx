@@ -109,21 +109,6 @@ export default function PrivacyPolicy() {
         </p>
       </section>
 
-      <section className="mb-16">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
-          contact
-        </h2>
-        <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
-          questions? reach out at{' '}
-          <a
-            href="mailto:hello@slow-hour.com"
-            style={{ color: '#CEF17B', textDecoration: 'underline' }}
-          >
-            hello@slow-hour.com
-          </a>
-        </p>
-      </section>
-
       <a
         href="/"
         style={{ fontSize: '26px', color: '#CEF17B', textDecoration: 'underline' }}

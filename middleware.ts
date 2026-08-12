@@ -13,19 +13,34 @@ function makeRedis(): Redis | null {
 
 const redis = makeRedis();
 
-// 10 readings/day per IP — matches the app's one-card-a-day model
+/*
+ * These are ABUSE GUARDS, not the product's free-reading quota.
+ *
+ * The quota — 3 free readings per person — is per-user and lives in
+ * localStorage (see TarotCard). It cannot live here: an IP is not a person.
+ * Mobile carriers and offices put hundreds of people behind one address, so an
+ * IP limit tight enough to be a quota would lock out real users the moment two
+ * of them shared a network. That was the original bug.
+ *
+ * What an IP limit IS good for is capping the damage when someone scripts the
+ * endpoint to run up the Anthropic bill. So these are set far above anything a
+ * human would reach, and only exist to bound cost.
+ */
+
+// ~60/hour — a person draws once a day; this only stops a loop.
 const transitLimiter = redis
-  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '24 h'), prefix: 'sl:transit', analytics: false })
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(60, '1 h'), prefix: 'sl:transit', analytics: false })
   : null;
 
-// 3 welcome messages/day — one-time onboarding call
+// Onboarding runs once per person, but a shared network onboards many people.
 const welcomeLimiter = redis
-  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(3, '24 h'), prefix: 'sl:welcome', analytics: false })
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(30, '1 h'), prefix: 'sl:welcome', analytics: false })
   : null;
 
-// 10 geocode lookups/hour — debounced on the client already
+// Cheap and debounced client-side; the ceiling also keeps us within Nominatim's
+// ~1 req/sec fair-use terms.
 const geocodeLimiter = redis
-  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '1 h'), prefix: 'sl:geocode', analytics: false })
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(120, '1 h'), prefix: 'sl:geocode', analytics: false })
   : null;
 
 function getIp(request: NextRequest): string {
@@ -57,7 +72,9 @@ export async function middleware(request: NextRequest) {
 
     if (!success) {
       return new NextResponse(
-        JSON.stringify({ error: 'too many requests — come back tomorrow.' }),
+        // Deliberately not "come back tomorrow" — that framed this as a daily
+        // product limit. A real person should never see this at all.
+        JSON.stringify({ error: 'too many requests from this network — try again shortly.' }),
         {
           status: 429,
           headers: {
