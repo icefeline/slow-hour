@@ -252,7 +252,7 @@ Traditional tarot readers vary widely (some never reverse, some do 50/50). 30% i
 
 **What it calculates:**
 - Planetary positions at birth (ecliptic longitude in degrees, 0–360°) for: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
-- House cusps using the **Equal House system** (ascendant + 30° increments)
+- House cusps using the **Whole Sign system** (the sign containing the ascendant is house 1, each following sign the next house)
 - Ascendant derived from Local Sidereal Time at the birth location
 
 **Location handling:**
@@ -263,8 +263,8 @@ Traditional tarot readers vary widely (some never reverse, some do 50/50). 30% i
 - If birth time is provided → used directly
 - If not provided → defaults to 12:00 noon. Claude is told this explicitly.
 
-**Why Equal Houses (not Placidus):**
-Placidus (the most common house system in Western astrology) requires iterative calculations that break down at extreme latitudes and add significant complexity. Equal houses give meaningful house placements for every birth location without edge cases, and the difference between systems only becomes significant with a precise birth time — which is optional data here.
+**Why Whole Sign (not Placidus):**
+Whole Sign is the classical Jyotish standard and what the code actually uses. Placidus (the most common house system in Western astrology) requires iterative calculations that break down at extreme latitudes and add significant complexity. Whole Sign gives meaningful house placements for every birth location without edge cases, and it degrades gracefully when birth time is missing — which it often is here, since time is optional.
 
 **Why Astronomy Engine:**
 It's open source, runs server-side in Node.js with no external API calls, and uses the same VSOP87 ephemeris data as professional astrology software. Positions are accurate to well within the orbs we use.

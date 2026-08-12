@@ -14,6 +14,12 @@ interface TarotCardProps {
   isReversed: boolean;
   isRevealed: boolean;
   animateReveal?: boolean;
+  /**
+   * Render the card face while the details stay sealed. Used by the tear-off
+   * page: the art sits underneath, so tearing progressively uncovers the real
+   * card rather than a card back that flips over afterwards.
+   */
+  artVisibleEarly?: boolean;
   userName?: string;
   cardDate?: string; // YYYY-MM-DD of when the card was drawn; defaults to today
 }
@@ -115,7 +121,7 @@ function convertToTransitData(transit: ActiveTransit): TransitData {
   };
 }
 
-export default function TarotCard({ card, isReversed, isRevealed, animateReveal, userName, cardDate }: TarotCardProps) {
+export default function TarotCard({ card, isReversed, isRevealed, animateReveal, artVisibleEarly, userName, cardDate }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
   const CardIcon = getCardIcon(card.id);
@@ -285,7 +291,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
       {/* Card Back/Front */}
       <div className="relative mb-16 md:mb-8">
         <div data-card-image className="aspect-[2/3] w-72 md:w-96 mx-auto rounded-2xl overflow-visible relative">
-          {isRevealed ? (
+          {isRevealed || artVisibleEarly ? (
             // Card Front - Actual card image
             <div className={`relative w-full h-full rounded-2xl overflow-hidden transform-gpu ${
               isReversed ? 'rotate-180' : ''

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import TarotCard from './components/TarotCard';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
+import TearOffPage from './components/TearOffPage';
 import CardSelector from './components/CardSelector';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
@@ -390,9 +391,17 @@ export default function Home() {
     setIsRevealed(true);
   }, [pendingAutoReveal, card]);
 
-  const handleRevealCard = () => {
+  /**
+   * Reveal after the tear. No slot-reel here — the tear was the reveal gesture,
+   * and running the reel on top of it would be two reveal animations competing.
+   */
+  const handleTearReveal = () => revealCard({ animate: false });
+
+  const handleRevealCard = () => revealCard({ animate: true });
+
+  const revealCard = ({ animate }: { animate: boolean }) => {
     setIsRevealed(true);
-    setAnimateReveal(true);
+    setAnimateReveal(animate);
     const today = localDateString();
     localStorage.setItem('lastDrawDate', today);
     localStorage.setItem('cardRevealed', 'true');
@@ -626,33 +635,29 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Card Display — ref wraps TarotCard so getBoundingClientRect gives exact card position */}
-            <div ref={cardAnchorRef}>
+            {/* Card Display — ref wraps TarotCard so getBoundingClientRect gives exact card position.
+                While unrevealed, the tear-off page covers the card; tearing it is the reveal. */}
+            <div ref={cardAnchorRef} className="relative">
               <TarotCard
                 card={card}
                 isReversed={isReversed}
                 isRevealed={isRevealed}
                 animateReveal={animateReveal}
+                // the tear page is covering the card, so put the real art
+                // underneath it — tearing then uncovers the card itself
+                artVisibleEarly={!isRevealed}
                 userName={localStorage.getItem('userName') || undefined}
                 cardDate={dateString}
               />
+              {!isRevealed && (
+                <TearOffPage onTear={handleTearReveal} disabled={isAnimating} />
+              )}
             </div>
 
-            {/* Reveal Button */}
             {!isRevealed && (
-              <div className="text-center mt-16">
-                <button
-                  onClick={handleRevealCard}
-                  disabled={isAnimating}
-                  className="px-8 py-3 bg-[#CEF17B] hover:bg-[#d4f58a] text-[#172211] rounded-full transition-all duration-200 shadow-lg disabled:opacity-60"
-                  style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  reveal card
-                </button>
-                <p className="text-[#E1EEFC] mt-4 opacity-60" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                  take a moment to centre yourself
-                </p>
-              </div>
+              <p className="text-[#E1EEFC] mt-6 text-center opacity-60" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                take a moment to centre yourself
+              </p>
             )}
 
             {/* Shuffle Animation Overlay — transforms driven entirely by JS refs, not React state */}
