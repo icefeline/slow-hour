@@ -223,7 +223,7 @@ export default function TearOffPage({ onTear, disabled = false }: TearOffPagePro
           >
             &gt; {weekday.toUpperCase()}<br />
             &gt; CARD SEALED<br />
-            &gt; PULL TO OPEN
+            &gt; PULL TO TEAR
           </div>
 
           <div
