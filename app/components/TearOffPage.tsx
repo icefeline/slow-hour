@@ -163,7 +163,7 @@ export default function TearOffPage({ onTear, disabled = false }: TearOffPagePro
             containerType: 'inline-size',
             marginTop: '10px',
             aspectRatio: '2 / 3',
-            background: '#CEF17B',
+            background: '#C9F24E',
             color: '#172211',
             boxShadow: '0 18px 40px rgba(0,0,0,.55)',
             clipPath: `polygon(${TORN_EDGE})`,

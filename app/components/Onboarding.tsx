@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
+/** Desktop panel is 909 tall; the design canvas is 748, so it scales to fit exactly. */
+const DESKTOP_SCALE = 909 / 748;
 import AsciiFlower from './AsciiFlower';
+import {
+  ObBack, ObHead, ObFields, ObTag, ObHint, ObToggle, ObCta,
+  fieldStyle, obValue, obPx, LIME, BONE,
+  COBALT, INK,
+} from './onboarding-ui';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -45,6 +53,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [birthTime, setBirthTime] = useState('');
   const [birthLocation, setBirthLocation] = useState('');
   const [noKnowBirthTime, setNoKnowBirthTime] = useState(false);
+  // Whether Claude reads their chart. Off means the plain card meaning only —
+  // no API call, no quota spent. Default on, but it is a real choice.
+  const [personalise, setPersonalise] = useState(true);
 
   // Error states
   const [dateError, setDateError] = useState('');
@@ -68,6 +79,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [deviceScale, setDeviceScale] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  /** Design canvas is 356 wide; scale it to whatever the phone actually is. */
+  const [mobileScale, setMobileScale] = useState(1);
 
   // Location geocode feedback
   const [locationResolved, setLocationResolved] = useState<string | null>(null);
@@ -78,10 +91,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
   const [isLoadingWelcome, setIsLoadingWelcome] = useState(false);
 
-  const totalSteps = 3; // 0: welcome screen, 1: name, 2: birthdate+time+location, 3: message
+  const totalSteps = 4; // 0: splash, 1: name, 2: birth, 3: personalisation, 4: reading
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => {
+      setIsMobile(window.innerWidth < 768);
+      setMobileScale(Math.min(window.innerWidth / 356, window.innerHeight / 748));
+    };
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -115,9 +131,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   }, []);
 
   const handleNext = () => {
-    if (currentStep === 2) {
-      // Transition to step 3 immediately and fetch the welcome message in parallel
-      setCurrentStep(3);
+    if (currentStep === 3) {
+      // Move to the reading immediately and fetch in parallel.
+      setCurrentStep(4);
+
+      // Opted out of personalisation? Then the welcome message must not come
+      // from Claude either — use the local one and make no request at all.
+      if (!personalise) {
+        setWelcomeMessage(getWelcomeMessage());
+        setIsLoadingWelcome(false);
+        return;
+      }
+
       setWelcomeMessage(null);
       setIsLoadingWelcome(true);
       fetch('/api/welcome-insight', {
@@ -150,10 +175,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       if (birthLocation) {
         localStorage.setItem('userBirthLocation', birthLocation);
       }
+      localStorage.setItem('slow-garden-personalise', personalise ? 'true' : 'false');
       localStorage.setItem('onboardingComplete', 'true');
       onComplete();
     }
   };
+
+  /** Steps drawn on the fixed 356x748 design canvas. */
+  const isDesignStep = currentStep >= 1 && currentStep <= 3;
 
   const canContinueFromName = name.trim().length > 0;
   const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
@@ -435,7 +464,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Typewriter effect — waits for the API-generated welcome message
   useEffect(() => {
-    if (currentStep === 3 && welcomeMessage !== null) {
+    if (currentStep === 4 && welcomeMessage !== null) {
       setDisplayedText('');
       setIsTypingComplete(false);
       const fullText = welcomeMessage;
@@ -476,6 +505,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       localStorage.setItem('userBirthdate', birthDate);
       if (birthTime && !noKnowBirthTime) localStorage.setItem('userBirthTime', birthTime);
       if (birthLocation) localStorage.setItem('userBirthLocation', birthLocation);
+      localStorage.setItem('slow-garden-personalise', personalise ? 'true' : 'false');
       localStorage.setItem('onboardingComplete', 'true');
       setTimeout(() => onComplete(), 2000);
     }, 1000);
@@ -666,7 +696,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
             {/* Subtitle */}
             <p
-              className="text-center text-[#CEF17B]"
+              className="text-center text-[#C9F24E]"
               style={{
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 fontSize: '6.15vw',
@@ -700,7 +730,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   fontFamily: 'var(--font-reenie-beanie), cursive',
                   fontSize: '6.15vw',
                   fontWeight: 500,
-                  background: '#CEF17B',
+                  background: '#C9F24E',
                   color: '#172211',
                 }}
               >
@@ -712,115 +742,49 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       case 1:
         return (
-          <div className="flex flex-col w-full flex-1 py-6">
-            {/* Back button — pinned top-left */}
-            <button
-              onClick={() => setCurrentStep(0)}
-              className="self-start text-[#E1EEFC]/50 text-2xl mb-4"
-              style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              ← back
-            </button>
-            {/* Content — top-aligned with the same 9vh offset as step 2, so both pages'
-                headers sit at the same height and neither shifts when errors appear */}
-            <div className="flex-1 flex flex-col items-center justify-start w-full gap-8 pt-[9vh]">
-              <div className="text-center">
-                <h2
-                  className="text-5xl md:text-6xl text-[#E1EEFC]"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  what's your name?
-                </h2>
-                <p
-                  className="text-2xl text-[#E1EEFC]/60 mt-0"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  the one that feels most like you
-                </p>
+          <div className="relative w-full h-full">
+            <ObBack tone="dark" scale={mobileScale} onClick={() => setCurrentStep(0)} />
+            <ObHead
+              tone="dark"
+              scale={mobileScale}
+              title={<>WHAT&apos;S<br />YOUR NAME?</>}
+              sub="FIRST NAME IS FINE"
+            />
+            <ObFields scale={mobileScale}>
+              <div style={fieldStyle('dark', mobileScale, true, true)}>
+                <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, mobileScale), color: LIME }}>&gt;</span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                  placeholder="YOUR NAME"
+                  autoFocus
+                  style={{ ...obValue(mobileScale, true), color: BONE, textTransform: 'uppercase' }}
+                />
               </div>
-
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-                placeholder="your name"
-                className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                style={inputStyle}
-                autoFocus
-              />
-            </div>
-
-            {/* Spacer so content isn't hidden behind the fixed button */}
-            <div className="h-20 shrink-0" />
-
-            {/* Fixed bottom button — floats above keyboard when open */}
-            <button
-              onClick={handleNext}
-              disabled={!canContinueFromName}
-              tabIndex={canContinueFromName ? 0 : -1}
-              aria-hidden={!canContinueFromName}
-              style={{
-                position: 'fixed',
-                left: '20px',
-                right: '20px',
-                bottom: keyboardHeight > 0
-                  ? `${keyboardHeight + 8}px`
-                  : 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
-                transition: 'bottom 0.15s ease-out, opacity 0.2s ease-in-out',
-                padding: '12px',
-                borderRadius: '9999px',
-                fontFamily: 'var(--font-reenie-beanie), cursive',
-                fontSize: '1.5rem',
-                background: '#CEF17B',
-                color: '#172211',
-                border: 'none',
-                cursor: 'pointer',
-                zIndex: 50,
-                opacity: canContinueFromName ? 1 : 0,
-                pointerEvents: canContinueFromName ? 'auto' : 'none',
-              }}
-            >
-              continue →
-            </button>
+              <ObHint tone="dark" scale={mobileScale}>STORED ON YOUR DEVICE ONLY</ObHint>
+            </ObFields>
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} />
           </div>
         );
 
       case 2:
         return (
-          <div className="flex flex-col w-full flex-1 py-6">
-            {/* Back button — pinned top-left */}
-            <button
-              onClick={() => setCurrentStep(1)}
-              className="self-start text-[#E1EEFC]/50 text-2xl mb-4"
-              style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              ← back
-            </button>
-            {/* Content — 9vh offset centres this page's block in the available space while
-                staying top-anchored, so the heading never shifts when fields grow below */}
-            <div className="flex-1 flex flex-col items-center justify-start w-full gap-8 overflow-y-auto pt-[9vh]">
-              <div className="text-center">
-                <h2
-                  className="text-5xl text-[#E1EEFC]"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  when were you born?
-                </h2>
-                <p
-                  className="text-2xl text-[#E1EEFC]/60 mt-0"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
-                >
-                  slow garden reads your vedic chart, but no pressure to share details!
-                </p>
-              </div>
-
-              {/* Fields — one per row, close together; an error only pushes the rows below it down */}
-              <div className="w-full flex flex-col gap-3">
-                <div>
+          <div className="relative w-full h-full">
+            <ObBack tone="dark" scale={mobileScale} onClick={() => setCurrentStep(1)} />
+            <ObHead
+              tone="dark"
+              scale={mobileScale}
+              title={<>WHEN WERE<br />YOU BORN?</>}
+              sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
+            />
+            <ObFields scale={mobileScale} stack>
+              <div>
+                <div style={fieldStyle('dark', mobileScale, birthDate.length > 0)}>
                   <input
                     type="text"
-                    placeholder="dd/mm/yyyy"
+                    placeholder="DD/MM/YYYY"
                     value={birthDate}
                     onChange={(e) => handleDateChange(e.target.value)}
                     onKeyDown={(e) => {
@@ -831,16 +795,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       }
                     }}
                     maxLength={10}
-                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                    style={dateError ? inputErrorStyle : inputStyle}
+                    style={{ ...obValue(mobileScale), color: BONE }}
                   />
-                  {dateError && <FieldError message={dateError} variant="dark" />}
+                  <ObTag tone="dark" scale={mobileScale} required />
                 </div>
+                {dateError && <FieldError message={dateError} variant="dark" />}
+              </div>
 
-                <div>
+              <div>
+                <div style={fieldStyle('dark', mobileScale, birthTime.length > 0)}>
                   <input
                     type="text"
-                    placeholder="hh:mm (optional)"
+                    placeholder="HH:MM"
                     value={birthTime}
                     onChange={(e) => handleTimeChange(e.target.value)}
                     onKeyDown={(e) => {
@@ -850,70 +816,64 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       }
                     }}
                     maxLength={5}
-                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                    style={timeError ? inputErrorStyle : inputStyle}
+                    style={{ ...obValue(mobileScale), color: BONE }}
                   />
-                  {timeError && <FieldError message={timeError} variant="dark" />}
+                  <ObTag tone="dark" scale={mobileScale} required={false} />
                 </div>
-
-                <div>
-                  <input
-                    type="text"
-                    placeholder="city, country (optional)"
-                    value={birthLocation}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                    className="w-full px-6 py-4 rounded-3xl text-center focus:outline-none text-3xl placeholder:text-[#E1EEFC]/30"
-                    style={locationError ? inputErrorStyle : inputStyle}
-                  />
-                  {locationError && <FieldError message={locationError} variant="dark" />}
-                  {!locationError && locationChecking && (
-                    <p className="text-[#E1EEFC]/40 text-base mt-2 px-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
-                  )}
-                  {!locationError && !locationChecking && locationResolved !== null && (
-                    <p className={`text-base mt-2 px-1 text-center ${locationResolved ? 'text-[#CEF17B]/80' : 'text-[#E1EEFC]/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                      {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
-                    </p>
-                  )}
-                </div>
+                {timeError && <FieldError message={timeError} variant="dark" />}
               </div>
 
-              {/* Spacer so content isn't hidden behind the fixed button */}
-              <div className="h-20 shrink-0" />
-            </div>
-
-            {/* Fixed bottom button — floats above keyboard when open */}
-            <button
-              onClick={handleNext}
-              disabled={!canContinueFromBirthdate}
-              tabIndex={canContinueFromBirthdate ? 0 : -1}
-              aria-hidden={!canContinueFromBirthdate}
-              style={{
-                position: 'fixed',
-                left: '20px',
-                right: '20px',
-                bottom: keyboardHeight > 0
-                  ? `${keyboardHeight + 8}px`
-                  : 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
-                transition: 'bottom 0.15s ease-out, opacity 0.2s ease-in-out',
-                padding: '12px',
-                borderRadius: '9999px',
-                fontFamily: 'var(--font-reenie-beanie), cursive',
-                fontSize: '1.5rem',
-                background: '#CEF17B',
-                color: '#172211',
-                border: 'none',
-                cursor: 'pointer',
-                zIndex: 50,
-                opacity: canContinueFromBirthdate ? 1 : 0,
-                pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
-              }}
-            >
-              continue →
-            </button>
+              <div>
+                <div style={fieldStyle('dark', mobileScale, birthLocation.length > 0)}>
+                  <input
+                    type="text"
+                    placeholder="CITY, COUNTRY"
+                    value={birthLocation}
+                    onChange={(e) => handleLocationChange(e.target.value)}
+                    style={{ ...obValue(mobileScale), color: BONE }}
+                  />
+                  <ObTag tone="dark" scale={mobileScale} required={false} />
+                </div>
+                {locationError && <FieldError message={locationError} variant="dark" />}
+                {!locationError && locationChecking && (
+                  <ObHint tone="dark" scale={mobileScale}>CHECKING…</ObHint>
+                )}
+                {!locationError && !locationChecking && locationResolved !== null && (
+                  <ObHint tone="dark" scale={mobileScale}>
+                    {locationResolved ? `↳ ${locationResolved.toUpperCase()}` : "COULDN'T FIND THAT — TRY ANOTHER SPELLING"}
+                  </ObHint>
+                )}
+              </div>
+            </ObFields>
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} />
           </div>
         );
 
       case 3:
+        return (
+          <div className="relative w-full h-full">
+            <ObBack tone="dark" scale={mobileScale} onClick={() => setCurrentStep(2)} />
+            <ObHead
+              tone="dark"
+              scale={mobileScale}
+              tight
+              title={<>WANT IT<br />PERSONALISED?</>}
+              sub={<>YOUR CHART SHAPES THE WORDS.<br />OFF MEANS THE PLAIN CARD MEANING.</>}
+            />
+            <ObFields scale={mobileScale}>
+              <div style={{ ...fieldStyle('dark', mobileScale, personalise), padding: `0 ${obPx(16, mobileScale)} 0 ${obPx(18, mobileScale)}` }}>
+                <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, mobileScale), color: BONE }}>
+                  READ MY CHART
+                </span>
+                <ObToggle tone="dark" scale={mobileScale} on={personalise} onChange={setPersonalise} label="read my chart" />
+              </div>
+              <ObHint tone="dark" scale={mobileScale}>YOU CAN TURN THIS OFF ANY DAY</ObHint>
+            </ObFields>
+            <ObCta scale={mobileScale} onClick={handleNext} />
+          </div>
+        );
+
+      case 4:
         return (
           <div className="relative flex-1 flex flex-col items-center justify-between py-3 gap-2">
             {/* Loading — absolute overlay so the circle centres on the whole screen,
@@ -975,8 +935,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
-          <AsciiFlower fontSize={22} color="#CEF17B" label="preparing your reading" />
-          <p className="text-3xl text-[#CEF17B]" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+          <AsciiFlower fontSize={22} color="#C9F24E" label="preparing your reading" />
+          <p className="text-3xl text-[#C9F24E]" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
             preparing your reading...
           </p>
         </div>
@@ -1004,11 +964,28 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
       <div className={`md:hidden relative z-10 flex flex-col h-[100dvh]
-        ${currentStep === 0 ? '' : 'px-5'}
-        ${currentStep === 3 ? 'overflow-hidden py-6' : currentStep === 0 ? '' : 'py-8'}`}>
-        <div className="flex-1 flex flex-col w-full">
-          {renderStepContent()}
-        </div>
+        ${currentStep === 0 ? '' : isDesignStep ? '' : 'px-5'}
+        ${currentStep === 4 ? 'overflow-hidden py-6' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}>
+        {isDesignStep ? (
+          /*
+           * Steps 1-3 are drawn on a fixed 356x748 canvas. Render it at exactly
+           * that aspect, centred — otherwise the top-anchored fields and the
+           * bottom-anchored CTA drift relative to each other and collide on
+           * shorter phones.
+           */
+          <div className="flex-1 flex items-center justify-center w-full">
+            <div
+              className="relative"
+              style={{ width: 356 * mobileScale, height: 748 * mobileScale }}
+            >
+              {renderStepContent()}
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col w-full">
+            {renderStepContent()}
+          </div>
+        )}
       </div>
 
       {/* ── DESKTOP layout — device frame, proportionally scaled to fit viewport ── */}
@@ -1192,160 +1169,148 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   </div>
                 )}
 
-                {/* Step 1 — name */}
-                {currentStep === 1 && (
-                  <div className="h-full w-full" style={{ position: 'relative' }}>
-                    {/* Back button — fixed position, matches step 2 */}
-                    <button
-                      onClick={() => setCurrentStep(0)}
-                      style={{ position: 'absolute', top: '24px', left: 0, zIndex: 10, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
+                {/* Steps 1-3 — the design canvas, centred in the panel */}
+                {isDesignStep && (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <div
+                      className="relative"
+                      style={{ width: 356 * DESKTOP_SCALE, height: 748 * DESKTOP_SCALE }}
                     >
-                      ← back
-                    </button>
+                      {currentStep === 1 && (
+                        <>
+                          <ObBack tone="light" scale={DESKTOP_SCALE} onClick={() => setCurrentStep(0)} />
+                          <ObHead
+                            tone="light"
+                            scale={DESKTOP_SCALE}
+                            title={<>WHAT&apos;S<br />YOUR NAME?</>}
+                            sub="FIRST NAME IS FINE"
+                          />
+                          <ObFields scale={DESKTOP_SCALE}>
+                            <div style={fieldStyle('light', DESKTOP_SCALE, true, true)}>
+                              <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, DESKTOP_SCALE), color: COBALT }}>&gt;</span>
+                              <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
+                                placeholder="YOUR NAME"
+                                autoFocus
+                                style={{ ...obValue(DESKTOP_SCALE, true), color: INK, textTransform: 'uppercase' }}
+                              />
+                            </div>
+                            <ObHint tone="light" scale={DESKTOP_SCALE}>STORED ON YOUR DEVICE ONLY</ObHint>
+                          </ObFields>
+                          <ObCta scale={DESKTOP_SCALE} onClick={handleNext} disabled={!canContinueFromName} />
+                        </>
+                      )}
 
-                    {/* Heading — shared fixed top with step 2 (see step 2 for how 220px is derived) */}
-                    <div className="text-center" style={{ position: 'absolute', top: '220px', left: '50%', transform: 'translateX(-50%)', width: '90%' }}>
-                      <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>what's your name?</h2>
-                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>the one that feels most like you</p>
+                      {currentStep === 2 && (
+                        <>
+                          <ObBack tone="light" scale={DESKTOP_SCALE} onClick={() => setCurrentStep(1)} />
+                          <ObHead
+                            tone="light"
+                            scale={DESKTOP_SCALE}
+                            title={<>WHEN WERE<br />YOU BORN?</>}
+                            sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
+                          />
+                          <ObFields scale={DESKTOP_SCALE} stack>
+                            <div>
+                              <div style={fieldStyle('light', DESKTOP_SCALE, birthDate.length > 0)}>
+                                <input
+                                  type="text"
+                                  placeholder="DD/MM/YYYY"
+                                  value={birthDate}
+                                  onChange={(e) => handleDateChange(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
+                                    if (e.key === 'Backspace' && birthDate.length > 0) {
+                                      e.preventDefault();
+                                      handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1));
+                                    }
+                                  }}
+                                  maxLength={10}
+                                  style={{ ...obValue(DESKTOP_SCALE), color: INK }}
+                                />
+                                <ObTag tone="light" scale={DESKTOP_SCALE} required />
+                              </div>
+                              {dateError && <FieldError message={dateError} variant="light" />}
+                            </div>
+
+                            <div>
+                              <div style={fieldStyle('light', DESKTOP_SCALE, birthTime.length > 0)}>
+                                <input
+                                  type="text"
+                                  placeholder="HH:MM"
+                                  value={birthTime}
+                                  onChange={(e) => handleTimeChange(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Backspace' && birthTime.length > 0) {
+                                      e.preventDefault();
+                                      handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1));
+                                    }
+                                  }}
+                                  maxLength={5}
+                                  style={{ ...obValue(DESKTOP_SCALE), color: INK }}
+                                />
+                                <ObTag tone="light" scale={DESKTOP_SCALE} required={false} />
+                              </div>
+                              {timeError && <FieldError message={timeError} variant="light" />}
+                            </div>
+
+                            <div>
+                              <div style={fieldStyle('light', DESKTOP_SCALE, birthLocation.length > 0)}>
+                                <input
+                                  type="text"
+                                  placeholder="CITY, COUNTRY"
+                                  value={birthLocation}
+                                  onChange={(e) => handleLocationChange(e.target.value)}
+                                  style={{ ...obValue(DESKTOP_SCALE), color: INK }}
+                                />
+                                <ObTag tone="light" scale={DESKTOP_SCALE} required={false} />
+                              </div>
+                              {locationError && <FieldError message={locationError} variant="light" />}
+                              {!locationError && locationChecking && (
+                                <ObHint tone="light" scale={DESKTOP_SCALE}>CHECKING…</ObHint>
+                              )}
+                              {!locationError && !locationChecking && locationResolved !== null && (
+                                <ObHint tone="light" scale={DESKTOP_SCALE}>
+                                  {locationResolved ? `↳ ${locationResolved.toUpperCase()}` : "COULDN'T FIND THAT — TRY ANOTHER SPELLING"}
+                                </ObHint>
+                              )}
+                            </div>
+                          </ObFields>
+                          <ObCta scale={DESKTOP_SCALE} onClick={handleNext} disabled={!canContinueFromBirthdate} />
+                        </>
+                      )}
+
+                      {currentStep === 3 && (
+                        <>
+                          <ObBack tone="light" scale={DESKTOP_SCALE} onClick={() => setCurrentStep(2)} />
+                          <ObHead
+                            tone="light"
+                            scale={DESKTOP_SCALE}
+                            tight
+                            title={<>WANT IT<br />PERSONALISED?</>}
+                            sub={<>YOUR CHART SHAPES THE WORDS.<br />OFF MEANS THE PLAIN CARD MEANING.</>}
+                          />
+                          <ObFields scale={DESKTOP_SCALE}>
+                            <div style={{ ...fieldStyle('light', DESKTOP_SCALE, personalise), padding: `0 ${obPx(16, DESKTOP_SCALE)} 0 ${obPx(18, DESKTOP_SCALE)}` }}>
+                              <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, DESKTOP_SCALE), color: INK }}>
+                                READ MY CHART
+                              </span>
+                              <ObToggle tone="light" scale={DESKTOP_SCALE} on={personalise} onChange={setPersonalise} label="read my chart" />
+                            </div>
+                            <ObHint tone="light" scale={DESKTOP_SCALE}>YOU CAN TURN THIS OFF ANY DAY</ObHint>
+                          </ObFields>
+                          <ObCta scale={DESKTOP_SCALE} onClick={handleNext} />
+                        </>
+                      )}
                     </div>
-
-                    {/* Field — same wrapper width/offset as step 2's fields, so input sizes and positions match */}
-                    <div className="w-full max-w-2xl" style={{ position: 'absolute', top: '350px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <input
-                        type="text" value={name} onChange={(e) => setName(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' && canContinueFromName) handleNext(); }}
-                        className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.3)' }}
-                        autoFocus
-                      />
-                    </div>
-
-                    {/* Continue button — pinned to the bottom of this fixed-height step, matches step 2 */}
-                    <button
-                      onClick={handleNext}
-                      disabled={!canContinueFromName}
-                      tabIndex={canContinueFromName ? 0 : -1}
-                      aria-hidden={!canContinueFromName}
-                      className="transition-opacity duration-200"
-                      style={{
-                        position: 'absolute',
-                        left: '50%',
-                        bottom: '76px',
-                        transform: 'translateX(-50%)',
-                        display: 'flex', width: '208px', height: '68px',
-                        justifyContent: 'center', alignItems: 'center',
-                        borderRadius: '9999px',
-                        fontFamily: 'var(--font-reenie-beanie), cursive',
-                        fontSize: '30px', fontWeight: 400,
-                        background: '#172211', color: '#E1EEFC',
-                        border: 'none', cursor: 'pointer',
-                        opacity: canContinueFromName ? 1 : 0,
-                        pointerEvents: canContinueFromName ? 'auto' : 'none',
-                      }}
-                    >
-                      continue →
-                    </button>
                   </div>
                 )}
 
-                {/* Step 2 — birthdate */}
-                {currentStep === 2 && (
-                  <div className="h-full w-full" style={{ position: 'relative' }}>
-                    {/* Back button — fixed position, unaffected by field growth below */}
-                    <button
-                      onClick={() => setCurrentStep(1)}
-                      style={{ position: 'absolute', top: '24px', left: 0, zIndex: 10, fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '22px', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(23,34,17,0.4)' }}
-                    >
-                      ← back
-                    </button>
-
-                    {/*
-                      Heading — fixed top offset, never moves. 220px centres this page's
-                      content block (heading + 3 fields = 412px tall in the 909px screen)
-                      while leaving room for the ~102px the fields grow when all three
-                      errors show, so the block still clears the continue button at 765px.
-                      Step 1 reuses the same offsets so both pages' headers and fields align.
-                    */}
-                    <div className="text-center" style={{ position: 'absolute', top: '220px', left: '50%', transform: 'translateX(-50%)', width: '90%' }}>
-                      <h2 className="text-5xl text-black" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>when were you born?</h2>
-                      <p className="text-2xl text-black/60 mt-1" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>slow garden reads your vedic chart, but no pressure to share details!</p>
-                    </div>
-
-                    {/* Fields — one per row, close together; an error only pushes the rows below it down. Fixed top offset so the heading and button above/below never shift. */}
-                    <div className="w-full max-w-2xl" style={{ position: 'absolute', top: '350px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div>
-                        <input type="text" placeholder="dd/mm/yyyy" value={birthDate}
-                          onChange={(e) => handleDateChange(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && canContinueFromBirthdate) handleNext();
-                            if (e.key === 'Backspace' && birthDate.length > 0) { e.preventDefault(); handleDateChange(birthDate.replace(/\D/g, '').slice(0, -1)); }
-                          }}
-                          maxLength={10}
-                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: dateError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                        />
-                        {dateError && <FieldError message={dateError} variant="light" />}
-                      </div>
-
-                      <div className="mt-3">
-                        <input type="text" placeholder="hh:mm (optional)" value={birthTime}
-                          onChange={(e) => handleTimeChange(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Backspace' && birthTime.length > 0) { e.preventDefault(); handleTimeChange(birthTime.replace(/\D/g, '').slice(0, -1)); } }}
-                          maxLength={5}
-                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: timeError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                        />
-                        {timeError && <FieldError message={timeError} variant="light" />}
-                      </div>
-
-                      <div className="mt-3">
-                        <input type="text" placeholder="city, country (optional)" value={birthLocation}
-                          onChange={(e) => handleLocationChange(e.target.value)}
-                          className="w-full px-8 py-6 rounded-3xl text-black text-center focus:outline-none text-3xl"
-                          style={{ fontFamily: 'var(--font-reenie-beanie), cursive', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(10px)', border: locationError ? '2px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.3)' }}
-                        />
-                        {locationError && <FieldError message={locationError} variant="light" />}
-                        {!locationError && locationChecking && (
-                          <p className="text-black/40 text-lg mt-2 px-1 text-center" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>checking...</p>
-                        )}
-                        {!locationError && !locationChecking && locationResolved !== null && (
-                          <p className={`text-lg mt-2 px-1 text-center ${locationResolved ? 'text-green-700/80' : 'text-black/40'}`} style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
-                            {locationResolved ? `↳ ${locationResolved}` : "couldn't find that — try a different spelling"}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Continue button — pinned to the bottom of this fixed-height step, unaffected by field growth above */}
-                    <button
-                      onClick={handleNext}
-                      disabled={!canContinueFromBirthdate}
-                      tabIndex={canContinueFromBirthdate ? 0 : -1}
-                      aria-hidden={!canContinueFromBirthdate}
-                      className="transition-opacity duration-200"
-                      style={{
-                        position: 'absolute',
-                        left: '50%',
-                        bottom: '76px',
-                        transform: 'translateX(-50%)',
-                        display: 'flex', width: '208px', height: '68px',
-                        justifyContent: 'center', alignItems: 'center',
-                        borderRadius: '9999px',
-                        fontFamily: 'var(--font-reenie-beanie), cursive',
-                        fontSize: '30px', fontWeight: 400,
-                        background: '#172211', color: '#E1EEFC',
-                        border: 'none', cursor: 'pointer',
-                        opacity: canContinueFromBirthdate ? 1 : 0,
-                        pointerEvents: canContinueFromBirthdate ? 'auto' : 'none',
-                      }}
-                    >
-                      continue →
-                    </button>
-                  </div>
-                )}
-
-                {/* Step 3 — typewriter message + drag card */}
-                {currentStep === 3 && (
+                {/* Step 4 — typewriter message + drag card */}
+                {currentStep === 4 && (
                   <div className="relative flex flex-col items-center justify-between h-full py-16 gap-8">
                     {/* Loading — absolute overlay so the circle centres on the whole card,
                         not just the text area above the (space-occupying) card image */}

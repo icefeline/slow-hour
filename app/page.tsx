@@ -505,7 +505,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#172211]">
-        <div className="text-[#CEF17B] text-lg" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>loading...</div>
+        <div className="text-[#C9F24E] text-lg" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>loading...</div>
       </div>
     );
   }
@@ -556,8 +556,8 @@ export default function Home() {
               aria-label="View today's card"
               className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'card'
-                  ? 'bg-[#CEF17B] text-[#172211]'
-                  : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
+                  ? 'bg-[#C9F24E] text-[#172211]'
+                  : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
               style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
             >
@@ -569,8 +569,8 @@ export default function Home() {
               aria-label="View year history"
               className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
                 currentView === 'year'
-                  ? 'bg-[#CEF17B] text-[#172211]'
-                  : 'bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60'
+                  ? 'bg-[#C9F24E] text-[#172211]'
+                  : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
               style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
             >
@@ -582,7 +582,7 @@ export default function Home() {
               <div className="hidden md:flex gap-3">
                 <button
                   onClick={handleReset}
-                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Reset today's card"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
@@ -590,7 +590,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={generateRandomCards}
-                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Generate 60 random cards"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
@@ -598,7 +598,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleFullReset}
-                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all"
+                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Full reset (including onboarding)"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
@@ -607,7 +607,7 @@ export default function Home() {
                 <button
                   onClick={() => runScatterAnimation(() => {})}
                   disabled={isAnimating}
-                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#CEF17B] border border-[#CEF17B]/30 hover:border-[#CEF17B]/60 transition-all disabled:opacity-40"
+                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all disabled:opacity-40"
                   title="Preview scatter animation"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
@@ -626,7 +626,7 @@ export default function Home() {
             {/* Date */}
             <div className="text-center mb-4 md:mb-8">
               <p
-                className="text-[#CEF17B]"
+                className="text-[#C9F24E]"
                 style={{ fontSize: 'clamp(26px, 3.5vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
               >
                 {new Date(dateString + 'T00:00:00').toLocaleDateString('en-GB', {
@@ -710,20 +710,20 @@ export default function Home() {
 
               return (
                 <div className="mt-12 w-full">
-                  <h3 className="text-[#CEF17B] mb-4 md:mb-6" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
                     talk about it
                   </h3>
                   {isToday ? (
                     <textarea
                       aria-label="Write your reflection on today's card"
-                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#CEF17B]/30 hover:border-[#CEF17B]/50 focus:border-[#CEF17B] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
+                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#C9F24E]/30 hover:border-[#C9F24E]/50 focus:border-[#C9F24E] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
                       placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
                       style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
                     />
                   ) : (
-                    <div className="bg-[#172211] border border-[#CEF17B]/20 rounded-xl p-4 md:p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>
+                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>
                       {reflection}
                     </div>
                   )}

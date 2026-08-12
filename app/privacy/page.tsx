@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
     >
       <h1
         className="mb-2"
-        style={{ fontSize: '48px', color: '#CEF17B' }}
+        style={{ fontSize: '48px', color: '#C9F24E' }}
       >
         privacy policy
       </h1>
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
       </p>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           the short version
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           what we collect
         </h2>
         <p className="mb-4" style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -46,7 +46,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           your reading data
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           third-party services
         </h2>
         <p className="mb-4" style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -66,7 +66,7 @@ export default function PrivacyPolicy() {
         </p>
         <ul className="list-disc pl-6 space-y-3" style={{ fontSize: '22px', lineHeight: '1.6' }}>
           <li>
-            <span style={{ color: '#CEF17B' }}>anthropic claude</span> — when
+            <span style={{ color: '#C9F24E' }}>anthropic claude</span> — when
             you reveal your daily card, your birth data and card information
             are sent to anthropic to generate your personalised reading.
             anthropic&apos;s privacy policy applies:{' '}
@@ -74,13 +74,13 @@ export default function PrivacyPolicy() {
               href="https://www.anthropic.com/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#CEF17B', textDecoration: 'underline' }}
+              style={{ color: '#C9F24E', textDecoration: 'underline' }}
             >
               anthropic.com/privacy
             </a>
           </li>
           <li>
-            <span style={{ color: '#CEF17B' }}>vercel analytics</span> — we
+            <span style={{ color: '#C9F24E' }}>vercel analytics</span> — we
             use vercel&apos;s privacy-friendly analytics to understand how many
             people visit the app. this collects no personal data and requires
             no cookie consent.
@@ -89,7 +89,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           cookies
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -99,7 +99,7 @@ export default function PrivacyPolicy() {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-3" style={{ fontSize: '30px', color: '#CEF17B' }}>
+        <h2 className="mb-3" style={{ fontSize: '30px', color: '#C9F24E' }}>
           your rights
         </h2>
         <p style={{ fontSize: '22px', lineHeight: '1.6' }}>
@@ -111,7 +111,7 @@ export default function PrivacyPolicy() {
 
       <a
         href="/"
-        style={{ fontSize: '26px', color: '#CEF17B', textDecoration: 'underline' }}
+        style={{ fontSize: '26px', color: '#C9F24E', textDecoration: 'underline' }}
       >
         ← back
       </a>

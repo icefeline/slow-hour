@@ -110,7 +110,7 @@ const VerticalLine = ({ isToday }: { isToday?: boolean }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-        className="text-[#CEF17B]"
+        className="text-[#C9F24E]"
         opacity={isToday ? '0.6' : '0.2'}
       />
     </svg>
@@ -119,7 +119,7 @@ const VerticalLine = ({ isToday }: { isToday?: boolean }) => {
 
 // Desktop mini tarot card
 const MiniTarotCard = ({ cardId, cardName, isToday }: { cardId: string; cardName: string; isToday?: boolean }) => (
-  <div className={`w-full h-full rounded overflow-hidden ${isToday ? 'ring-2 ring-[#CEF17B] shadow-lg' : 'shadow-sm'}`}>
+  <div className={`w-full h-full rounded overflow-hidden ${isToday ? 'ring-2 ring-[#C9F24E] shadow-lg' : 'shadow-sm'}`}>
     <img
       src={`/cards/${getCardFilename(cardId, cardName)}.png`}
       alt={cardName}
@@ -258,7 +258,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       <div ref={yearHeaderRef} className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
-            className="text-4xl md:text-6xl text-[#CEF17B] mb-1"
+            className="text-4xl md:text-6xl text-[#C9F24E] mb-1"
             style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
           >
             {year}
@@ -288,7 +288,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             >
               {/* Month name — intentionally small */}
               <h2
-                className={`mb-3 ${isCurrentMonth ? 'text-[#CEF17B]' : 'text-[#CEF17B]/50'}`}
+                className={`mb-3 ${isCurrentMonth ? 'text-[#C9F24E]' : 'text-[#C9F24E]/50'}`}
                 style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '20px', lineHeight: 1 }}
               >
                 {monthName}
@@ -299,7 +299,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 {WEEKDAYS.map(wd => (
                   <div
                     key={wd}
-                    className="text-center text-[#CEF17B] opacity-35"
+                    className="text-center text-[#C9F24E] opacity-35"
                     style={{
                       fontSize: '10px',
                       fontFamily: 'var(--font-vt323), monospace',
@@ -329,7 +329,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                     <div
                       key={date}
                       role="gridcell"
-                      className={`relative overflow-hidden rounded-sm aspect-[2/3] ${!isCurrMonth ? 'opacity-20' : ''} ${isToday ? 'ring-1 ring-[#CEF17B]' : ''}`}
+                      className={`relative overflow-hidden rounded-sm aspect-[2/3] ${!isCurrMonth ? 'opacity-20' : ''} ${isToday ? 'ring-1 ring-[#C9F24E]' : ''}`}
                     >
                       <button
                         onClick={() => isCurrMonth && handleDayClick(date, hasCard, isToday)}
@@ -348,7 +348,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                             <div
                               className="absolute inset-0"
                               style={{
-                                background: '#CEF17B',
+                                background: '#C9F24E',
                                 mask: STAMP_MASK,
                                 maskComposite: 'subtract, subtract, subtract, subtract, add',
                                 WebkitMask: STAMP_MASK,
@@ -383,13 +383,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                           </div>
                         ) : (
                           /* Empty cell */
-                          <div className="absolute inset-0 bg-[#172211] border border-[#CEF17B]/10 rounded-sm" />
+                          <div className="absolute inset-0 bg-[#172211] border border-[#C9F24E]/10 rounded-sm" />
                         )}
 
                         {/* Date number — only shown on empty cells */}
                         {!hasCard && (
                           <span
-                            className="absolute top-0.5 left-1 leading-none z-10 select-none text-[#CEF17B]/30"
+                            className="absolute top-0.5 left-1 leading-none z-10 select-none text-[#C9F24E]/30"
                             style={{ fontSize: '9px', fontFamily: 'var(--font-vt323), monospace' }}
                           >
                             {day}
@@ -417,7 +417,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
           />
           {/* Drawer panel */}
           <div
-            className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#CEF17B]/30"
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#C9F24E]/30"
             role="dialog"
             aria-modal="true"
             aria-label={`Card reading for ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`}
@@ -433,13 +433,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               onTouchMove={handleDrawerTouchMove}
               onTouchEnd={handleDrawerTouchEnd}
             >
-              <div className="w-12 h-1.5 bg-[#CEF17B]/40 rounded-full" />
+              <div className="w-12 h-1.5 bg-[#C9F24E]/40 rounded-full" />
             </div>
 
             <div className="px-4 pb-6 pt-2">
               <div className="text-center mb-4">
                 <p
-                  className="text-[#CEF17B] text-xl tracking-wider"
+                  className="text-[#C9F24E] text-xl tracking-wider"
                   style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
@@ -463,13 +463,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                   return (
                     <div className="mt-4 max-w-sm mx-auto">
                       <h3
-                        className="text-3xl text-[#CEF17B] mb-2"
+                        className="text-3xl text-[#C9F24E] mb-2"
                         style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                       >
                         reflection
                       </h3>
                       <div
-                        className="bg-[#172211] border-2 border-[#CEF17B]/20 rounded-xl p-4 text-[#E1EEFC] text-2xl leading-relaxed"
+                        className="bg-[#172211] border-2 border-[#C9F24E]/20 rounded-xl p-4 text-[#E1EEFC] text-2xl leading-relaxed"
                         style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
                       >
                         {reflection}

@@ -5,7 +5,7 @@
 :root {
   --background: #172211;
   --foreground: #E1EEFC;
-  --accent: #CEF17B;
+  --accent: #C9F24E;
 }
 
 body {
@@ -140,7 +140,7 @@ button, input, textarea, select {
 
 /* Accessible focus styles for keyboard navigation */
 :focus-visible {
-  outline: 2px solid #CEF17B;
+  outline: 2px solid #C9F24E;
   outline-offset: 3px;
   border-radius: 4px;
 }

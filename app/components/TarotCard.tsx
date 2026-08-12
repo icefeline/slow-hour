@@ -167,6 +167,20 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
    * punishes everyone behind a shared network. Cost abuse is bounded by the
    * abuse guards in middleware.ts instead.
    */
+  /**
+   * Set during onboarding ("read my chart"). When off, no request is made at
+   * all — no Claude call, no quota spent — and the reader gets the card and its
+   * traditional meaning. Defaults to on so anyone who onboarded before this
+   * existed is unaffected.
+   */
+  const personalisationOn = (): boolean => {
+    try {
+      return localStorage.getItem('slow-garden-personalise') !== 'false';
+    } catch {
+      return true;
+    }
+  };
+
   const FREE_READING_DAYS = 3;
   const READING_DAYS_KEY = 'slow-garden-reading-days';
 
@@ -197,6 +211,9 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
   };
 
   const fetchInsight = async () => {
+    // Opted out — the personalised layer is simply absent, not "loading".
+    if (!personalisationOn()) return;
+
     const readingDay = cardDate ?? todayKey();
 
     if (!hasQuotaFor(readingDay)) {
@@ -305,6 +322,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
   // Generate insight when card is revealed
   useEffect(() => {
     if (!isRevealed || generatedInsight || insightError || isRateLimited) return;
+    if (!personalisationOn()) return;
     const timer = setTimeout(fetchInsight, 800);
     return () => clearTimeout(timer);
   }, [isRevealed, card.id, isReversed, generatedInsight, insightError]);
@@ -377,7 +395,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
                 fontSize: 'clamp(80px, 28vw, 200px)',
                 fontFamily: 'var(--font-reenie-beanie), cursive',
                 lineHeight: '0.72',
-                color: '#CEF17B',
+                color: '#C9F24E',
                 overflow: 'visible',
                 WebkitTextStroke: '1px #172211',
                 transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
@@ -408,7 +426,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
               return (
                 <span
                   key={index}
-                  className="absolute text-[#CEF17B]"
+                  className="absolute text-[#C9F24E]"
                   style={{
                     fontSize: mobileFontSize,
                     fontFamily: 'var(--font-reenie-beanie), cursive',
@@ -428,21 +446,22 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Meaning */}
           <div>
-            <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
             <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
-          {/* Active Insight - Personalized Context */}
-          {insightError ? (
+          {/* Active Insight — omitted entirely when the reader opted out, so the
+              card and its traditional meaning stand on their own. */}
+          {!personalisationOn() ? null : insightError ? (
             <div>
-              <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
+              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
               <div>
                 <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
                   couldn&apos;t connect to the reading right now.
                 </p>
                 <button
                   onClick={() => setInsightError(null)}
-                  className="mt-3 text-[#CEF17B] opacity-70 hover:opacity-100 transition-opacity"
+                  className="mt-3 text-[#C9F24E] opacity-70 hover:opacity-100 transition-opacity"
                   style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
                 >
                   try again ↻
@@ -472,7 +491,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Description */}
           <div>
-            <h4 className="text-[#CEF17B] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
             <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>

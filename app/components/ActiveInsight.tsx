@@ -55,7 +55,7 @@ export function ActiveInsight({ insight, keyPhrase, action, transitInfo, userNam
   }, []);
 
   return (
-    <div className={`rounded-lg border border-[#CEF17B] bg-[#CEF17B] p-4 md:p-6 flex flex-col ${isLoading ? '' : 'min-h-[160px] md:min-h-[200px]'}`}>
+    <div className={`rounded-lg border border-[#C9F24E] bg-[#C9F24E] p-4 md:p-6 flex flex-col ${isLoading ? '' : 'min-h-[160px] md:min-h-[200px]'}`}>
       {isLoading ? (
         <div className="flex items-start">
           {/* Thinking text */}
