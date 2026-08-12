@@ -516,7 +516,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#172211]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+    <main className="min-h-screen flex flex-col bg-[#172211]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       <GroundTexture />
 
       {/* Navigation Header with Backdrop Blur */}
@@ -623,7 +623,7 @@ export default function Home() {
       </div>
 
       {/* Content */}
-      <div className="pt-safe-nav">
+      <div className="pt-safe-nav flex-1">
         {currentView === 'card' && card && (
           <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12">
             {/* Date */}
@@ -752,7 +752,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="text-center py-6 flex items-center justify-center gap-5">
+      <div className="mt-auto text-center py-6 flex items-center justify-center gap-5">
         <a
           href="/privacy"
           className="text-[#E1EEFC] opacity-30 hover:opacity-60 transition-opacity"

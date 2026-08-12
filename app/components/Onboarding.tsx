@@ -4,6 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 
 /** Desktop panel is 909 tall; the design canvas is 748, so it scales to fit exactly. */
 const DESKTOP_SCALE = 909 / 748;
+/**
+ * Welcome-message type size (design px), shared by the title and the body so the
+ * whole reading is one block. 26 is the largest size where the longest messages
+ * the model returns (~600 characters) still fit the panel without scrolling:
+ * VT323 advances ~0.5em, so 26px gives ~46 characters across the 599px column,
+ * and 15 lines fit the 500px-tall block.
+ */
+const WELCOME_PX = 26;
 import AsciiFlower from './AsciiFlower';
 import {
   ObBack, ObHead, ObFields, ObTag, ObHint, ObToggle, ObCta,
@@ -664,18 +672,24 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     switch (currentStep) {
       case 0:
         return (
-          <div className="flex flex-col flex-1">
+          <div
+            className="relative flex flex-col flex-1"
+            /* reserve the CTA's band (62 tall, 34 from the bottom) so the auto
+               margins below centre the wordmark in the space above the button */
+            style={{ paddingBottom: `${96 * mobileScale}px` }}
+          >
             {/*
               Logo group — every dimension is in vw so the wordmark scales with the
               viewport instead of being pinned to a fixed px size. Height is exactly
-              two line-heights, so the gap to the subtitle below is only the subtitle's
-              own margin (nothing extra baked into this box).
+              two line-heights. Auto margins centre it in the screen now that nothing
+              else sits in this column (the CTA is absolutely positioned).
             */}
             <div style={{
               position: 'relative',
               width: '100%',
               height: '67.2vw',
-              marginTop: '14vh',
+              marginTop: 'auto',
+              marginBottom: 'auto',
               flexShrink: 0,
               overflow: 'visible',
             }}>
@@ -719,49 +733,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               />
             </div>
 
-            {/* Subtitle */}
-            <p
-              className="text-center text-[#C9F24E]"
-              style={{
-                fontFamily: 'var(--font-reenie-beanie), cursive',
-                fontSize: '6.15vw',
-                lineHeight: '6.15vw',
-                fontWeight: 500,
-                padding: '0 20px',
-                /* 17vw clears the italic 'g' descender, which hangs ~10vw below the
-                   logo group's box, and leaves the same visual gap as desktop */
-                marginTop: '17vw',
-              }}
-            >
-              build your archive of daily perspectives.
-            </p>
-
-            {/* Spacer — pushes button to the bottom */}
-            <div className="flex-1" />
-
-            {/* Continue button */}
-            <div className="flex justify-center" style={{ padding: '0 20px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14.4vw)' }}>
-              <button
-                onClick={handleNext}
-                className="transition-all duration-200"
-                style={{
-                  display: 'flex',
-                  width: '89.7vw',
-                  maxWidth: '100%',
-                  height: '14.4vw',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: '9999px',
-                  fontFamily: 'var(--font-reenie-beanie), cursive',
-                  fontSize: '6.15vw',
-                  fontWeight: 500,
-                  background: '#C9F24E',
-                  color: '#172211',
-                }}
-              >
-                continue →
-              </button>
-            </div>
+            {/* Continue — the same CTA the rest of the onboarding uses */}
+            <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
         );
 
@@ -883,7 +856,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               scale={mobileScale}
               tight
               title={<>WANT IT<br />PERSONALISED?</>}
-              sub={<>YOUR CHART SHAPES THE WORDS.<br />OFF MEANS THE PLAIN CARD MEANING.</>}
+              sub={<>SLOW GARDEN CAN GROW AND EVOLVE<br />WITH YOUR INTERACTION. COMPLETELY OPTIONAL.</>}
             />
             <ObFields scale={mobileScale}>
               <div style={{ ...fieldStyle('dark', mobileScale, personalise), padding: `0 ${obPx(16, mobileScale)} 0 ${obPx(18, mobileScale)}` }}>
@@ -1121,10 +1094,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   <div className="flex flex-col h-full" style={{ position: 'relative' }}>
                     {/* Content — flex column; font metrics from Figma ×1.1234 scale, spiral mobile-proportioned */}
                     <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-                      {/* Logo group: full width, overflow visible so text bleeds edges */}
+                      {/* Logo group: full width, overflow visible so text bleeds edges.
+                          Centred in the space above the CTA — the button's band
+                          (62 tall, 34 from the bottom) is excluded, not divided. */}
                       <div style={{
                         position: 'absolute',
-                        top: '100px',
+                        top: `${((909 - 96 * DESKTOP_SCALE) - 435) / 2}px`,
                         left: 0,
                         right: 0,
                         height: '435px',
@@ -1169,55 +1144,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           }}
                         />
                       </div>
-                      {/* Subtitle: 110px below the logo group — clears the italic 'g'
-                          descender, matching the mobile 17vw gap (100 + 435 + 110 = 645) */}
-                      <p
-                        style={{
-                          position: 'absolute',
-                          left: '20px',
-                          right: '20px',
-                          top: '645px',
-                          transform: 'none',
-                          width: 'auto',
-                          textAlign: 'center',
-                          fontFamily: 'var(--font-reenie-beanie), cursive',
-                          fontSize: '36px',
-                          lineHeight: '27px',
-                          fontWeight: 400,
-                          color: '#172211',
-                          margin: 0,
-                        }}
-                      >
-                        build your archive of daily perspectives.
-                      </p>
-                      {/* Button: Figma position (50% + 344px from card top) */}
-                      <div style={{
-                        position: 'absolute',
-                        left: '50%',
-                        top: 'calc(50% + 344px)',
-                        transform: 'translateX(-50%) translateY(-50%)',
-                      }}>
-                        <button
-                          onClick={handleNext}
-                          style={{
-                            display: 'flex',
-                            width: '208px',
-                            height: '68px',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: '9999px',
-                            fontFamily: 'var(--font-reenie-beanie), cursive',
-                            fontSize: '30px',
-                            fontWeight: 400,
-                            background: '#172211',
-                            color: '#E1EEFC',
-                            border: 'none',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          continue →
-                        </button>
-                      </div>
+                      {/* Continue — the same CTA the rest of the onboarding uses */}
+                      <ObCta scale={DESKTOP_SCALE} onClick={handleNext} />
                     </div>
                   </div>
                 )}
@@ -1356,16 +1284,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                                 }}
                               >
                                 <div style={{
-                                  fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(36, DESKTOP_SCALE),
-                                  lineHeight: 1, color: COBALT, textTransform: 'uppercase',
+                                  fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(WELCOME_PX, DESKTOP_SCALE),
+                                  lineHeight: 1.15, color: COBALT, textTransform: 'uppercase',
                                 }}>
                                   {rTitle}
                                 </div>
                                 {rBody && (
                                   <div style={{
-                                    fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
-                                    fontSize: obPx(14, DESKTOP_SCALE), letterSpacing: '0.05em',
-                                    lineHeight: 1.7, color: INK, textTransform: 'uppercase',
+                                    fontFamily: 'var(--font-vt323), monospace',
+                                    fontSize: obPx(WELCOME_PX, DESKTOP_SCALE),
+                                    lineHeight: 1.15, color: COBALT, textTransform: 'uppercase',
                                     whiteSpace: 'pre-line',
                                   }}>
                                     {rBody}
@@ -1413,7 +1341,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             scale={DESKTOP_SCALE}
                             tight
                             title={<>WANT IT<br />PERSONALISED?</>}
-                            sub={<>YOUR CHART SHAPES THE WORDS.<br />OFF MEANS THE PLAIN CARD MEANING.</>}
+                            sub={<>SLOW GARDEN CAN GROW AND EVOLVE<br />WITH YOUR INTERACTION. COMPLETELY OPTIONAL.</>}
                           />
                           <ObFields scale={DESKTOP_SCALE}>
                             <div style={{ ...fieldStyle('light', DESKTOP_SCALE, personalise), padding: `0 ${obPx(16, DESKTOP_SCALE)} 0 ${obPx(18, DESKTOP_SCALE)}` }}>
