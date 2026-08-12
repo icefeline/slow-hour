@@ -483,7 +483,10 @@ export default function Home() {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
-    loadTodaysCard(true); // Auto-reveal after onboarding
+    // Deliberately NOT auto-revealed. A new person lands on the sealed tear-off
+    // page and pulls it themselves — that gesture is the product, and handing
+    // them an already-open card skips the one thing the whole app is built on.
+    loadTodaysCard(false);
     loadJournalEntries();
   };
 
