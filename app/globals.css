@@ -211,3 +211,17 @@ input.rounded-3xl:focus-within {
 @media (prefers-reduced-motion: reduce) {
   .tear-settle { transition-duration: 0.01s; }
 }
+
+/* Ground texture — the light layer drifts so the screen is never quite still. */
+@keyframes sgDrift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(2.5%, -2%, 0) scale(1.06); }
+}
+
+.sg-light {
+  animation: sgDrift 48s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-light { animation: none; }
+}

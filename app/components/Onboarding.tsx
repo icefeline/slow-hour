@@ -130,6 +130,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return () => window.removeEventListener('resize', computeScale);
   }, []);
 
+  /**
+   * Split the reading into its greeting and body.
+   *
+   * The split has to come from the COMPLETE message, not the typed-so-far text:
+   * mid-typewriter the blank line does not exist yet, so splitting the partial
+   * string puts the whole message in the title and it renders at 36px.
+   */
+  const readingParts = () => {
+    const full = welcomeMessage ?? '';
+    // Prefer the blank line the prompt asks for, but the model does not always
+    // return one — fall back to the opening sentence so the greeting still
+    // reads as a title instead of the whole reading rendering at 36px.
+    let fullTitle = full.split(/\n\s*\n/)[0];
+    if (fullTitle.length === full.length) {
+      const firstSentence = full.match(/^[^.!?]*[.!?]/);
+      if (firstSentence) fullTitle = firstSentence[0];
+    }
+    const typed = displayedText;
+    const title = typed.slice(0, fullTitle.length);
+    const body = typed.length > fullTitle.length
+      ? typed.slice(fullTitle.length).replace(/^\s+/, '')
+      : '';
+    return { title, body };
+  };
+
   const handleNext = () => {
     if (currentStep === 3) {
       // Move to the reading immediately and fetch in parallel.
@@ -182,7 +207,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   /** Steps drawn on the fixed 356x748 design canvas. */
-  const isDesignStep = currentStep >= 1 && currentStep <= 3;
+  const isDesignStep = currentStep >= 1 && currentStep <= 4;
 
   const canContinueFromName = name.trim().length > 0;
   const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
@@ -873,57 +898,85 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           </div>
         );
 
-      case 4:
+      case 4: {
+        // The message arrives as "greeting\n\nbody". The design sets the greeting
+        // as the title and the rest as body copy, so split on the first blank line.
+        const { title: readingTitle, body: readingBody } = readingParts();
         return (
-          <div className="relative flex-1 flex flex-col items-center justify-between py-3 gap-2">
-            {/* Loading — absolute overlay so the circle centres on the whole screen,
-                not just the text area above the (space-occupying) card */}
+          <div className="relative w-full h-full">
             {isLoadingWelcome && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <AsciiFlower fontSize={16} color="rgba(225, 238, 252, 0.7)" label="reading your chart" />
+                <AsciiFlower fontSize={16} color="rgba(238, 244, 224, 0.7)" label="reading your chart" />
               </div>
             )}
-            <div className="flex-1 w-full min-h-0 overflow-y-auto pt-4">
-              {!isLoadingWelcome && (
-                <p
-                  className="w-full text-2xl text-[#E1EEFC] text-center whitespace-pre-line"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
+
+            {!isLoadingWelcome && (
+              <div
+                style={{
+                  position: 'absolute', left: obPx(24, mobileScale), right: obPx(24, mobileScale),
+                  top: obPx(80, mobileScale), display: 'flex', flexDirection: 'column',
+                  gap: obPx(14, mobileScale),
+                  maxHeight: obPx(560, mobileScale), overflowY: 'auto',
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(36, mobileScale),
+                    lineHeight: 1, color: LIME, textShadow: '0 2px 16px rgba(0,0,0,.5)',
+                    textTransform: 'uppercase',
+                  }}
                 >
-                  {displayedText}
-                </p>
-              )}
-            </div>
+                  {readingTitle}
+                </div>
+                {readingBody && (
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+                      fontSize: obPx(14, mobileScale), letterSpacing: '0.05em',
+                      lineHeight: 1.7, color: BONE, textTransform: 'uppercase',
+                      whiteSpace: 'pre-line',
+                    }}
+                  >
+                    {readingBody}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div
-              className="flex flex-col items-center gap-1.5 pb-1 shrink-0"
-              style={{ visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden' }}
+              style={{
+                position: 'absolute', left: obPx(24, mobileScale), right: obPx(24, mobileScale),
+                bottom: obPx(34, mobileScale), display: 'flex', alignItems: 'flex-end',
+                gap: obPx(16, mobileScale),
+                visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden',
+              }}
             >
               <img
                 src="/card-back.png"
                 alt="Card back"
-                className="rounded-2xl shadow-xl select-none"
+                className="select-none"
                 style={{
-                  width: '150px',
-                  height: '225px',
-                  objectFit: 'cover',
-                  cursor: 'grab',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  touchAction: 'none',
+                  width: obPx(140, mobileScale), height: obPx(210, mobileScale),
+                  objectFit: 'cover', cursor: 'grab',
+                  userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'none',
                 }}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
                 draggable="false"
               />
-              <p
-                className="text-base text-[#E1EEFC]/60 animate-bounce"
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+              <span
+                style={{
+                  fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, mobileScale),
+                  color: LIME, paddingBottom: obPx(8, mobileScale),
+                }}
               >
-                drag me to begin
-              </p>
+                ← DRAG ME
+              </span>
             </div>
           </div>
         );
+      }
+
 
       default:
         return null;
@@ -1061,7 +1114,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 }}
               />
               {/* Desktop content uses original dark-on-light styling */}
-              <div className={`h-full overflow-y-auto ${currentStep === 0 ? '' : 'px-12'}`} style={{ color: '#172211', position: 'relative', zIndex: 1 }}>
+              <div className={`h-full overflow-y-auto ${currentStep === 0 || isDesignStep ? '' : 'px-12'}`} style={{ color: '#172211', position: 'relative', zIndex: 1 }}>
 
                 {/* Step 0 — welcome / logo */}
                 {currentStep === 0 && (
@@ -1173,8 +1226,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 {isDesignStep && (
                   <div className="h-full w-full flex items-center justify-center">
                     <div
-                      className="relative"
-                      style={{ width: 356 * DESKTOP_SCALE, height: 748 * DESKTOP_SCALE }}
+                      className="relative w-full"
+                      style={{ height: 748 * DESKTOP_SCALE }}
                     >
                       {currentStep === 1 && (
                         <>
@@ -1283,6 +1336,75 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                         </>
                       )}
 
+                      {currentStep === 4 && (() => {
+                        const { title: rTitle, body: rBody } = readingParts();
+                        return (
+                          <>
+                            {isLoadingWelcome && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <AsciiFlower fontSize={28} color="rgba(23, 34, 17, 0.55)" label="reading your chart" />
+                              </div>
+                            )}
+
+                            {!isLoadingWelcome && (
+                              <div
+                                style={{
+                                  position: 'absolute', left: obPx(24, DESKTOP_SCALE), right: obPx(24, DESKTOP_SCALE),
+                                  top: obPx(80, DESKTOP_SCALE), display: 'flex', flexDirection: 'column',
+                                  gap: obPx(14, DESKTOP_SCALE),
+                                  maxHeight: obPx(500, DESKTOP_SCALE), overflowY: 'auto',
+                                }}
+                              >
+                                <div style={{
+                                  fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(36, DESKTOP_SCALE),
+                                  lineHeight: 1, color: COBALT, textTransform: 'uppercase',
+                                }}>
+                                  {rTitle}
+                                </div>
+                                {rBody && (
+                                  <div style={{
+                                    fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+                                    fontSize: obPx(14, DESKTOP_SCALE), letterSpacing: '0.05em',
+                                    lineHeight: 1.7, color: INK, textTransform: 'uppercase',
+                                    whiteSpace: 'pre-line',
+                                  }}>
+                                    {rBody}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            <div
+                              style={{
+                                position: 'absolute', left: obPx(24, DESKTOP_SCALE), right: obPx(24, DESKTOP_SCALE),
+                                bottom: obPx(34, DESKTOP_SCALE), display: 'flex', alignItems: 'flex-end',
+                                gap: obPx(16, DESKTOP_SCALE),
+                                visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden',
+                              }}
+                            >
+                              <img
+                                src="/card-back.png"
+                                alt="Card back"
+                                className="select-none"
+                                style={{
+                                  width: obPx(140, DESKTOP_SCALE), height: obPx(210, DESKTOP_SCALE),
+                                  objectFit: 'cover', cursor: 'grab',
+                                  userSelect: 'none', WebkitUserSelect: 'none',
+                                }}
+                                onMouseDown={handleMouseDown}
+                                draggable="false"
+                              />
+                              <span style={{
+                                fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, DESKTOP_SCALE),
+                                color: COBALT, paddingBottom: obPx(8, DESKTOP_SCALE),
+                              }}>
+                                ← DRAG ME
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })()}
+
                       {currentStep === 3 && (
                         <>
                           <ObBack tone="light" scale={DESKTOP_SCALE} onClick={() => setCurrentStep(2)} />
@@ -1309,38 +1431,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   </div>
                 )}
 
-                {/* Step 4 — typewriter message + drag card */}
-                {currentStep === 4 && (
-                  <div className="relative flex flex-col items-center justify-between h-full py-16 gap-8">
-                    {/* Loading — absolute overlay so the circle centres on the whole card,
-                        not just the text area above the (space-occupying) card image */}
-                    {isLoadingWelcome && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        {/* larger than mobile's 16 because the whole desktop frame is
-                            scaled down by deviceScale — this keeps the bloom at the
-                            same ~45% of the screen width on both */}
-                        <AsciiFlower fontSize={28} color="rgba(23, 34, 17, 0.55)" label="reading your chart" />
-                      </div>
-                    )}
-                    {/* overflow-y-auto with no vertical centering — centering here would push the top of long
-                        messages above the scrollable range and clip it against the card's overflow-hidden edge */}
-                    <div className="flex-1 overflow-y-auto pt-6 w-full">
-                      {!isLoadingWelcome && (
-                        <p className="text-3xl text-black text-center whitespace-pre-line" style={{ fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.4' }}>{displayedText}</p>
-                      )}
-                    </div>
-                    <div
-                      className="flex items-center gap-4 mb-8"
-                      style={{ visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden' }}
-                    >
-                      <img src="/card-back.png" alt="Card back" className="rounded-2xl shadow-xl select-none"
-                        style={{ width: '180px', height: '270px', objectFit: 'cover', cursor: 'grab', userSelect: 'none', WebkitUserSelect: 'none' }}
-                        onMouseDown={handleMouseDown} draggable="false"
-                      />
-                      <p className="text-2xl text-black/70 animate-bounce" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>← drag me</p>
-                    </div>
-                  </div>
-                )}
 
               </div>
             </div>

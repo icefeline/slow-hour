@@ -5,6 +5,7 @@ import TarotCard from './components/TarotCard';
 import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
 import TearOffPage from './components/TearOffPage';
+import GroundTexture from './components/GroundTexture';
 import CardSelector from './components/CardSelector';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
@@ -516,6 +517,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#172211]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <GroundTexture />
+
       {/* Navigation Header with Backdrop Blur */}
       <div className="fixed top-0 left-0 right-0 z-30" style={{
         background: 'rgba(23, 34, 17, 0.85)',
