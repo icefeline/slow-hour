@@ -101,14 +101,35 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const totalSteps = 4; // 0: splash, 1: name, 2: birth, 3: personalisation, 4: reading
 
+  /**
+   * The viewport the canvas is sized against — deliberately NOT the live one.
+   *
+   * Mobile browsers shrink innerHeight (and fire resize) when the on-screen
+   * keyboard opens. Scaling off that made the whole screen visibly shrink the
+   * moment you tapped a field. A height-only shrink is always the keyboard, so
+   * hold the last full height; a width change is a real rotation, so re-measure.
+   */
+  const baseViewportRef = useRef<{ w: number; h: number } | null>(null);
+  const [baseHeight, setBaseHeight] = useState(0);
+
   useEffect(() => {
     const check = () => {
-      setIsMobile(window.innerWidth < 768);
-      setMobileScale(Math.min(window.innerWidth / 356, window.innerHeight / 748));
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const base = baseViewportRef.current;
+      if (base && w === base.w && h < base.h) return; // keyboard, not a new viewport
+      baseViewportRef.current = { w, h };
+      setIsMobile(w < 768);
+      setMobileScale(Math.min(w / 356, h / 748));
+      setBaseHeight(h);
     };
     check();
     window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    window.addEventListener('orientationchange', check);
+    return () => {
+      window.removeEventListener('resize', check);
+      window.removeEventListener('orientationchange', check);
+    };
   }, []);
 
   useEffect(() => {
@@ -989,9 +1010,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="absolute inset-0 bg-[#172211]/60" />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
-      <div className={`md:hidden relative z-10 flex flex-col h-[100dvh]
+      <div
+        className={`md:hidden relative z-10 flex flex-col
         ${currentStep === 0 ? '' : isDesignStep ? '' : 'px-5'}
-        ${currentStep === 4 ? 'overflow-hidden py-6' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}>
+        ${currentStep === 4 ? 'overflow-hidden py-6' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}
+        /* held at the pre-keyboard height for the same reason the scale is —
+           100dvh collapses under the keyboard and drags the layout up with it */
+        style={{ height: baseHeight ? `${baseHeight}px` : '100dvh' }}
+      >
         {isDesignStep ? (
           /*
            * Steps 1-3 are drawn on a fixed 356x748 canvas. Render it at exactly
