@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
-import { calculateNatalChart, calculateActiveTransits, getDominantTransit } from '@/lib/utils/astrology-calculator';
+import {
+  calculateNatalChart, calculateActiveTransits, getDominantTransit, grahaPositionsAt,
+} from '@/lib/utils/astrology-calculator';
+import { buildVedicContext, describeVedicContext } from '@/lib/utils/vedic-signal';
+import { cardPlanetAffinity } from '@/lib/data/insight-structure-templates';
 import { getCardArchetype, cardArchetypes } from '@/lib/data/card-archetypes';
 import { sanitizeText, isValidDate, isValidTime } from '@/lib/utils/validate';
 
@@ -41,7 +45,8 @@ async function generateClaudeInsight(
   moonSign: string,
   nakshatraName: string,
   hasBirthTime: boolean,
-  hasBirthLocation: boolean
+  hasBirthLocation: boolean,
+  vedicContext: string,
 ): Promise<ClaudeInsight | null> {
   const cardArchetype = getCardArchetype(cardId, isReversed);
   if (!cardArchetype) return null;
@@ -126,11 +131,20 @@ About this person:
 - Card themes: ${coreThemes}
 - Emotional tone of this card: ${emotionalTone}
 
-What's happening in their chart right now:
-- Transit: ${transitingPlanet} ${aspectType} ${natalPlanet}
-- ${planetMeaning[transitingPlanet.toLowerCase()] || transitingPlanet} is creating ${aspectMeaning[aspectType] || aspectType} with their natal ${planetMeaning[natalPlanet.toLowerCase()] || natalPlanet}
-- Phase: ${phaseMeaning[phase] || phase}
-- This is activating their ${house}th house: ${houseTheme}
+What's happening in their chart right now.
+
+This is read the Jyotish way, in layers that move at different speeds: the dasha
+is the chapter they are years into, the gochara is where the grahas are sitting
+relative to their birth Moon, and the drishti is what has its attention on what
+today. The chapter is the backdrop; the strongest thread is the foreground. Let
+the two speak to each other — a small daily pressure inside a long chapter reads
+very differently from the same pressure inside a different one.
+
+${vedicContext}
+
+Supporting western-style reading of the same sky, use only if it adds something:
+- ${transitingPlanet} ${aspectType} ${natalPlanet}, ${phaseMeaning[phase] || phase}
+- landing in the ${house}th house: ${houseTheme}
 
 Write a JSON object with exactly these four fields:
 
@@ -242,6 +256,21 @@ export async function POST(request: Request) {
     // (natalChart.sunSign is already Lahiri sidereal after the calculator update)
     const sunSign = natalChart.sunSign;
 
+    // The Jyotish read: dasha, gochara, drishti, dignity. This is what the
+    // reading leads on — the western transit above is kept as a supporting
+    // detail rather than the whole story.
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const vedic = buildVedicContext(
+      natalChart,
+      grahaPositionsAt(now),
+      grahaPositionsAt(tomorrow),
+      now,
+      typeof seed === 'number' ? seed : 0.5,
+      cardPlanetAffinity[sanitizedCardId]?.planets ?? [],
+    );
+    const vedicContext = describeVedicContext(vedic, natalChart);
+
     // Generate Claude insight (with memory context if available)
     const claudeInsight = await generateClaudeInsight(
       sanitizedCardId,
@@ -257,13 +286,20 @@ export async function POST(request: Request) {
       natalChart.moonSign,
       natalChart.nakshatra.name,
       !!sanitizedBirthTime,
-      !!sanitizedLocation
+      !!sanitizedLocation,
+      vedicContext,
     );
 
     return NextResponse.json({
       dominantTransit,
       allTransits: activeTransits,
       claudeInsight,
+      vedic: {
+        mahadasha: vedic.dasha?.maha.lord ?? null,
+        antardasha: vedic.dasha?.antar.lord ?? null,
+        lead: vedic.lead ? { kind: vedic.lead.kind, actor: vedic.lead.actor } : null,
+        sadeSati: vedic.sadeSati,
+      },
     });
   } catch (error) {
     console.error('Transit calculation error:', error);

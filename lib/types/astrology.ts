@@ -50,6 +50,15 @@ export interface UserChart {
     timezone: string;
   };
   houses: House[];
+  /** The instant the chart was cast for, resolved in the birth place's zone. */
+  birthInstant: Date;
+  /** Sidereal longitudes of the nine grahas, Rahu and Ketu included. */
+  grahaPositions: Record<
+    'sun' | 'moon' | 'mercury' | 'venus' | 'mars' | 'jupiter' | 'saturn' | 'rahu' | 'ketu',
+    number
+  >;
+  /** Sidereal lagna in degrees. Only meaningful when a birth time was given. */
+  ascendantLongitude: number;
 }
 
 export interface ActiveTransit {

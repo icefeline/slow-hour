@@ -28,7 +28,23 @@ export const mockUserChart: UserChart = {
     { number: 10, sign: 'gemini', theme: 'career & public life' },
     { number: 11, sign: 'cancer', theme: 'community & hopes' },
     { number: 12, sign: 'leo', theme: 'subconscious & spirituality' }
-  ]
+  ],
+  // 14:30 in New York on that date, as an instant
+  birthInstant: new Date('1990-07-15T18:30:00Z'),
+  // Sidereal degrees consistent with the signs above: Moon in pisces places the
+  // janma nakshatra in revati, which is what the nakshatra field claims.
+  grahaPositions: {
+    sun: 98.4,    // cancer
+    moon: 349.2,  // pisces, revati
+    mercury: 112.0,
+    venus: 75.5,
+    mars: 25.8,
+    jupiter: 96.1,
+    saturn: 271.3,
+    rahu: 306.7,
+    ketu: 126.7,
+  },
+  ascendantLongitude: 155.0, // virgo
 };
 
 // Mock active transits for different scenarios

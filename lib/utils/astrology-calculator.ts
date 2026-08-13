@@ -8,6 +8,8 @@
 import * as Astronomy from 'astronomy-engine';
 import type { ActiveTransit, UserChart, House, Planet, AspectType, TransitPhase } from '../types/astrology';
 import { cardPlanetAffinity } from '../data/insight-structure-templates';
+import { birthInstant, zoneForCoordinates } from './birth-instant';
+import { nodePositions, type Graha } from './jyotish';
 
 // Planet bodies in Astronomy Engine
 const PLANET_BODIES = {
@@ -287,10 +289,14 @@ async function geocodeLocation(location: string): Promise<{ latitude: number; lo
     const data = await response.json();
 
     if (data && data.length > 0) {
+      const latitude = parseFloat(data[0].lat);
+      const longitude = parseFloat(data[0].lon);
+      // The zone comes from the coordinates, not from the browser — the chart
+      // is cast for where they were born, not where they are reading this.
       return {
-        latitude: parseFloat(data[0].lat),
-        longitude: parseFloat(data[0].lon),
-        timezone: 'UTC'
+        latitude,
+        longitude,
+        timezone: zoneForCoordinates(latitude, longitude) ?? 'UTC',
       };
     }
 
@@ -316,15 +322,14 @@ export async function calculateNatalChart(
       ? await geocodeLocation(birthLocation)
       : { latitude: 0, longitude: 0, timezone: 'UTC' };
 
-    // Parse birth time
-    let birthDateTime = new Date(birthDate);
-    if (birthTime) {
-      const [hours, minutes] = birthTime.split(':').map(Number);
-      birthDateTime.setHours(hours, minutes, 0, 0);
-    } else {
-      // Default to noon if no time provided
-      birthDateTime.setHours(12, 0, 0, 0);
-    }
+    // The birth clock time is read in the birth place's zone. Doing this with
+    // setHours read it in the server's zone — UTC in production — which put a
+    // Singapore birth eight hours late and threw the lagna out by four signs.
+    const { instant: birthDateTime } = birthInstant(
+      birthDate,
+      birthTime,
+      location.timezone === 'UTC' ? null : location.timezone,
+    );
 
     // Create observer for location
     const observer = new Astronomy.Observer(location.latitude, location.longitude, 0);
@@ -386,6 +391,8 @@ export async function calculateNatalChart(
         getNakshatra(startMoon).index === getNakshatra(endMoon).index;
     }
 
+    const nodes = nodePositions(birthDateTime, ayanamsa);
+
     return {
       sunSign: getZodiacSign(positions.sun),   // sidereal sun sign
       moonSign: getZodiacSign(positions.moon), // sidereal moon sign — janma rashi
@@ -396,12 +403,38 @@ export async function calculateNatalChart(
       birthDate,
       birthTime: birthTime || '12:00',
       birthLocation: location,
-      houses
+      houses,
+      // Kept so the dasha timeline and gochara work from the same instant the
+      // chart was cast for, rather than re-deriving it and drifting.
+      birthInstant: birthDateTime,
+      grahaPositions: {
+        sun: positions.sun, moon: positions.moon, mercury: positions.mercury,
+        venus: positions.venus, mars: positions.mars, jupiter: positions.jupiter,
+        saturn: positions.saturn, rahu: nodes.rahu, ketu: nodes.ketu,
+      },
+      ascendantLongitude: ascendant,
     };
   } catch (error) {
     console.error('Failed to calculate natal chart:', error);
     return null;
   }
+}
+
+/**
+ * Sidereal longitudes of the nine grahas at an instant, Rahu and Ketu included.
+ *
+ * The observer barely matters for the grahas at this resolution — it is passed
+ * through for consistency with the natal call rather than for parallax.
+ */
+export function grahaPositionsAt(date: Date, observer?: Astronomy.Observer): Record<Graha, number> {
+  const ayanamsa = getLahiriAyanamsa(date);
+  const sidereal = applyAyanamsaToPositions(calculatePlanetaryPositions(date, observer), ayanamsa);
+  const nodes = nodePositions(date, ayanamsa);
+  return {
+    sun: sidereal.sun, moon: sidereal.moon, mercury: sidereal.mercury,
+    venus: sidereal.venus, mars: sidereal.mars, jupiter: sidereal.jupiter,
+    saturn: sidereal.saturn, rahu: nodes.rahu, ketu: nodes.ketu,
+  };
 }
 
 /**
@@ -419,12 +452,9 @@ export async function calculateActiveTransits(
       0
     );
 
-    // Reconstruct natal datetime
-    let natalDateTime = new Date(natalChart.birthDate);
-    if (natalChart.birthTime) {
-      const [hours, minutes] = natalChart.birthTime.split(':').map(Number);
-      natalDateTime.setHours(hours, minutes, 0, 0);
-    }
+    // The instant the chart was cast for, carried over rather than rebuilt —
+    // re-deriving it here is what let the two paths disagree about the hour.
+    const natalDateTime = natalChart.birthInstant;
 
     // Ayanamsa for birth date and current date (ayanamsa drifts ~0.014°/yr, so they differ slightly)
     const birthAyanamsa = getLahiriAyanamsa(natalDateTime);
