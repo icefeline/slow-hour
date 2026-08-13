@@ -152,7 +152,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       // Leave ~5% breathing room on each dimension
       const scaleW = (window.innerWidth * 0.95) / 801;
       const scaleH = (window.innerHeight * 0.95) / 1000;
-      setDeviceScale(Math.min(1, scaleW, scaleH));
+      /*
+       * Grows as well as shrinks. This was capped at 1, which meant the frame
+       * stopped at its design size of 801x1000 no matter how much room it had:
+       * on a large display, in full screen, or at a zoomed-out page it sat as a
+       * small card in a field of background. The frame is portrait, so height
+       * is what binds in practice. The upper bound keeps the panel's one raster
+       * asset from being pushed further than it can carry.
+       */
+      setDeviceScale(Math.min(2.2, scaleW, scaleH));
     };
     computeScale();
     window.addEventListener('resize', computeScale);
