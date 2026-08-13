@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { cardAccords, cardScents, SCENT_RELATIONS } from '@/lib/data/card-scents';
+import { artForNotes } from '@/lib/data/scent-art';
 
 /**
  * The scent accord for a card, between the meaning and the personalised read.
@@ -22,6 +24,38 @@ import { cardAccords, cardScents, SCENT_RELATIONS } from '@/lib/data/card-scents
 const LABEL = '#8E9A85';
 const NOTE = '#F7F4E6';
 
+/**
+ * Where the ASCII drawings sit behind the notes.
+ *
+ * Four placements, each fading out through a radial mask so nothing has a hard
+ * border. They are deliberately wider than the text column and hang past both
+ * edges of it — the section clips them, so the drawings read as a field the
+ * notes are set into rather than as pictures placed beside a list. Offsets are
+ * percentages of the section so the bleed holds at any width.
+ *
+ * The opacities step down in order, so the note a card opens with anchors the
+ * composition and the rest fall back into depth behind it.
+ */
+const ART_SLOTS = [
+  { left: '1%', top: '-4%', height: 'clamp(300px, 30vw, 520px)', opacity: 0.9, mask: '48%, 94%' },
+  { right: '2%', top: '12%', height: 'clamp(320px, 32vw, 560px)', opacity: 0.68, mask: '46%, 92%' },
+  { left: '20%', bottom: '-8%', height: 'clamp(280px, 28vw, 480px)', opacity: 0.5, mask: '44%, 90%' },
+  { right: '22%', top: '-10%', height: 'clamp(260px, 26vw, 440px)', opacity: 0.38, mask: '42%, 88%' },
+] as const;
+
+/**
+ * On a phone the same four would overlap into mush and each drawing would be
+ * cropped to a sliver by the screen edge. Two, larger, each keeping its own
+ * side, stays legible as artwork.
+ */
+const ART_SLOTS_NARROW = [
+  // Pushed further off each edge than the desktop slots and set lower: on a
+  // phone the notes occupy the middle of the screen, so a drawing sitting
+  // straight behind them competes with the labels for the same pixels.
+  { left: '-34%', top: '-4%', height: 'clamp(320px, 95vw, 420px)', opacity: 0.5, mask: '50%, 95%' },
+  { right: '-38%', bottom: '-8%', height: 'clamp(300px, 88vw, 400px)', opacity: 0.34, mask: '46%, 92%' },
+] as const;
+
 /** Tier order is fixed: what you meet first, the body, what lingers. */
 const TIERS = [
   { key: 'top', label: 'OPENS WITH' },
@@ -32,6 +66,16 @@ const TIERS = [
 export function ScentNotes({ cardId }: { cardId: string }) {
   const accord = cardAccords[cardId];
   const scent = cardScents[cardId];
+
+  // Phones get a different composition, not a squeezed version of this one.
+  const [isNarrow, setIsNarrow] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 640px)');
+    const sync = () => setIsNarrow(query.matches);
+    sync();
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
 
   // A written six-note accord wins; suits still to be written fall back to the
   // three tiers, labelled once each, so the deck stays whole in the meantime.
@@ -53,8 +97,71 @@ export function ScentNotes({ cardId }: { cardId: string }) {
 
   if (rows.length === 0) return null;
 
+  // Art follows the accord's own order, so the drawing that anchors the block
+  // is the note the card opens with. Cards whose notes have no drawing yet
+  // simply render without one.
+  const slots = isNarrow ? ART_SLOTS_NARROW : ART_SLOTS;
+  const art = artForNotes(rows.map(r => r.note), slots.length);
+
   return (
-    <section aria-label="scent notes">
+    <section
+      aria-label="scent notes"
+      style={{
+        position: 'relative',
+        // No clipping here on purpose: cropping the drawings against the text
+        // column's edge is exactly what made them look like cut-out pictures
+        // rather than a field the notes sit in.
+        paddingBlock: 'clamp(56px, 14vw, 92px)',
+      }}
+    >
+      {art.length > 0 && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            // Broken out of the text column to the full viewport, so the
+            // drawings answer to the screen rather than to the column's padding.
+            // body carries overflow-x: hidden so this can't scroll the page.
+            left: '50%',
+            width: '100vw',
+            transform: 'translateX(-50%)',
+            pointerEvents: 'none',
+          }}
+        >
+          {art.map((src, i) => {
+            const slot = slots[i];
+            const [inner, outer] = slot.mask.split(', ');
+            const mask = `radial-gradient(closest-side, #000 ${inner}, transparent ${outer})`;
+            return (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                style={{
+                  position: 'absolute',
+                  left: 'left' in slot ? slot.left : undefined,
+                  right: 'right' in slot ? slot.right : undefined,
+                  top: 'top' in slot ? slot.top : undefined,
+                  bottom: 'bottom' in slot ? slot.bottom : undefined,
+                  height: slot.height,
+                  width: 'auto',
+                  maxWidth: 'none',
+                  opacity: slot.opacity,
+                  WebkitMaskImage: mask,
+                  maskImage: mask,
+                  userSelect: 'none',
+                }}
+                draggable="false"
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Lifted above the art layer. */}
+      <div style={{ position: 'relative' }}>
       {/* Centred with the block below it — a left heading over a centred panel
           reads as a mistake rather than as a choice. */}
       <h4
@@ -111,6 +218,7 @@ export function ScentNotes({ cardId }: { cardId: string }) {
           </div>
         ))}
       </dl>
+      </div>
     </section>
   );
 }
