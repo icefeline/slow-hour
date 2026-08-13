@@ -25,6 +25,18 @@ const LABEL = '#8E9A85';
 const NOTE = '#F7F4E6';
 
 /**
+ * The ASCII field is off while its placement is worked out.
+ *
+ * Everything it needs is still here and still current — the drawings in
+ * public/notes, the note-to-drawing matching in scent-art.ts, and the slot
+ * tables below. Flip this to true to bring it back; it also wants
+ * `overflow-x: hidden` on body again, which was removed from globals.css at
+ * the same time as this, since a full-bleed layer can push the page sideways
+ * on a phone.
+ */
+const SHOW_ART = false;
+
+/**
  * Where the ASCII drawings sit behind the notes.
  *
  * Four placements, each fading out through a radial mask so nothing has a hard
@@ -101,17 +113,16 @@ export function ScentNotes({ cardId }: { cardId: string }) {
   // is the note the card opens with. Cards whose notes have no drawing yet
   // simply render without one.
   const slots = isNarrow ? ART_SLOTS_NARROW : ART_SLOTS;
-  const art = artForNotes(rows.map(r => r.note), slots.length);
+  const art = SHOW_ART ? artForNotes(rows.map(r => r.note), slots.length) : [];
 
   return (
     <section
       aria-label="scent notes"
       style={{
         position: 'relative',
-        // No clipping here on purpose: cropping the drawings against the text
-        // column's edge is exactly what made them look like cut-out pictures
-        // rather than a field the notes sit in.
-        paddingBlock: 'clamp(56px, 14vw, 92px)',
+        // Roomy but not the extra height the drawings needed — with the field
+        // off, that much padding just left a hole between the sections.
+        paddingBlock: 'clamp(24px, 7vw, 40px)',
       }}
     >
       {art.length > 0 && (

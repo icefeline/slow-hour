@@ -12,10 +12,6 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-reenie-beanie), cursive;
-  /* Full-bleed decoration (the scent notes' ASCII field) is laid out against
-     the viewport rather than the text column, so it can sit wider than the
-     page without a horizontal scrollbar appearing. */
-  overflow-x: hidden;
 }
 
 button, input, textarea, select {
