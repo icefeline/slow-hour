@@ -506,7 +506,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#172211]">
-        <div className="text-[#C9F24E] text-lg" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>loading...</div>
+        <div className="text-[#C9F24E] text-lg" style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>loading...</div>
       </div>
     );
   }
@@ -540,8 +540,8 @@ export default function Home() {
               }}
             />
             <span
-              className="text-[#E1EEFC]"
-              style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1' }}
+              className="text-[#F7F4E6]"
+              style={{ fontSize: 'clamp(15px, 2.6vw, 20px)', letterSpacing: '0.06em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1' }}
             >
               slow garden
             </span>
@@ -562,7 +562,7 @@ export default function Home() {
                   ? 'bg-[#C9F24E] text-[#172211]'
                   : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
-              style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+              style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
             >
               today
             </button>
@@ -575,7 +575,7 @@ export default function Home() {
                   ? 'bg-[#C9F24E] text-[#172211]'
                   : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
-              style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+              style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
             >
               year
             </button>
@@ -587,7 +587,7 @@ export default function Home() {
                   onClick={handleReset}
                   className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Reset today's card"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   ↻
                 </button>
@@ -595,7 +595,7 @@ export default function Home() {
                   onClick={generateRandomCards}
                   className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Generate 60 random cards"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   60
                 </button>
@@ -603,7 +603,7 @@ export default function Home() {
                   onClick={handleFullReset}
                   className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Full reset (including onboarding)"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   🔄
                 </button>
@@ -612,7 +612,7 @@ export default function Home() {
                   disabled={isAnimating}
                   className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all disabled:opacity-40"
                   title="Preview scatter animation"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   ✦
                 </button>
@@ -630,7 +630,7 @@ export default function Home() {
             <div className="text-center mb-4 md:mb-8">
               <p
                 className="text-[#C9F24E]"
-                style={{ fontSize: 'clamp(26px, 3.5vw, 36px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                style={{ fontSize: 'clamp(12px, 2.6vw, 15px)', letterSpacing: '0.18em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
               >
                 {new Date(dateString + 'T00:00:00').toLocaleDateString('en-GB', {
                   weekday: 'long',
@@ -661,7 +661,7 @@ export default function Home() {
             </div>
 
             {!isRevealed && (
-              <p className="text-[#E1EEFC] mt-6 text-center opacity-60" style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+              <p className="text-[#F7F4E6] mt-6 text-center opacity-60" style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
                 take a moment to centre yourself
               </p>
             )}
@@ -713,20 +713,20 @@ export default function Home() {
 
               return (
                 <div className="mt-12 w-full">
-                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
                     talk about it
                   </h3>
                   {isToday ? (
                     <textarea
                       aria-label="Write your reflection on today's card"
-                      className="w-full h-48 bg-[#172211] text-[#E1EEFC] border border-[#C9F24E]/30 hover:border-[#C9F24E]/50 focus:border-[#C9F24E] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#E1EEFC]/40"
+                      className="w-full h-48 bg-[#172211] text-[#F7F4E6] border border-[#C9F24E]/30 hover:border-[#C9F24E]/50 focus:border-[#C9F24E] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#F7F4E6]/40"
                       placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
-                      style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}
+                      style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}
                     />
                   ) : (
-                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#E1EEFC] leading-relaxed" style={{ fontSize: 'clamp(24px, 5vw, 40px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>
+                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#F7F4E6] leading-relaxed" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>
                       {reflection}
                     </div>
                   )}
@@ -755,18 +755,18 @@ export default function Home() {
       <div className="mt-auto text-center py-6 flex items-center justify-center gap-5">
         <a
           href="/privacy"
-          className="text-[#E1EEFC] opacity-30 hover:opacity-60 transition-opacity"
-          style={{ fontSize: '18px', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+          className="text-[#F7F4E6] opacity-30 hover:opacity-60 transition-opacity"
+          style={{ fontSize: '12px', letterSpacing: '0.14em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
         >
           privacy policy
         </a>
-        <span className="text-[#E1EEFC] opacity-30" style={{ fontSize: '18px' }}>·</span>
+        <span className="text-[#F7F4E6] opacity-30" style={{ fontSize: '12px' }}>·</span>
         <a
           href="https://buymeacoffee.com/shxntxnx"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#E1EEFC] opacity-30 hover:opacity-60 transition-opacity"
-          style={{ fontSize: '18px', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+          className="text-[#F7F4E6] opacity-30 hover:opacity-60 transition-opacity"
+          style={{ fontSize: '12px', letterSpacing: '0.14em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
         >
           buy me a coffee
         </a>

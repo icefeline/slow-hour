@@ -664,7 +664,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     background: 'rgba(255, 255, 255, 0.12)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
-    color: '#E1EEFC',
+    color: '#F7F4E6',
     borderRadius: '1.5rem',   // explicit radius — prevents iOS from squaring corners on focus
     WebkitAppearance: 'none',
     appearance: 'none',
@@ -689,7 +689,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       </span>
       <p
         className={variant === 'dark' ? 'text-red-400 text-sm' : 'text-red-600 text-base'}
-        style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+        style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
       >
         {message}
       </p>
@@ -1006,7 +1006,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
           <AsciiFlower fontSize={22} color="#C9F24E" label="preparing your reading" />
-          <p className="text-3xl text-[#C9F24E]" style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}>
+          <p className="text-3xl text-[#C9F24E]" style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
             preparing your reading...
           </p>
         </div>
@@ -1121,7 +1121,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-60.5%, -50%)',
-                background: '#E1EEFC',
+                background: '#F7F4E6',
               }}
             >
               {/* Cloud background — shown on all onboarding steps */}

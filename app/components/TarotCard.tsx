@@ -447,8 +447,8 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Meaning */}
           <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>meaning</h4>
+            <p className="text-[#F7F4E6]" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
           {/* Scent notes — sits between the traditional meaning and the
@@ -459,15 +459,15 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
               card and its traditional meaning stand on their own. */}
           {!personalisationOn() ? null : insightError ? (
             <div>
-              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>what this could mean for you</h4>
+              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>what this could mean for you</h4>
               <div>
-                <p className="text-[#E1EEFC] opacity-60" style={{ fontSize: 'clamp(22px, 4.5vw, 34px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.3' }}>
+                <p className="text-[#F7F4E6] opacity-60" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>
                   couldn&apos;t connect to the reading right now.
                 </p>
                 <button
                   onClick={() => setInsightError(null)}
                   className="mt-3 text-[#C9F24E] opacity-70 hover:opacity-100 transition-opacity"
-                  style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   try again ↻
                 </button>
@@ -496,8 +496,8 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Description */}
           <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>about this card</h4>
-            <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{card.description.toLowerCase()}</p>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>about this card</h4>
+            <p className="text-[#F7F4E6]" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>
       )}

@@ -4,18 +4,22 @@
 
 :root {
   --background: #172211;
-  --foreground: #E1EEFC;
+  /* Warm bone, borrowed from the scent notes. The old soft blue read cold
+     against the lime and the card art; this sits with both. */
+  --foreground: #F7F4E6;
   --accent: #C9F24E;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-reenie-beanie), cursive;
+  /* The handwritten face is now reserved for the two places it earns: the card
+     name and the keywords orbiting it. Everything else is mono. */
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
 }
 
 button, input, textarea, select {
-  font-family: var(--font-reenie-beanie), cursive;
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
 }
 
 @layer utilities {

@@ -259,13 +259,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
             className="text-4xl md:text-6xl text-[#C9F24E] mb-1"
-            style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+            style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
           >
             {year}
           </h1>
           <p
-            className="text-[#E1EEFC] text-base md:text-xl opacity-70"
-            style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+            className="text-[#F7F4E6] text-base md:text-xl opacity-70"
+            style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
           >
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
@@ -289,7 +289,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               {/* Month name — intentionally small */}
               <h2
                 className={`mb-3 ${isCurrentMonth ? 'text-[#C9F24E]' : 'text-[#C9F24E]/50'}`}
-                style={{ fontFamily: 'var(--font-reenie-beanie), cursive', fontSize: '20px', lineHeight: 1 }}
+                style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', fontSize: '20px', lineHeight: 1 }}
               >
                 {monthName}
               </h2>
@@ -440,7 +440,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               <div className="text-center mb-4">
                 <p
                   className="text-[#C9F24E] text-xl tracking-wider"
-                  style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
@@ -464,13 +464,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                     <div className="mt-4 max-w-sm mx-auto">
                       <h3
                         className="text-3xl text-[#C9F24E] mb-2"
-                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                        style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                       >
                         reflection
                       </h3>
                       <div
-                        className="bg-[#172211] border-2 border-[#C9F24E]/20 rounded-xl p-4 text-[#E1EEFC] text-2xl leading-relaxed"
-                        style={{ fontFamily: 'var(--font-reenie-beanie), cursive' }}
+                        className="bg-[#172211] border-2 border-[#C9F24E]/20 rounded-xl p-4 text-[#F7F4E6] text-2xl leading-relaxed"
+                        style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                       >
                         {reflection}
                       </div>
