@@ -18,6 +18,97 @@ export interface CardScent {
   base: string[];
 }
 
+/**
+ * The relations a six-note accord is written in, in render order.
+ *
+ * These say what each note *does* to the accord, which the three tiers cannot:
+ * a tier tells you when a note arrives, not whether it cools or warms. Six
+ * notes, one per relation, is also a fixed shape — every card's block is the
+ * same height, and the column reads as one voice across the deck.
+ */
+export const SCENT_RELATIONS = [
+  'OPENS WITH',
+  'STEADIED BY',
+  'COOLED BY',
+  'WARMED BY',
+  'DEEPENED BY',
+  'CLOSES ON',
+] as const;
+
+export type ScentRelation = (typeof SCENT_RELATIONS)[number];
+
+/** One note per relation. */
+export type CardAccord = Record<ScentRelation, string>;
+
+/**
+ * Six-note accords, written a suit at a time.
+ *
+ * Cards not yet written fall back to the three tiers below, so the deck stays
+ * whole while this fills in. Notes are drawn from the same palette the tiers
+ * use, so a card reads as the same perfume in either form — except cups-king,
+ * whose accord comes from the design and deliberately differs.
+ */
+export const cardAccords: Record<string, CardAccord> = {
+  // ── Cups (water — floral, honeyed, wet) ───────────────────────────────────
+  'cups-ace': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'magnolia', 'COOLED BY': 'white rose',
+    'WARMED BY': 'orange blossom', 'DEEPENED BY': 'ambrette seed', 'CLOSES ON': 'white musk',
+  },
+  'cups-2': {
+    'OPENS WITH': 'neroli', 'STEADIED BY': 'iris', 'COOLED BY': 'bergamot',
+    'WARMED BY': 'rose', 'DEEPENED BY': 'jasmine sambac', 'CLOSES ON': 'sandalwood',
+  },
+  'cups-3': {
+    'OPENS WITH': 'mandarin', 'STEADIED BY': 'elderflower', 'COOLED BY': 'white tea',
+    'WARMED BY': 'osmanthus', 'DEEPENED BY': 'honey', 'CLOSES ON': 'orris',
+  },
+  'cups-4': {
+    'OPENS WITH': 'green tea', 'STEADIED BY': 'hay', 'COOLED BY': 'cucumber',
+    'WARMED BY': 'chamomile', 'DEEPENED BY': 'orris', 'CLOSES ON': 'oakmoss',
+  },
+  'cups-5': {
+    'OPENS WITH': 'petrichor', 'STEADIED BY': 'iris', 'COOLED BY': 'violet',
+    'WARMED BY': 'chamomile', 'DEEPENED BY': 'wet stone', 'CLOSES ON': 'oakmoss',
+  },
+  'cups-6': {
+    'OPENS WITH': 'peach', 'STEADIED BY': 'orris', 'COOLED BY': 'mandarin',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'rose', 'CLOSES ON': 'vanilla',
+  },
+  'cups-7': {
+    'OPENS WITH': 'blackcurrant bud', 'STEADIED BY': 'blue lotus', 'COOLED BY': 'star anise',
+    'WARMED BY': 'tuberose', 'DEEPENED BY': 'poppy', 'CLOSES ON': 'myrrh',
+  },
+  'cups-8': {
+    'OPENS WITH': 'sea salt', 'STEADIED BY': 'cypress', 'COOLED BY': 'mugwort',
+    'WARMED BY': 'chamomile', 'DEEPENED BY': 'myrrh', 'CLOSES ON': 'oakmoss',
+  },
+  'cups-9': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'fig', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'jasmine', 'CLOSES ON': 'tonka bean',
+  },
+  'cups-10': {
+    'OPENS WITH': 'neroli', 'STEADIED BY': 'chamomile', 'COOLED BY': 'mandarin',
+    'WARMED BY': 'orange blossom', 'DEEPENED BY': 'rose', 'CLOSES ON': 'beeswax',
+  },
+  'cups-page': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'violet', 'COOLED BY': 'seaweed',
+    'WARMED BY': 'elderflower', 'DEEPENED BY': 'blue lotus', 'CLOSES ON': 'white musk',
+  },
+  'cups-knight': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'iris', 'COOLED BY': 'neroli',
+    'WARMED BY': 'rose', 'DEEPENED BY': 'jasmine sambac', 'CLOSES ON': 'ambergris',
+  },
+  'cups-queen': {
+    'OPENS WITH': 'sea salt', 'STEADIED BY': 'magnolia', 'COOLED BY': 'mandarin',
+    'WARMED BY': 'rose', 'DEEPENED BY': 'blue lotus', 'CLOSES ON': 'ambergris',
+  },
+  // From the design — the one card whose accord was drawn rather than derived.
+  'cups-king': {
+    'OPENS WITH': 'elderflower', 'STEADIED BY': 'magnolia', 'COOLED BY': 'white rose',
+    'WARMED BY': 'orange blossom', 'DEEPENED BY': 'ylang ylang', 'CLOSES ON': 'damask rose',
+  },
+};
+
 export const cardScents: Record<string, CardScent> = {
   // ── Major Arcana ──────────────────────────────────────────────────────────
   'major-0':  { top: ['bergamot', 'mimosa'],                heart: ['elderflower', 'hay'],                    base: ['white cedar'] },

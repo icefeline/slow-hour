@@ -1,6 +1,6 @@
 'use client';
 
-import { cardScents } from '@/lib/data/card-scents';
+import { cardAccords, cardScents, SCENT_RELATIONS } from '@/lib/data/card-scents';
 
 /**
  * The scent accord for a card, between the meaning and the personalised read.
@@ -30,23 +30,35 @@ const TIERS = [
 ] as const;
 
 export function ScentNotes({ cardId }: { cardId: string }) {
+  const accord = cardAccords[cardId];
   const scent = cardScents[cardId];
-  if (!scent) return null;
 
-  const rows = TIERS.flatMap(({ key, label }) =>
-    scent[key].map((note, i) => ({
-      // Only the first note of a tier carries the label.
-      label: i === 0 ? label : '',
-      note,
-      key: `${key}-${note}`,
-    })),
-  );
+  // A written six-note accord wins; suits still to be written fall back to the
+  // three tiers, labelled once each, so the deck stays whole in the meantime.
+  const rows = accord
+    ? SCENT_RELATIONS.map(relation => ({
+        label: relation as string,
+        note: accord[relation],
+        key: relation,
+      }))
+    : scent
+    ? TIERS.flatMap(({ key, label }) =>
+        scent[key].map((note, i) => ({
+          label: i === 0 ? label : '',
+          note,
+          key: `${key}-${note}`,
+        })),
+      )
+    : [];
+
   if (rows.length === 0) return null;
 
   return (
     <section aria-label="scent notes">
+      {/* Centred with the block below it — a left heading over a centred panel
+          reads as a mistake rather than as a choice. */}
       <h4
-        className="text-[#C9F24E] mb-3 md:mb-5"
+        className="text-[#C9F24E] mb-3 md:mb-5 text-center"
         style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}
       >
         scent notes
@@ -55,15 +67,19 @@ export function ScentNotes({ cardId }: { cardId: string }) {
       <dl
         style={{
           display: 'grid',
-          // Tracks the design's 118-of-430 proportion on a phone but stops
-          // growing after that — as a straight percentage the label column
-          // drifted a quarter of the way across a desktop container and the
-          // seam lost its relationship to the heading above.
-          gridTemplateColumns: 'clamp(88px, 27vw, 132px) 1fr',
+          // Label column tracks the design's 118-of-430 proportion on a phone
+          // and stops growing after that; the note column takes only the width
+          // its longest note needs, so the pair can be centred as one unit.
+          gridTemplateColumns: 'clamp(88px, 27vw, 132px) max-content',
           columnGap: 'clamp(14px, 4vw, 18px)',
           rowGap: 'clamp(10px, 3vw, 12px)',
           alignItems: 'baseline',
-          margin: 0,
+          // Centred in the column: the block is a spec panel rather than prose,
+          // and left-aligning it against the handwritten body above left the
+          // seam floating in the middle of nothing.
+          width: 'fit-content',
+          marginInline: 'auto',
+          marginBlock: 0,
         }}
       >
         {rows.map(({ label, note, key }) => (
