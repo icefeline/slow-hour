@@ -49,6 +49,98 @@ export type CardAccord = Record<ScentRelation, string>;
  * whose accord comes from the design and deliberately differs.
  */
 export const cardAccords: Record<string, CardAccord> = {
+  // ── Major Arcana ──────────────────────────────────────────────────────────
+  // Unlike a suit, these share no family, so each is built to stand alone: the
+  // relations are what stop twenty-two singular cards blurring into each other.
+  'major-0': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'hay', 'COOLED BY': 'elderflower',
+    'WARMED BY': 'mimosa', 'DEEPENED BY': 'orris', 'CLOSES ON': 'white cedar',
+  },
+  'major-1': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'tobacco', 'COOLED BY': 'bergamot',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'labdanum', 'CLOSES ON': 'frankincense',
+  },
+  'major-2': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'orris', 'COOLED BY': 'sea salt',
+    'WARMED BY': 'myrrh', 'DEEPENED BY': 'blue lotus', 'CLOSES ON': 'oakmoss',
+  },
+  'major-3': {
+    'OPENS WITH': 'peach', 'STEADIED BY': 'fig', 'COOLED BY': 'rose',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'tuberose', 'CLOSES ON': 'sandalwood',
+  },
+  'major-4': {
+    'OPENS WITH': 'cardamom', 'STEADIED BY': 'cedar', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'labdanum', 'CLOSES ON': 'birch tar',
+  },
+  'major-5': {
+    'OPENS WITH': 'bay laurel', 'STEADIED BY': 'beeswax', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'frankincense', 'DEEPENED BY': 'myrrh', 'CLOSES ON': 'sandalwood',
+  },
+  'major-6': {
+    'OPENS WITH': 'neroli', 'STEADIED BY': 'ambrette seed', 'COOLED BY': 'rose',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'jasmine sambac', 'CLOSES ON': 'sandalwood',
+  },
+  'major-7': {
+    'OPENS WITH': 'ginger', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'vetiver', 'CLOSES ON': 'cedar',
+  },
+  'major-8': {
+    'OPENS WITH': 'saffron', 'STEADIED BY': 'immortelle', 'COOLED BY': 'pink pepper',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'rose', 'CLOSES ON': 'sandalwood',
+  },
+  'major-9': {
+    'OPENS WITH': 'sage', 'STEADIED BY': 'hinoki', 'COOLED BY': 'juniper',
+    'WARMED BY': 'palo santo', 'DEEPENED BY': 'frankincense', 'CLOSES ON': 'ash',
+  },
+  'major-10': {
+    'OPENS WITH': 'star anise', 'STEADIED BY': 'cardamom', 'COOLED BY': 'coriander seed',
+    'WARMED BY': 'cinnamon', 'DEEPENED BY': 'honey', 'CLOSES ON': 'tonka bean',
+  },
+  'major-11': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'iris', 'COOLED BY': 'sea salt',
+    'WARMED BY': 'vervain', 'DEEPENED BY': 'violet leaf', 'CLOSES ON': 'vetiver',
+  },
+  'major-12': {
+    'OPENS WITH': 'petrichor', 'STEADIED BY': 'blue lotus', 'COOLED BY': 'violet leaf',
+    'WARMED BY': 'myrrh', 'DEEPENED BY': 'oakmoss', 'CLOSES ON': 'vetiver',
+  },
+  'major-13': {
+    'OPENS WITH': 'rhubarb', 'STEADIED BY': 'immortelle', 'COOLED BY': 'cypress',
+    'WARMED BY': 'myrrh', 'DEEPENED BY': 'patchouli', 'CLOSES ON': 'oakmoss',
+  },
+  'major-14': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'chamomile', 'COOLED BY': 'coriander seed',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'rose', 'CLOSES ON': 'benzoin',
+  },
+  'major-15': {
+    'OPENS WITH': 'blackcurrant bud', 'STEADIED BY': 'tobacco', 'COOLED BY': 'ginger',
+    'WARMED BY': 'cacao', 'DEEPENED BY': 'oud', 'CLOSES ON': 'labdanum',
+  },
+  'major-16': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'tobacco', 'COOLED BY': 'ginger',
+    'WARMED BY': "dragon's blood", 'DEEPENED BY': 'birch tar', 'CLOSES ON': 'ash',
+  },
+  'major-17': {
+    'OPENS WITH': 'neroli', 'STEADIED BY': 'iris', 'COOLED BY': 'rose water',
+    'WARMED BY': 'mimosa', 'DEEPENED BY': 'blue lotus', 'CLOSES ON': 'white musk',
+  },
+  'major-18': {
+    'OPENS WITH': 'seaweed', 'STEADIED BY': 'mugwort', 'COOLED BY': 'blue lotus',
+    'WARMED BY': 'jasmine sambac', 'DEEPENED BY': 'ambergris', 'CLOSES ON': 'oakmoss',
+  },
+  'major-19': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'immortelle', 'COOLED BY': 'orange blossom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'saffron', 'CLOSES ON': 'sandalwood',
+  },
+  'major-20': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'frankincense', 'COOLED BY': 'hyssop',
+    'WARMED BY': 'tuberose', 'DEEPENED BY': 'oud', 'CLOSES ON': 'myrrh',
+  },
+  'major-21': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'fig', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'rose', 'DEEPENED BY': 'jasmine', 'CLOSES ON': 'sandalwood',
+  },
+
   // ── Cups (water — floral, honeyed, wet) ───────────────────────────────────
   'cups-ace': {
     'OPENS WITH': 'yuzu', 'STEADIED BY': 'magnolia', 'COOLED BY': 'white rose',
