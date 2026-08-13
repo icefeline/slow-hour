@@ -41,7 +41,18 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://slowww.garden"),
   title: "slow garden",
   description: "one card. one moment. one day.",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
+  // Declared here rather than as <link>s in <head> so Next owns the tags and
+  // they can't drift from the manifest. The spec sheet's 01 · original is the
+  // single installed icon on every platform; maskable-512 carries the 80% safe
+  // zone for Android's mask.
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-180.png", sizes: "180x180", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -73,10 +84,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#172211" />
-        <link rel="apple-touch-icon" href="/icon-512.png" />
-        <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
-        <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
+        {/* matches the icon's ground and the manifest's theme_color */}
+        <meta name="theme-color" content="#171F1A" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="slow garden" />
