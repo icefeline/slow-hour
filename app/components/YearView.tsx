@@ -259,14 +259,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       <div ref={yearHeaderRef} className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
-            className="text-[#C9F24E] mb-2"
-            style={LABEL_TYPE}
+            className="text-[#C9F24E] mb-1"
+            style={{ ...LABEL_TYPE, fontSize: 'clamp(22px, 5vw, 34px)', letterSpacing: '0.16em' }}
           >
             {year}
           </h1>
           <p
             className="text-[#F7F4E6] opacity-70"
-            style={{ ...LABEL_TYPE, letterSpacing: '0.12em' }}
+            style={{ ...LABEL_TYPE, fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.14em' }}
           >
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>

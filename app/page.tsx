@@ -558,12 +558,12 @@ export default function Home() {
               }}
               aria-pressed={currentView === 'card'}
               aria-label="View today's card"
-              className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
+              className={`px-3 md:px-5 py-1.5 md:py-2 rounded-full transition-all ${
                 currentView === 'card'
                   ? 'bg-[#C9F24E] text-[#172211]'
                   : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
-              style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+              style={{ ...LABEL_TYPE, fontSize: 'clamp(9px, 2.2vw, 11px)', letterSpacing: '0.16em' }}
             >
               today
             </button>
@@ -571,12 +571,12 @@ export default function Home() {
               onClick={() => setCurrentView('year')}
               aria-pressed={currentView === 'year'}
               aria-label="View year history"
-              className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full transition-all text-lg md:text-2xl ${
+              className={`px-3 md:px-5 py-1.5 md:py-2 rounded-full transition-all ${
                 currentView === 'year'
                   ? 'bg-[#C9F24E] text-[#172211]'
                   : 'bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60'
               }`}
-              style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+              style={{ ...LABEL_TYPE, fontSize: 'clamp(9px, 2.2vw, 11px)', letterSpacing: '0.16em' }}
             >
               year
             </button>
@@ -586,7 +586,7 @@ export default function Home() {
               <div className="hidden md:flex gap-3">
                 <button
                   onClick={handleReset}
-                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
+                  className="px-3 py-1.5 rounded-full text-sm bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Reset today's card"
                   style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
@@ -594,7 +594,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={generateRandomCards}
-                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
+                  className="px-3 py-1.5 rounded-full text-xs bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Generate 60 random cards"
                   style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
@@ -602,7 +602,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleFullReset}
-                  className="px-4 py-2 rounded-full text-2xl bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
+                  className="px-3 py-1.5 rounded-full text-sm bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all"
                   title="Full reset (including onboarding)"
                   style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
@@ -611,7 +611,7 @@ export default function Home() {
                 <button
                   onClick={() => runScatterAnimation(() => {})}
                   disabled={isAnimating}
-                  className="px-3 py-2 rounded-full text-lg bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all disabled:opacity-40"
+                  className="px-3 py-1.5 rounded-full text-xs bg-[#172211] text-[#C9F24E] border border-[#C9F24E]/30 hover:border-[#C9F24E]/60 transition-all disabled:opacity-40"
                   title="Preview scatter animation"
                   style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
                 >
