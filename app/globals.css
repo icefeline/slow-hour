@@ -170,12 +170,15 @@ input.rounded-3xl:focus-within {
 }
 
 /* PWA safe-area utilities for viewport-fit=cover */
+/* --nav-h is measured from the nav itself and already includes the safe-area
+   inset, since the nav pads itself by it. The fallbacks only apply for the
+   first paint, before the measurement lands. */
 .pt-safe-nav {
-  padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  padding-top: var(--nav-h, calc(3.5rem + env(safe-area-inset-top, 0px)));
 }
 @media (min-width: 768px) {
   .pt-safe-nav {
-    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+    padding-top: var(--nav-h, calc(5rem + env(safe-area-inset-top, 0px)));
   }
 }
 

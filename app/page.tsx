@@ -152,6 +152,7 @@ export default function Home() {
   const shuffleData = useRef<Array<{ tx: number; ty: number; tz: number; rtx: number; rty: number; rotateX: number; rotateY: number; rotateZ: number; spinDuration: number; spinReverse: boolean }>>([]);
   const convergeTarget = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const cardAnchorRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
   const shuffledImages = useRef<string[]>([...SCATTER_CARD_IMAGES]);
   const [pendingAutoReveal, setPendingAutoReveal] = useState(false);
   const [animateReveal, setAnimateReveal] = useState(false);
@@ -175,6 +176,32 @@ export default function Home() {
     animateCardsRef.current = null;
     requestAnimationFrame(() => requestAnimationFrame(() => fn()));
   }, [isAnimating]);
+
+
+  /*
+   * The nav's height, published as --nav-h.
+   *
+   * Anything that has to sit directly beneath it — the page's top padding, the
+   * year view's sticky header — used to hard-code 3.5rem/5rem. Those were only
+   * ever guesses at the rendered height, and they stopped being true the moment
+   * the nav's type changed: 3px of page content showed through under the bar on
+   * a phone, and the year header tucked 9px behind it on desktop. Measured, the
+   * offset cannot drift again. The height already includes the safe-area inset,
+   * since the nav pads itself by it.
+   */
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const publish = () => {
+      document.documentElement.style.setProperty('--nav-h', `${nav.getBoundingClientRect().height}px`);
+    };
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(nav);
+    return () => observer.disconnect();
+    // The loading screen and onboarding both return before the nav renders, so
+    // on first mount there is nothing to measure. Re-run once it exists.
+  }, [isLoading, showOnboarding]);
 
   useEffect(() => {
     // Check if onboarding has been completed
@@ -521,7 +548,7 @@ export default function Home() {
       <GroundTexture />
 
       {/* Navigation Header with Backdrop Blur */}
-      <div className="fixed top-0 left-0 right-0 z-30" style={{
+      <div ref={navRef} className="fixed top-0 left-0 right-0 z-30" style={{
         background: 'rgba(23, 34, 17, 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',

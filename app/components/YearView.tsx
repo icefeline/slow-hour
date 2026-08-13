@@ -177,7 +177,11 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   useEffect(() => {
     requestAnimationFrame(() => {
       if (!currentMonthRef.current) return;
-      const navHeight = window.innerWidth >= 768 ? 80 : 56; // md:top-20 = 80px, top-14 = 56px
+      // Same measured height the sticky header sits at, rather than a third
+      // copy of the guess.
+      const navHeight = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--nav-h'),
+      ) || (window.innerWidth >= 768 ? 80 : 56);
       const stickyHeight = yearHeaderRef.current?.offsetHeight ?? 88;
       const gap = 16;
       const elementTop = currentMonthRef.current.getBoundingClientRect().top + window.scrollY;
@@ -256,7 +260,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     <div className="relative min-h-screen bg-[#172211] pt-6 md:pt-12">
 
       {/* Sticky header */}
-      <div ref={yearHeaderRef} className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
+      <div
+        ref={yearHeaderRef}
+        className="sticky z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8"
+        /* Flush against the nav: a hard-coded offset left a strip of scrolling
+           content visible between the two the moment the nav resized. */
+        style={{ top: 'var(--nav-h, 3.5rem)' }}
+      >
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
             className="text-[#C9F24E] mb-1"
@@ -293,7 +303,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               key={monthName}
               ref={isCurrentMonth ? currentMonthRef : undefined}
               className="mb-10"
-              style={{ scrollMarginTop: '92px' }}
+              style={{ scrollMarginTop: 'calc(var(--nav-h, 3.5rem) + 36px)' }}
             >
               {/* Month name — intentionally small */}
               <h2
