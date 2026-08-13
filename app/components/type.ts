@@ -28,6 +28,8 @@ export const LABEL_TYPE: CSSProperties = {
  */
 export const BODY_TYPE: CSSProperties = {
   fontFamily: 'var(--font-biz-udmincho), serif',
-  fontSize: '22px',
+  // Was a flat 22px, which stayed 22px on a phone and on a wide desktop alike —
+  // too big in a 343px column, and not the size a serif wants for a paragraph.
+  fontSize: 'clamp(15px, 2.2vw, 19px)',
   lineHeight: 1.6,
 };
