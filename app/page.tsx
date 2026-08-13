@@ -7,7 +7,7 @@ import Onboarding from './components/Onboarding';
 import TearOffPage from './components/TearOffPage';
 import GroundTexture from './components/GroundTexture';
 import CardSelector from './components/CardSelector';
-import { LABEL_TYPE } from './components/type';
+import { BODY_TYPE, LABEL_TYPE } from './components/type';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
@@ -724,10 +724,10 @@ export default function Home() {
                       placeholder="spill your thoughts here"
                       onChange={(e) => handleJournalChange(e.target.value)}
                       defaultValue={reflection}
-                      style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}
+                      style={BODY_TYPE}
                     />
                   ) : (
-                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#F7F4E6] leading-relaxed" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>
+                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#F7F4E6] leading-relaxed" style={BODY_TYPE}>
                       {reflection}
                     </div>
                   )}

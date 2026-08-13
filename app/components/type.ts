@@ -17,3 +17,18 @@ export const LABEL_TYPE: CSSProperties = {
   letterSpacing: '0.2em',
   lineHeight: 1.4,
 };
+
+/**
+ * Body copy: the card's meaning, its description, a saved reflection.
+ *
+ * Uppercase mono at tight leading, so a paragraph reads as a block of texture
+ * rather than as prose — the same register the scent notes and the reading
+ * panel are already in.
+ */
+export const BODY_TYPE: CSSProperties = {
+  fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+  fontSize: '22px',
+  letterSpacing: '0.06em',
+  lineHeight: 1.2,
+  textTransform: 'uppercase',
+};
