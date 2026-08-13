@@ -7,6 +7,7 @@ import Onboarding from './components/Onboarding';
 import TearOffPage from './components/TearOffPage';
 import GroundTexture from './components/GroundTexture';
 import CardSelector from './components/CardSelector';
+import { LABEL_TYPE } from './components/type';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
@@ -541,7 +542,7 @@ export default function Home() {
             />
             <span
               className="text-[#F7F4E6]"
-              style={{ fontSize: 'clamp(15px, 2.6vw, 20px)', letterSpacing: '0.06em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1' }}
+              style={{ fontSize: 'clamp(16px, 2.8vw, 22px)', letterSpacing: '0.1em', fontVariant: 'small-caps', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1' }}
             >
               slow garden
             </span>
@@ -713,7 +714,7 @@ export default function Home() {
 
               return (
                 <div className="mt-12 w-full">
-                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
+                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={LABEL_TYPE}>
                     talk about it
                   </h3>
                   {isToday ? (

@@ -6,6 +6,7 @@ import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/ca
 import { getCardIcon } from './card-icons';
 import { ActiveInsight } from './ActiveInsight';
 import { ScentNotes } from './ScentNotes';
+import { LABEL_TYPE } from './type';
 import CardSlotReveal from './CardSlotReveal';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
 import type { ActiveTransit } from '@/lib/types/astrology';
@@ -447,7 +448,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Meaning */}
           <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>meaning</h4>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>meaning</h4>
             <p className="text-[#F7F4E6]" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>{activeMeaning.toLowerCase()}</p>
           </div>
 
@@ -459,7 +460,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
               card and its traditional meaning stand on their own. */}
           {!personalisationOn() ? null : insightError ? (
             <div>
-              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>what this could mean for you</h4>
+              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>what this could mean for you</h4>
               <div>
                 <p className="text-[#F7F4E6] opacity-60" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>
                   couldn&apos;t connect to the reading right now.
@@ -496,7 +497,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
           {/* Description */}
           <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>about this card</h4>
+            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>about this card</h4>
             <p className="text-[#F7F4E6]" style={{ fontSize: 'clamp(15px, 3.4vw, 22px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', lineHeight: '1.75' }}>{card.description.toLowerCase()}</p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import TarotCard from './TarotCard';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
+import { LABEL_TYPE } from './type';
 
 interface JournalEntry {
   date: string;
@@ -258,14 +259,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       <div ref={yearHeaderRef} className="sticky top-14 md:top-20 z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8">
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
-            className="text-4xl md:text-6xl text-[#C9F24E] mb-1"
-            style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+            className="text-[#C9F24E] mb-2"
+            style={LABEL_TYPE}
           >
             {year}
           </h1>
           <p
-            className="text-[#F7F4E6] text-base md:text-xl opacity-70"
-            style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+            className="text-[#F7F4E6] opacity-70"
+            style={{ ...LABEL_TYPE, letterSpacing: '0.12em' }}
           >
             {daysWithCards} {daysWithCards === 1 ? 'day' : 'days'} drawn
           </p>
@@ -289,7 +290,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               {/* Month name — intentionally small */}
               <h2
                 className={`mb-3 ${isCurrentMonth ? 'text-[#C9F24E]' : 'text-[#C9F24E]/50'}`}
-                style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace', fontSize: '20px', lineHeight: 1 }}
+                style={LABEL_TYPE}
               >
                 {monthName}
               </h2>

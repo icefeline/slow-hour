@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { cardAccords, cardScents, SCENT_RELATIONS } from '@/lib/data/card-scents';
 import { artForNotes } from '@/lib/data/scent-art';
+import { LABEL_TYPE } from './type';
 
 /**
  * The scent accord for a card, between the meaning and the personalised read.
@@ -177,7 +178,7 @@ export function ScentNotes({ cardId }: { cardId: string }) {
           reads as a mistake rather than as a choice. */}
       <h4
         className="text-[#C9F24E] mb-3 md:mb-5 text-center"
-        style={{ fontSize: 'clamp(11px, 2.6vw, 14px)', letterSpacing: '0.2em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+        style={LABEL_TYPE}
       >
         scent notes
       </h4>
