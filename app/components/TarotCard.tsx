@@ -5,6 +5,7 @@ import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
 import { getCardIcon } from './card-icons';
 import { ActiveInsight } from './ActiveInsight';
+import { ScentNotes } from './ScentNotes';
 import CardSlotReveal from './CardSlotReveal';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
 import type { ActiveTransit } from '@/lib/types/astrology';
@@ -449,6 +450,10 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
             <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={{ fontSize: 'clamp(18px, 3vw, 28px)', fontFamily: 'var(--font-reenie-beanie), cursive' }}>meaning</h4>
             <p className="text-[#E1EEFC]" style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontFamily: 'var(--font-reenie-beanie), cursive', lineHeight: '1.2' }}>{activeMeaning.toLowerCase()}</p>
           </div>
+
+          {/* Scent notes — sits between the traditional meaning and the
+              personalised read. Renders nothing for cards without an accord. */}
+          <ScentNotes cardId={card.id} />
 
           {/* Active Insight — omitted entirely when the reader opted out, so the
               card and its traditional meaning stand on their own. */}
