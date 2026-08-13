@@ -260,7 +260,15 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
         <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
             className="text-[#C9F24E] mb-1"
-            style={{ ...LABEL_TYPE, fontSize: 'clamp(22px, 5vw, 34px)', letterSpacing: '0.16em' }}
+            /* The pixel face, as on the tear-off calendar — this is the same
+               number in the same role. Sized up from the mono it replaces:
+               VT323 sits small for its point size. */
+            style={{
+              fontFamily: 'var(--font-vt323), monospace',
+              fontSize: 'clamp(30px, 6.5vw, 46px)',
+              letterSpacing: '0.14em',
+              lineHeight: 1,
+            }}
           >
             {year}
           </h1>
