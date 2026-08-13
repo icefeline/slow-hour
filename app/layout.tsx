@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Reenie_Beanie, VT323, Instrument_Serif, DM_Mono } from "next/font/google";
+import { Reenie_Beanie, VT323, Instrument_Serif, DM_Mono, BIZ_UDMincho } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -25,6 +25,12 @@ const dmMono = DM_Mono({
   weight: ['300', '400', '500'],
   subsets: ['latin'],
   variable: '--font-dm-mono',
+});
+
+const bizUdMincho = BIZ_UDMincho({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-biz-udmincho',
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -90,7 +96,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="slow garden" />
       </head>
-      <body className={`${reenieBeanie.variable} ${vt323.variable} ${instrumentSerif.variable} ${dmMono.variable} antialiased`}>
+      <body className={`${reenieBeanie.variable} ${vt323.variable} ${instrumentSerif.variable} ${dmMono.variable} ${bizUdMincho.variable} antialiased`}>
         {children}
         <Analytics />
       </body>

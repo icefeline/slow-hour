@@ -21,14 +21,13 @@ export const LABEL_TYPE: CSSProperties = {
 /**
  * Body copy: the card's meaning, its description, a saved reflection.
  *
- * Uppercase mono at tight leading, so a paragraph reads as a block of texture
- * rather than as prose — the same register the scent notes and the reading
- * panel are already in.
+ * BIZ UDMincho — a mincho serif, so the reading itself has a different voice
+ * from the mono chrome around it. Set in normal case at open leading: the
+ * previous uppercase-mono treatment turned a paragraph into texture, which is
+ * the opposite of what a serif is for.
  */
 export const BODY_TYPE: CSSProperties = {
-  fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+  fontFamily: 'var(--font-biz-udmincho), serif',
   fontSize: '22px',
-  letterSpacing: '0.06em',
-  lineHeight: 1.2,
-  textTransform: 'uppercase',
+  lineHeight: 1.6,
 };
