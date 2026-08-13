@@ -1006,7 +1006,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
           <AsciiFlower fontSize={22} color="#C9F24E" label="preparing your reading" />
-          <p className="text-3xl text-[#C9F24E]" style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
+          {/* The pixel face, small: this line belongs to the machine doing the
+              work, not to the interface asking for something. */}
+          <p
+            className="text-[#C9F24E]"
+            style={{
+              fontFamily: 'var(--font-vt323), monospace',
+              fontSize: 'clamp(14px, 3.2vw, 18px)',
+              letterSpacing: '0.12em',
+            }}
+          >
             preparing your reading...
           </p>
         </div>

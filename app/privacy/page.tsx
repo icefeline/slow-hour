@@ -20,7 +20,7 @@ const BODY = 'clamp(15px, 2.2vw, 19px)';
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-12">
-      <h2 className="mb-3" style={{ fontSize: H2, lineHeight: 1.25 }}>
+      <h2 className="mb-3" style={{ fontSize: H2, lineHeight: 1.25, fontWeight: 700 }}>
         {title}
       </h2>
       {children}
@@ -35,7 +35,7 @@ export default function PrivacyPolicy() {
       style={{ background: LIME, color: INK, fontFamily: SERIF }}
     >
       <div className="max-w-2xl mx-auto">
-        <h1 className="mb-1" style={{ fontSize: H1, lineHeight: 1.1 }}>
+        <h1 className="mb-1" style={{ fontSize: H1, lineHeight: 1.1, fontWeight: 700 }}>
           privacy policy
         </h1>
         <p className="mb-14 opacity-60" style={{ fontFamily: MONO, fontSize: 'clamp(10px, 2.2vw, 12px)', letterSpacing: '0.18em' }}>
@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
           </p>
           <ul className="list-disc pl-6 space-y-4" style={{ fontSize: BODY, lineHeight: 1.7 }}>
             <li>
-              <span className="underline">anthropic claude</span> — when you draw
+              <span className="underline" style={{ fontWeight: 700 }}>anthropic claude</span> — when you draw
               your card, your birth details and the card are sent to anthropic to
               generate the reading. their privacy policy applies:{' '}
               <a
@@ -92,23 +92,24 @@ export default function PrivacyPolicy() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline"
+                style={{ fontWeight: 700 }}
               >
                 anthropic.com/privacy
               </a>
             </li>
             <li>
-              <span className="underline">openstreetmap nominatim</span> — if you
+              <span className="underline" style={{ fontWeight: 700 }}>openstreetmap nominatim</span> — if you
               enter a birth location, that text is sent to openstreetmap&apos;s
               geocoder to find its coordinates. nothing else about you goes with it.
             </li>
             <li>
-              <span className="underline">upstash</span> — our rate limiter counts
+              <span className="underline" style={{ fontWeight: 700 }}>upstash</span> — our rate limiter counts
               requests per ip address so one network can&apos;t exhaust the service.
               your ip is stored as a short-lived counter and nothing else about you
               is attached to it.
             </li>
             <li>
-              <span className="underline">vercel analytics</span> — privacy-friendly,
+              <span className="underline" style={{ fontWeight: 700 }}>vercel analytics</span> — privacy-friendly,
               cookieless counts of how many people visit. no personal data, no
               cookie banner needed.
             </li>
@@ -138,7 +139,7 @@ export default function PrivacyPolicy() {
           </p>
         </Section>
 
-        <a href="/" className="underline" style={{ fontFamily: MONO, fontSize: 'clamp(11px, 2.4vw, 13px)', letterSpacing: '0.18em' }}>
+        <a href="/" className="underline" style={{ fontFamily: MONO, fontSize: 'clamp(11px, 2.4vw, 13px)', letterSpacing: '0.18em', fontWeight: 500 }}>
           ← back
         </a>
       </div>

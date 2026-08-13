@@ -28,7 +28,9 @@ const dmMono = DM_Mono({
 });
 
 const bizUdMincho = BIZ_UDMincho({
-  weight: '400',
+  // 700 is here for the privacy page's headings and links — without it the
+  // browser synthesises a fake bold by smearing the outlines.
+  weight: ['400', '700'],
   subsets: ['latin'],
   variable: '--font-biz-udmincho',
 });
