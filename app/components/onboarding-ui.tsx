@@ -187,14 +187,30 @@ export function ObToggle({
 }
 
 export function ObCta({
-  scale, onClick, disabled = false, label = 'CONTINUE',
-}: { scale: number; onClick: () => void; disabled?: boolean; label?: string }) {
+  scale, onClick, disabled = false, label = 'CONTINUE', lift = 0,
+}: {
+  scale: number; onClick: () => void; disabled?: boolean; label?: string;
+  /**
+   * Height of the on-screen keyboard, in px. When it is up, the CTA's usual
+   * home is underneath it, so the user has to dismiss the keyboard before they
+   * can even see the button. Given a lift, the CTA goes fixed and sits just
+   * above the keyboard instead — one tap to continue rather than done-then-tap.
+   */
+  lift?: number;
+}) {
+  const lifted = lift > 0;
   return (
     <button
       onClick={onClick}
       disabled={disabled}
+      // pointer-down beats the blur that would otherwise close the keyboard and
+      // move the button out from under the finger mid-tap
+      onPointerDown={(e) => { e.preventDefault(); }}
       style={{
-        position: 'absolute', left: px(24, scale), right: px(24, scale), bottom: px(34, scale),
+        position: lifted ? 'fixed' : 'absolute',
+        left: px(24, scale), right: px(24, scale),
+        bottom: lifted ? `${lift + 12}px` : px(34, scale),
+        zIndex: lifted ? 40 : undefined,
         height: px(62, scale), background: LIME, color: INK,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: `0 ${px(22, scale)}`, border: 'none', borderRadius: 0,

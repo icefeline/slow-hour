@@ -789,7 +789,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
               <ObHint tone="dark" scale={mobileScale}>STORED ON YOUR DEVICE ONLY</ObHint>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} lift={keyboardHeight} />
           </div>
         );
 
@@ -869,7 +869,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 )}
               </div>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} lift={keyboardHeight} />
           </div>
         );
 
@@ -1035,15 +1035,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       >
         {isDesignStep ? (
           /*
-           * Steps 1-3 are drawn on a fixed 356x748 canvas. Render it at exactly
-           * that aspect, centred — otherwise the top-anchored fields and the
-           * bottom-anchored CTA drift relative to each other and collide on
-           * shorter phones.
+           * Steps 1-3 are drawn on a 356x748 canvas. The HEIGHT is held to that
+           * aspect — the top-anchored fields and the bottom-anchored CTA drift
+           * into each other otherwise — but the width fills the screen. Pinning
+           * the width to 356 * scale too left a dead margin down both sides on
+           * any phone wider than the scaled canvas; the fields inset themselves
+           * by their own 24 design-px padding, which is the only gutter wanted.
            */
           <div className="flex-1 flex items-center justify-center w-full">
             <div
-              className="relative"
-              style={{ width: 356 * mobileScale, height: 748 * mobileScale }}
+              className="relative w-full"
+              style={{ height: 748 * mobileScale }}
             >
               {renderStepContent()}
             </div>

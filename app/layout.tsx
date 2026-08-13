@@ -84,8 +84,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* matches the icon's ground and the manifest's theme_color */}
-        <meta name="theme-color" content="#171F1A" />
+        {/* the design system's background, matching the manifest's theme_color */}
+        <meta name="theme-color" content="#172211" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="slow garden" />
