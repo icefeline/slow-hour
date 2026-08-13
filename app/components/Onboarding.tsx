@@ -700,20 +700,25 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             style={{ paddingBottom: `${96 * mobileScale}px` }}
           >
             {/*
-              Logo group — every dimension is in vw so the wordmark scales with the
-              viewport instead of being pinned to a fixed px size. Height is exactly
-              two line-heights. Auto margins centre it in the screen now that nothing
-              else sits in this column (the CTA is absolutely positioned).
+              Logo group — sized off one unit so the wordmark scales with the
+              viewport instead of being pinned to a fixed px size. The unit is
+              width-driven (42vw, the original proportion) until the screen is
+              too short for it — on a landscape phone a pure-vw wordmark grew
+              taller than the viewport and pushed the CTA off-screen — so the
+              height caps it. Every other measurement is a ratio of that unit,
+              keeping the Figma proportions intact at any size.
+              Auto margins centre it in the space above the CTA.
             */}
             <div style={{
+              '--wm': 'min(42vw, 34dvh)',
               position: 'relative',
               width: '100%',
-              height: '67.2vw',
+              height: 'calc(var(--wm) * 1.6)',
               marginTop: 'auto',
               marginBottom: 'auto',
               flexShrink: 0,
               overflow: 'visible',
-            }}>
+            } as React.CSSProperties}>
               {/* Glass text: "sl  w / garden" — Instrument Serif italic, -8% ls */}
               <div
                 style={{
@@ -734,8 +739,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   userSelect: 'none',
                 } as React.CSSProperties}
               >
-                <span style={{ display: 'block', fontSize: '42vw', lineHeight: '33.6vw', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
-                <span style={{ display: 'block', fontSize: '42vw', lineHeight: '33.6vw', letterSpacing: '-0.08em' }}>garden</span>
+                <span style={{ display: 'block', fontSize: 'var(--wm)', lineHeight: 'calc(var(--wm) * 0.8)', letterSpacing: '-0.08em' }}>sl&nbsp;&nbsp;w</span>
+                <span style={{ display: 'block', fontSize: 'var(--wm)', lineHeight: 'calc(var(--wm) * 0.8)', letterSpacing: '-0.08em' }}>garden</span>
               </div>
               {/* Spiral — sits in the gap between 'l' and 'w', standing in for the 'o' */}
               <img
@@ -744,9 +749,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 aria-hidden="true"
                 style={{
                   position: 'absolute',
-                  width: '38vw',
-                  height: '32.55vw',
-                  top: '10.1vw',
+                  width: 'calc(var(--wm) * 0.9048)',
+                  height: 'calc(var(--wm) * 0.775)',
+                  top: 'calc(var(--wm) * 0.2405)',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   pointerEvents: 'none',
@@ -897,7 +902,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         // as the title and the rest as body copy, so split on the first blank line.
         const { title: readingTitle, body: readingBody } = readingParts();
         return (
-          <div className="relative w-full h-full">
+          /*
+           * Flex column rather than absolute blocks: the reading is as long as
+           * the model makes it, and on a short viewport a fixed 560-tall text
+           * block ran straight through the card below it. Now the text takes
+           * whatever is left after the card's row is reserved, and scrolls.
+           */
+          <div
+            className="relative w-full h-full flex flex-col"
+            style={{ paddingTop: obPx(80, mobileScale), paddingBottom: obPx(34, mobileScale) }}
+          >
             {isLoadingWelcome && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <AsciiFlower fontSize={16} color="rgba(238, 244, 224, 0.7)" label="reading your chart" />
@@ -907,10 +921,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             {!isLoadingWelcome && (
               <div
                 style={{
-                  position: 'absolute', left: obPx(24, mobileScale), right: obPx(24, mobileScale),
-                  top: obPx(80, mobileScale), display: 'flex', flexDirection: 'column',
+                  paddingLeft: obPx(24, mobileScale), paddingRight: obPx(24, mobileScale),
+                  display: 'flex', flexDirection: 'column',
                   gap: obPx(14, mobileScale),
-                  maxHeight: obPx(560, mobileScale), overflowY: 'auto',
+                  flex: '1 1 auto', minHeight: 0, overflowY: 'auto',
                 }}
               >
                 <div
@@ -939,8 +953,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
             <div
               style={{
-                position: 'absolute', left: obPx(24, mobileScale), right: obPx(24, mobileScale),
-                bottom: obPx(34, mobileScale), display: 'flex', alignItems: 'flex-end',
+                paddingLeft: obPx(24, mobileScale), paddingRight: obPx(24, mobileScale),
+                marginTop: obPx(20, mobileScale),
+                flexShrink: 0, display: 'flex', alignItems: 'flex-end',
                 gap: obPx(16, mobileScale),
                 visibility: isTypingComplete && !isDragging ? 'visible' : 'hidden',
               }}
@@ -1013,7 +1028,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       <div
         className={`md:hidden relative z-10 flex flex-col
         ${currentStep === 0 ? '' : isDesignStep ? '' : 'px-5'}
-        ${currentStep === 4 ? 'overflow-hidden py-6' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}
+        ${currentStep === 4 ? 'overflow-hidden' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}
         /* held at the pre-keyboard height for the same reason the scale is —
            100dvh collapses under the keyboard and drags the layout up with it */
         style={{ height: baseHeight ? `${baseHeight}px` : '100dvh' }}
@@ -1034,7 +1049,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col w-full">
+          /* min-h-0 so the reading's scroll area can actually shrink — without it
+             a flex item refuses to go below its content height and the card row
+             below it is pushed off the bottom of a short screen */
+          <div className="flex-1 min-h-0 flex flex-col w-full">
             {renderStepContent()}
           </div>
         )}

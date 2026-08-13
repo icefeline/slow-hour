@@ -44,7 +44,8 @@ never use raw hex values in components — use Tailwind classes mapped to these.
 - **VT323** — monospace pixel font, used for the year calendar view
 - body text inherits system sans; keep it minimal
 
-the splash wordmark is sized in `vw` on mobile and in px against the 647px device-frame
+the splash wordmark is sized on mobile from a single `--wm` unit — `min(42vw, 34dvh)`,
+width-driven until the screen is too short — and in px against the 647px device-frame
 screen on desktop, using the same proportions on both — keep them in sync if you change one.
 
 ### motion
