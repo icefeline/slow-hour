@@ -107,6 +107,186 @@ export const cardAccords: Record<string, CardAccord> = {
     'OPENS WITH': 'elderflower', 'STEADIED BY': 'magnolia', 'COOLED BY': 'white rose',
     'WARMED BY': 'orange blossom', 'DEEPENED BY': 'ylang ylang', 'CLOSES ON': 'damask rose',
   },
+
+  // ── Swords (air — cool, dry, sharp, bitter) ───────────────────────────────
+  // The cool suit, so "warmed by" is the relation doing the most work here:
+  // it is the one note keeping each of these off the edge of austerity.
+  'swords-ace': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'vetiver', 'COOLED BY': 'violet leaf',
+    'WARMED BY': 'black pepper', 'DEEPENED BY': 'juniper', 'CLOSES ON': 'hinoki',
+  },
+  'swords-2': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'iris', 'COOLED BY': 'cucumber',
+    'WARMED BY': 'ambrette seed', 'DEEPENED BY': 'violet leaf', 'CLOSES ON': 'white musk',
+  },
+  'swords-3': {
+    'OPENS WITH': 'rhubarb', 'STEADIED BY': 'iris', 'COOLED BY': 'wet stone',
+    'WARMED BY': 'black pepper', 'DEEPENED BY': 'wormwood', 'CLOSES ON': 'oakmoss',
+  },
+  'swords-4': {
+    'OPENS WITH': 'eucalyptus', 'STEADIED BY': 'hinoki', 'COOLED BY': 'lavender',
+    'WARMED BY': 'chamomile', 'DEEPENED BY': 'hay', 'CLOSES ON': 'cedar',
+  },
+  'swords-5': {
+    'OPENS WITH': 'ginger', 'STEADIED BY': 'wormwood', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'birch tar', 'CLOSES ON': 'ash',
+  },
+  'swords-6': {
+    'OPENS WITH': 'sea salt', 'STEADIED BY': 'iris', 'COOLED BY': 'violet leaf',
+    'WARMED BY': 'bergamot', 'DEEPENED BY': 'cypress', 'CLOSES ON': 'oakmoss',
+  },
+  'swords-7': {
+    'OPENS WITH': 'coriander seed', 'STEADIED BY': 'tarragon', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'ambrette seed', 'CLOSES ON': 'vetiver',
+  },
+  'swords-8': {
+    'OPENS WITH': 'juniper', 'STEADIED BY': 'mugwort', 'COOLED BY': 'cypress',
+    'WARMED BY': 'wormwood', 'DEEPENED BY': 'vetiver', 'CLOSES ON': 'oakmoss',
+  },
+  'swords-9': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'valerian', 'COOLED BY': 'ginger',
+    'WARMED BY': 'wormwood', 'DEEPENED BY': 'myrrh', 'CLOSES ON': 'birch tar',
+  },
+  'swords-10': {
+    'OPENS WITH': 'rhubarb', 'STEADIED BY': 'iris', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'wormwood', 'CLOSES ON': 'ash',
+  },
+  'swords-page': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'green tea', 'COOLED BY': 'violet leaf',
+    'WARMED BY': 'pink pepper', 'DEEPENED BY': 'cedar', 'CLOSES ON': 'vetiver',
+  },
+  'swords-knight': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'ginger', 'DEEPENED BY': 'tobacco', 'CLOSES ON': 'cedar',
+  },
+  'swords-queen': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'iris', 'COOLED BY': 'violet leaf',
+    'WARMED BY': 'tarragon', 'DEEPENED BY': 'wormwood', 'CLOSES ON': 'vetiver',
+  },
+  'swords-king': {
+    'OPENS WITH': 'cardamom', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'hinoki',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'oakmoss', 'CLOSES ON': 'cedar',
+  },
+
+  // ── Wands (fire — hot, dry, spiced, resinous) ─────────────────────────────
+  // The inverse problem to swords: "cooled by" is the relief valve, and
+  // without it every one of these would read as the same hot spice.
+  'wands-ace': {
+    'OPENS WITH': 'ginger', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'pink pepper',
+    'WARMED BY': 'cinnamon', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'cedar',
+  },
+  'wands-2': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'frankincense', 'CLOSES ON': 'cedar',
+  },
+  'wands-3': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'sandalwood', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'saffron', 'DEEPENED BY': 'tobacco', 'CLOSES ON': 'frankincense',
+  },
+  'wands-4': {
+    'OPENS WITH': 'cinnamon', 'STEADIED BY': 'beeswax', 'COOLED BY': 'orange blossom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'rose', 'CLOSES ON': 'sandalwood',
+  },
+  'wands-5': {
+    'OPENS WITH': 'pink pepper', 'STEADIED BY': 'hay', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'ginger', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'cedar',
+  },
+  'wands-6': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'saffron', 'CLOSES ON': 'frankincense',
+  },
+  'wands-7': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'thyme', 'COOLED BY': 'ginger',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'vetiver',
+  },
+  'wands-8': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'cardamom', 'COOLED BY': 'star anise',
+    'WARMED BY': 'ginger', 'DEEPENED BY': 'pink pepper', 'CLOSES ON': 'cedar',
+  },
+  'wands-9': {
+    'OPENS WITH': 'cypress', 'STEADIED BY': 'thyme', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'labdanum', 'CLOSES ON': 'oakmoss',
+  },
+  'wands-10': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'hay', 'COOLED BY': 'cedar',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'labdanum', 'CLOSES ON': 'vetiver',
+  },
+  'wands-page': {
+    'OPENS WITH': 'yuzu', 'STEADIED BY': 'cardamom', 'COOLED BY': 'pink pepper',
+    'WARMED BY': 'ginger', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'cedar',
+  },
+  'wands-knight': {
+    'OPENS WITH': 'ginger', 'STEADIED BY': 'saffron', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'cinnamon', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'birch tar',
+  },
+  'wands-queen': {
+    'OPENS WITH': 'pink pepper', 'STEADIED BY': 'saffron', 'COOLED BY': 'bergamot',
+    'WARMED BY': 'cinnamon', 'DEEPENED BY': 'rose', 'CLOSES ON': 'sandalwood',
+  },
+  'wands-king': {
+    'OPENS WITH': 'cardamom', 'STEADIED BY': 'bay laurel', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': "dragon's blood", 'CLOSES ON': 'frankincense',
+  },
+
+  // ── Pentacles (earth — waxy, earthy, harvest, quiet) ──────────────────────
+  // The quietest suit. "Opens with" carries the green top — fig leaf, tomato
+  // leaf, carrot seed — so these don't start already underground.
+  'pentacles-ace': {
+    'OPENS WITH': 'fig leaf', 'STEADIED BY': 'orris', 'COOLED BY': 'carrot seed',
+    'WARMED BY': 'beeswax', 'DEEPENED BY': 'vetiver', 'CLOSES ON': 'sandalwood',
+  },
+  'pentacles-2': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'hay', 'COOLED BY': 'pink pepper',
+    'WARMED BY': 'ginger', 'DEEPENED BY': 'honey', 'CLOSES ON': 'vetiver',
+  },
+  'pentacles-3': {
+    'OPENS WITH': 'cardamom', 'STEADIED BY': 'hay', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'beeswax', 'DEEPENED BY': 'tobacco', 'CLOSES ON': 'cedar',
+  },
+  'pentacles-4': {
+    'OPENS WITH': 'black pepper', 'STEADIED BY': 'patchouli', 'COOLED BY': 'vetiver',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'labdanum', 'CLOSES ON': 'oakmoss',
+  },
+  'pentacles-5': {
+    'OPENS WITH': 'cypress', 'STEADIED BY': 'hay', 'COOLED BY': 'wet stone',
+    'WARMED BY': 'mugwort', 'DEEPENED BY': 'birch tar', 'CLOSES ON': 'oakmoss',
+  },
+  'pentacles-6': {
+    'OPENS WITH': 'bergamot', 'STEADIED BY': 'fig', 'COOLED BY': 'coriander seed',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'tobacco', 'CLOSES ON': 'beeswax',
+  },
+  'pentacles-7': {
+    'OPENS WITH': 'tomato leaf', 'STEADIED BY': 'hay', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'fig', 'DEEPENED BY': 'honey', 'CLOSES ON': 'vetiver',
+  },
+  'pentacles-8': {
+    'OPENS WITH': 'coriander seed', 'STEADIED BY': 'hay', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'beeswax', 'DEEPENED BY': 'tobacco', 'CLOSES ON': 'sandalwood',
+  },
+  'pentacles-9': {
+    'OPENS WITH': 'fig', 'STEADIED BY': 'orris', 'COOLED BY': 'bergamot',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'rose', 'CLOSES ON': 'sandalwood',
+  },
+  'pentacles-10': {
+    'OPENS WITH': 'fig', 'STEADIED BY': 'orris', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'patchouli', 'CLOSES ON': 'sandalwood',
+  },
+  'pentacles-page': {
+    'OPENS WITH': 'fig leaf', 'STEADIED BY': 'hay', 'COOLED BY': 'coriander seed',
+    'WARMED BY': 'carrot seed', 'DEEPENED BY': 'oakmoss', 'CLOSES ON': 'vetiver',
+  },
+  'pentacles-knight': {
+    'OPENS WITH': 'cardamom', 'STEADIED BY': 'hay', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'patchouli', 'CLOSES ON': 'vetiver',
+  },
+  'pentacles-queen': {
+    'OPENS WITH': 'fig', 'STEADIED BY': 'beeswax', 'COOLED BY': 'cardamom',
+    'WARMED BY': 'honey', 'DEEPENED BY': 'fenugreek', 'CLOSES ON': 'sandalwood',
+  },
+  'pentacles-king': {
+    'OPENS WITH': 'fig', 'STEADIED BY': 'patchouli', 'COOLED BY': 'black pepper',
+    'WARMED BY': 'tobacco', 'DEEPENED BY': 'truffle', 'CLOSES ON': 'oakmoss',
+  },
 };
 
 export const cardScents: Record<string, CardScent> = {
