@@ -1,0 +1,253 @@
+SLOW GARDEN — HOW "WHAT THIS COULD MEAN FOR YOU" IS WRITTEN
+The personalised reading on the card detail, generated once per card per day.
+Source: app/api/calculate-transit/route.ts, lib/utils/vedic-signal.ts,
+        lib/utils/jyotish.ts, lib/utils/astrology-calculator.ts
+Exported 2026-08-14.
+
+==============================================================================
+SHORT VERSION
+==============================================================================
+
+The words are written by Claude (claude-haiku-4-5, max 500 tokens), returning
+four fields as JSON. Everything it is given is computed from a real ephemeris
+or written by hand. Which card you drew is NOT chosen by AI — it is a hash of
+the date.
+
+==============================================================================
+STEP 0 — THE CARD ITSELF (no AI)
+==============================================================================
+
+  card       = seeded hash of the date (+ birth date), over the 78-card deck
+  reversed   = a second hash of the same seed
+  meaning    = looked up verbatim from the hand-written deck
+
+Same person, same day, same card, every time. Re-opening does not re-roll.
+
+==============================================================================
+STEP 1 — THE CHART (no AI)
+==============================================================================
+
+Same calculation as the welcome message: Nominatim for coordinates, the birth
+place's timezone for the true instant, astronomy-engine for positions, Lahiri
+ayanamsa for sidereal, Whole Sign houses, mean lunar node for Rahu/Ketu.
+
+==============================================================================
+STEP 2 — WHAT IS LIVE IN THE CHART TODAY (no AI)
+==============================================================================
+
+Four layers are computed, each moving at a different speed. Every one is
+deterministic — no model decides what is active.
+
+  DASHA        the Vimshottari period the person is living through. The first
+               mahadasha is the janma nakshatra's lord, already part spent at
+               birth by the fraction of the nakshatra the Moon had crossed;
+               the rest follow the fixed 120-year order. The running
+               mahadasha and antardasha are both computed, with how far
+               through each one the person is.
+               Scale: years, then months.
+
+  GOCHARA      where each graha sits today counted from the janma rashi,
+               1-12, and whether that position is classically favourable for
+               that graha. Saturn over the 12th, 1st or 2nd from the Moon is
+               named as sade sati, with its phase (rising / peak / setting).
+               Scale: weeks.
+
+  DRISHTI      which grahas are looking at which natal grahas today. Whole
+               sign glances, not orb-based aspects: everything aspects the
+               7th, Mars also 4/7/8, Jupiter 5/7/9, Saturn 3/7/10, the nodes
+               5/7/9.
+               Scale: days.
+
+  DIGNITY      whether today's leading graha is exalted, debilitated, in its
+               own sign or neutral; whether it is combust (too close to the
+               Sun); whether it is retrograde; and its navamsa sign.
+               Flavour on top.
+
+Plus RETURNS: any graha within 3 degrees of where it stood at birth.
+
+WHICH ONE LEADS
+  Every live signal is scored: base strength, +10 if the graha matches the
+  drawn card's affinity, +5 if it also rules the current dasha, plus a
+  deterministic jitter seeded from the day so the same person on the same day
+  always gets the same lead, but an ordinary week moves around the chart.
+  The dasha is deliberately excluded from this contest — it is reported
+  separately as the chapter every day, and it outscores everything else by
+  construction, so leading with it would name the same planet daily.
+
+==============================================================================
+STEP 3 — THE LAYERS BECOME PLAIN ENGLISH (no AI)
+==============================================================================
+
+No jargon reaches the model. Each graha and each house has a hand-written
+line, so nothing technical can leak into the reading:
+
+  sun      "the part of you that wants to be met on its own terms"
+  moon     "the part that feels first and explains itself later"
+  mercury  "the part that needs to name a thing before it can put it down"
+  venus    "the part that reaches for beauty, ease, and being wanted"
+  mars     "the part that pushes, and knows what it is willing to fight for"
+  jupiter  "the part that widens, believes, and looks for the meaning in it"
+  saturn   "the part that keeps time, holds the line, and asks what is
+            actually real"
+  rahu     "the hunger that pulls forward into unfamiliar ground"
+  ketu     "the part already letting go, and quietly bored of what used to
+            work"
+
+The twelve houses from the Moon are written the same way, e.g.
+  6th  "the daily grind and what it is wearing down"
+  10th "the work, and being watched while doing it"
+  12th "the inner room, solitude, and what is being released"
+
+The assembled block looks like this:
+
+  Chapter (ending): a long stretch about meaning, growth, and what is
+  believed.
+  Sub-chapter (ending): the hunger that pulls forward into unfamiliar ground.
+  Today's strongest thread: the part that keeps time, holds the line, and
+  asks what is actually real is sitting over what they are holding onto, and
+  what it costs to keep, where it tends to chafe.
+  It is moving backwards — revisiting rather than advancing.
+  Also live, quieter:
+  - ...
+  - ...
+
+==============================================================================
+STEP 4 — CONTINUITY
+==============================================================================
+
+Up to 10 previous memoryNotes and 10 recent card names are included, with an
+explicit instruction never to reference them aloud. This is what makes a run
+of readings feel continuous without the app saying "as I noticed last week".
+
+==============================================================================
+STEP 5 — THE PROMPT
+==============================================================================
+
+------------------------------------------------------------------------------
+[memory block, only if there is history]
+Background on this person — use this only to deepen your understanding of
+their current arc. Do not reference it directly. Do not say "as I've
+noticed", "you've been dealing with", or anything that signals you remember
+past readings. Let it quietly inform your accuracy and sensitivity.
+
+Recent patterns:
+- ...
+Cards drawn recently: ...
+
+[main prompt]
+You write the personalised synthesis for a tarot app called Slow Garden. This
+is the "what this could mean for you" section — the part that makes the
+reading feel like it was written specifically for this person.
+
+The app exists to help people see themselves more clearly, not to tell them
+what to do or think. The best insight doesn't hand them a conclusion — it
+holds up a mirror at exactly the right angle so they can find the thing
+themselves. Think less therapist, more that one friend who says the true
+thing gently and then lets you sit with it.
+
+Astrology context: Vedic sidereal zodiac (Lahiri ayanamsa), Whole Sign houses.
+
+Voice (these matter):
+- Entirely lowercase, no em dashes
+- Sound like a perceptive friend, not a practitioner
+- Be specific — vague wisdom is worthless here
+- No "journey", "navigate", "embrace", "explore", "tap into", "delve",
+  "unpack", "honour your", "give yourself permission"
+- No questions anywhere in the insight or action (the card already asks them)
+- Do not restate or paraphrase the card meaning — they can read it
+- Do not explain the transit in general terms — tell them what THIS transit
+  means in THEIR life right now
+- Do not name any zodiac sign
+
+[data note, when birth time or location is missing]
+
+About this person:
+- Janma nakshatra: ${nakshatraName} — fixed at birth, the deepest layer of
+  how they are built
+- Moon sign / janma rashi (sidereal): ${moonSign} — in Jyotish this is the
+  primary sign, how they actually feel and process
+- Sun sign (sidereal): ${sunSign} — secondary here; the outward-facing self,
+  not the core
+- Card drawn: ${cardName} (${orientation})
+- Card themes: ${coreThemes}
+- Emotional tone of this card: ${emotionalTone}
+
+What's happening in their chart right now.
+
+This is read the Jyotish way, in layers that move at different speeds: the
+dasha is the chapter they are years into, the gochara is where the grahas are
+sitting relative to their birth Moon, and the drishti is what has its
+attention on what today. The chapter is the backdrop; the strongest thread is
+the foreground. Let the two speak to each other — a small daily pressure
+inside a long chapter reads very differently from the same pressure inside a
+different one.
+
+${vedicContext}   <- the plain-English block from step 3
+
+Supporting western-style reading of the same sky, use only if it adds
+something:
+- ${transitingPlanet} ${aspectType} ${natalPlanet}, ${phase}
+- landing in the ${house}th house: ${houseTheme}
+
+Write a JSON object with exactly these four fields:
+
+"keyPhrase": 3-6 words. The headline for this specific moment — something
+that could only come from the combination of this card and this transit. Not
+a platitude. Lowercase.
+
+"insight": 2-4 sentences. This is the main reading. The card is a pattern.
+The transit is a pressure or an opening. The house is where it's playing out
+in their life. Put those three things together — not as separate facts, but
+as one coherent thing that's happening to them right now. Let their sun sign
+quietly shape the flavour of how they experience it. Make them feel seen in a
+way that surprises them slightly. No moralising, no advice. No questions.
+
+"action": 1-2 sentences. Not a task — a practice of noticing. Help them catch
+themselves at the exact moment the pattern runs automatically: the flinch,
+the deflection, the story they tell to stay comfortable. Frame it as an
+observation to collect, not a behaviour to change. The awareness is the whole
+point.
+
+"memoryNote": One sentence, lowercase. An honest private note about what's
+active in this person's inner life right now — written as a theme, not an
+event. No card names, no planet names, no "they" or "you". Pattern language
+only ("tension between X and Y" or "themes of A surfacing alongside B").
+
+Return only valid JSON, no markdown, no extra text.
+------------------------------------------------------------------------------
+
+==============================================================================
+STEP 6 — WHAT COMES BACK
+==============================================================================
+
+  keyPhrase   3-6 word headline
+  insight     the reading itself, 2-4 sentences
+  action      the "try this" noticing practice
+  memoryNote  private, never shown; stored locally and fed into future
+              readings for continuity
+
+If the model returns nothing usable, the app shows an error rather than
+substituting a generic reading.
+
+==============================================================================
+WHAT IS AND IS NOT AI
+==============================================================================
+
+  no AI       which card, whether it is reversed, the card's meaning, the
+              whole chart, the dasha, the gochara, the drishti, the dignity,
+              which signal leads today, and every description above
+  AI          keyPhrase, insight, action, memoryNote
+
+Personalisation off = no request is made at all. The reader gets the card and
+its traditional meaning.
+
+==============================================================================
+KNOWN LIMITS
+==============================================================================
+
+  · Vimshottari runs to mahadasha and antardasha only — no deeper levels.
+  · No vargas beyond the navamsa, which is computed but not yet read.
+  · No yogas.
+  · The supporting "western-style" line still uses Uranus, Neptune and Pluto,
+    which classical Jyotish does not recognise. It is secondary to the Vedic
+    block but it is still in the prompt.

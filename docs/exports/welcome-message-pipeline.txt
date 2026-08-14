@@ -1,0 +1,163 @@
+SLOW GARDEN — HOW THE WELCOME MESSAGE IS WRITTEN
+The message shown once, at the end of onboarding, before the first draw.
+Source: app/api/welcome-insight/route.ts
+Exported 2026-08-14.
+
+==============================================================================
+SHORT VERSION
+==============================================================================
+
+The words are written by Claude (claude-haiku-4-5, max 220 tokens).
+Everything Claude is given is computed or hand-written first — it never sees
+a birth date, and it is never asked to do astrology. It is given four
+pre-written descriptions and a strict voice spec, and asked to join them up.
+
+==============================================================================
+STEP 1 — WHAT THE PERSON GIVES
+==============================================================================
+
+  name            required (falls back to "friend")
+  birth date      required, DD/MM/YYYY
+  birth time      optional
+  birth location  optional
+
+Anything longer than its limit is truncated and stripped:
+name 100 chars, location 200, time 5.
+
+==============================================================================
+STEP 2 — THE CHART IS CALCULATED (no AI)
+==============================================================================
+
+calculateNatalChart() runs before any model call:
+
+  · birth location -> coordinates via OpenStreetMap Nominatim
+  · coordinates -> IANA timezone, and the birth clock time is resolved to a
+    real UTC instant in that zone (historical DST included)
+  · planetary positions from the astronomy-engine ephemeris
+  · Lahiri ayanamsa subtracted -> sidereal positions
+  · sidereal ascendant -> Whole Sign houses
+  · Rahu and Ketu from the mean lunar node
+
+From that chart three things are pulled:
+
+  JANMA NAKSHATRA  the nakshatra the Moon occupied at birth, from the real
+                   sidereal Moon. 27 possibilities.
+  JANMA RASHI      the sidereal Moon sign. 12 possibilities.
+  LIFE PATH        the birth date's digits summed to a single digit, keeping
+                   11/22/33. This is numerology, not astrology.
+
+==============================================================================
+STEP 3 — THOSE THREE BECOME HAND-WRITTEN TEXT
+==============================================================================
+
+Each lookup is a phrase written by hand and stored in the route. Claude is
+given the phrase, never the name of the placement.
+
+  · 27 nakshatra quality lines — one per nakshatra
+      e.g. dhanishtha: "rhythm and abundance — moves between worlds easily,
+      gathers and gives in equal measure, a certain restless vitality"
+
+  · 9 dasha theme lines — one per nakshatra ruling planet
+      e.g. mars: "a drive toward action and will — what is worth fighting
+      for, what isn't"
+
+  · 12 moon rashi quality lines — one per sign
+      e.g. aquarius: "needs distance to understand what it feels — raw
+      emotion without analysis is overwhelming"
+
+  · 12 life path notes — one per number
+      e.g. 9: "a path of release — always finishing cycles before others are
+      ready for them to end"
+
+A greeting is also chosen by the nakshatra's ruling planet, from a fixed
+menu of two per planet:
+
+  ketu     "{name}." / "oh, {name}."
+  venus    "welcome, {name}." / "hey, {name}."
+  sun      "hey, {name}." / "{name}."
+  moon     "hey, {name}." / "oh, {name}."
+  mars     "hey, {name}." / "there you are, {name}."
+  rahu     "oh, {name}." / "there you are, {name}."
+  jupiter  "welcome, {name}." / "good, {name}."
+  saturn   "{name}." / "good, {name}."
+  mercury  "hey, {name}." / "welcome, {name}."
+
+==============================================================================
+STEP 4 — HONESTY ABOUT PRECISION
+==============================================================================
+
+One of four data notes is included, so the model knows what it can claim:
+
+  time + location   "full Jyotish context — janma nakshatra, moon rashi and
+                    lagna all exact"
+  time only         "janma nakshatra and moon rashi exact; lagna approximate
+                    without location"
+  neither, Moon stayed in one nakshatra all day
+                    "janma nakshatra and moon rashi are still exact; no lagna"
+  neither, Moon crossed a boundary that day
+                    "treat the janma nakshatra as the likelier of two; no lagna"
+
+==============================================================================
+STEP 5 — THE PROMPT
+==============================================================================
+
+Sent verbatim, with ${...} filled from the steps above.
+
+------------------------------------------------------------------------------
+You write the welcome message for Slow Garden, a tarot app grounded in Vedic
+astrology (Jyotish). Someone has just entered their birth details for the
+first time. This is what they read first — a brief, personal reflection that
+shows their chart has actually been considered, and opens toward their first
+card draw.
+
+This app uses Jyotish, not Western astrology. That means:
+- The janma nakshatra (birth lunar mansion) is the most personal and
+  distinctive marker — lean into it heavily
+- The janma rashi (moon sign in Jyotish) is the primary identity marker —
+  more important than the sun sign
+- Do NOT write about sun sign energy as the main thing — the nakshatra and
+  moon rashi say more
+- The ruling planet of the nakshatra colours what the soul is being asked to
+  work with
+
+Voice (non-negotiable):
+- Entirely lowercase, no em dashes, no exclamation marks
+- Perceptive friend who just looked at the chart — warm and specific, not
+  practitioner-speak
+- Begin with this greeting (choose the one that best fits the nakshatra
+  energy): ${greetingHint}
+- After the greeting: 3 sentences only. Each must open with a different word.
+  No sentence after the greeting may start with "you"
+- Use varied openers: "there's", "something in", "a lot of what", "for
+  someone", "in people with", "what shows up", "the pattern", "most of what",
+  "some of", "this kind of"
+- Be specific to the actual placements — not generic. The nakshatra quality
+  is the anchor
+- Final sentence: 5-8 words, quietly gestures toward the card draw
+- No nakshatra name, no rashi name, no planet name — describe the quality,
+  embody the concept
+- No: "journey", "navigate", "embrace", "explore", "tap into", "delve",
+  "unpack", "honour", "karma", "dharma", "resonate"
+- No questions
+
+About this person:
+Name: ${sanitizedName}
+Janma nakshatra quality: ${nakshatra.quality}
+Nakshatra ruling planet theme: ${DASHA_THEMES[nakshatra.planet]}
+Janma rashi (moon sign) quality: ${MOON_RASHI_QUALITIES[moonRashi]}
+Life path: ${LIFE_PATH_NOTES[lifePath]}
+Data: ${dataNote}
+
+Write: greeting line + exactly 3 sentences. Total ~65-80 words. Nothing else.
+------------------------------------------------------------------------------
+
+==============================================================================
+WHAT IS AND IS NOT AI
+==============================================================================
+
+  computed, no AI    the chart, the nakshatra, the rashi, the life path,
+                     the greeting menu, all four description sets
+  written by AI      the 4 sentences the reader sees
+
+If the reader turned personalisation off during onboarding, no request is
+made at all and a local message is used instead.

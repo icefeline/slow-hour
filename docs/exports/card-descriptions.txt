@@ -1,0 +1,337 @@
+SLOW GARDEN — CARD DESCRIPTIONS
+Every card's "about this card" line. 78 cards.
+Exported 2026-08-14.
+
+==============================================================================
+
+
+——————————————————————————————————————————————————————————————————————————————
+MAJOR
+——————————————————————————————————————————————————————————————————————————————
+
+THE FOOL  [major-0]
+  The Fool is the first card of the Major Arcana and represents the
+  beginning of a journey.
+
+THE MAGICIAN  [major-1]
+  The Magician harnesses the power of the universe to manifest desires into
+  reality.
+
+THE HIGH PRIESTESS  [major-2]
+  The High Priestess sits at the gate between the conscious and subconscious
+  realms.
+
+THE EMPRESS  [major-3]
+  The Empress embodies the archetypal mother figure, representing creation
+  and abundance.
+
+THE EMPEROR  [major-4]
+  The Emperor represents masculine energy, structure, and the establishment
+  of order.
+
+THE HIEROPHANT  [major-5]
+  The Hierophant represents traditional values and sacred rituals.
+
+THE LOVERS  [major-6]
+  The Lovers represents union, relationships, and the choices we make in
+  love.
+
+THE CHARIOT  [major-7]
+  The Chariot represents triumph over obstacles through determination and
+  control.
+
+STRENGTH  [major-8]
+  Strength represents the quiet power of compassion and inner fortitude.
+
+THE HERMIT  [major-9]
+  The Hermit represents the path of introspection and seeking inner truth.
+
+WHEEL OF FORTUNE  [major-10]
+  The Wheel of Fortune represents the ever-turning cycles of life and fate.
+
+JUSTICE  [major-11]
+  Justice represents truth, fairness, and the law of cause and effect.
+
+THE HANGED MAN  [major-12]
+  The Hanged Man represents surrender and the wisdom gained through new
+  perspectives.
+
+DEATH  [major-13]
+  Death represents profound transformation and the necessary endings that
+  make way for new beginnings.
+
+TEMPERANCE  [major-14]
+  Temperance represents the alchemical process of blending opposites into
+  wholeness.
+
+THE DEVIL  [major-15]
+  The Devil represents the chains we forge ourselves and the illusions that
+  bind us.
+
+THE TOWER  [major-16]
+  The Tower represents sudden upheaval and the liberation that comes from
+  necessary destruction.
+
+THE STAR  [major-17]
+  The Star represents the return of hope and the healing light that guides
+  us forward.
+
+THE MOON  [major-18]
+  The Moon represents the realm of illusion, intuition, and the mysteries of
+  the subconscious.
+
+THE SUN  [major-19]
+  The Sun represents the radiant energy of joy, success, and unfiltered
+  vitality.
+
+JUDGEMENT  [major-20]
+  Judgement represents the moment of awakening and the call to rise into a
+  new version of yourself.
+
+THE WORLD  [major-21]
+  The World represents the culmination of a journey and the integration of
+  all you have learned.
+
+
+——————————————————————————————————————————————————————————————————————————————
+CUPS
+——————————————————————————————————————————————————————————————————————————————
+
+ACE OF CUPS  [cups-ace]
+  The Ace of Cups represents the pure potential of emotional and creative
+  abundance.
+
+TWO OF CUPS  [cups-2]
+  The Two of Cups represents the sacred bond of mutual respect and emotional
+  connection.
+
+THREE OF CUPS  [cups-3]
+  The Three of Cups represents the joy found in authentic community and
+  shared celebration.
+
+FOUR OF CUPS  [cups-4]
+  The Four of Cups represents the danger of apathy and the invitation to see
+  what is already being offered.
+
+FIVE OF CUPS  [cups-5]
+  The Five of Cups represents the grief of loss and the choice to see what
+  still remains.
+
+SIX OF CUPS  [cups-6]
+  The Six of Cups represents the tender gifts of memory and the healing
+  found in innocence.
+
+SEVEN OF CUPS  [cups-7]
+  The Seven of Cups represents the dizzying array of choices and the need
+  for discernment.
+
+EIGHT OF CUPS  [cups-8]
+  The Eight of Cups represents the brave journey of leaving behind what no
+  longer serves the soul.
+
+NINE OF CUPS  [cups-9]
+  The Nine of Cups represents the deep satisfaction of wishes fulfilled and
+  contentment earned.
+
+TEN OF CUPS  [cups-10]
+  The Ten of Cups represents the culmination of emotional fulfillment and
+  lasting harmony.
+
+PAGE OF CUPS  [cups-page]
+  The Page of Cups represents the tender beginnings of emotional and
+  creative exploration.
+
+KNIGHT OF CUPS  [cups-knight]
+  The Knight of Cups represents the courage to follow what makes your heart
+  come alive.
+
+QUEEN OF CUPS  [cups-queen]
+  The Queen of Cups represents the power of emotional wisdom and
+  compassionate presence.
+
+KING OF CUPS  [cups-king]
+  The King of Cups represents the wisdom of emotional mastery and
+  compassionate leadership.
+
+
+——————————————————————————————————————————————————————————————————————————————
+WANDS
+——————————————————————————————————————————————————————————————————————————————
+
+ACE OF WANDS  [wands-ace]
+  The Ace of Wands represents the ignition of creative fire and the courage
+  to begin.
+
+TWO OF WANDS  [wands-2]
+  The Two of Wands represents the power of vision and the moment before bold
+  action.
+
+THREE OF WANDS  [wands-3]
+  The Three of Wands represents the momentum of vision becoming reality.
+
+FOUR OF WANDS  [wands-4]
+  The Four of Wands represents the joyful celebration of foundations built
+  and stability earned.
+
+FIVE OF WANDS  [wands-5]
+  The Five of Wands represents the creative tension of conflict and the
+  challenge of competing energies.
+
+SIX OF WANDS  [wands-6]
+  The Six of Wands represents the triumph of effort recognized and the
+  confidence earned through achievement.
+
+SEVEN OF WANDS  [wands-7]
+  The Seven of Wands represents the courage to defend what you believe in
+  against opposition.
+
+EIGHT OF WANDS  [wands-8]
+  The Eight of Wands represents the swift movement of energy and the
+  acceleration of progress.
+
+NINE OF WANDS  [wands-9]
+  The Nine of Wands represents the weary courage of resilience and the
+  strength to continue.
+
+TEN OF WANDS  [wands-10]
+  The Ten of Wands represents the weight of responsibility and the need to
+  discern what is yours to carry.
+
+PAGE OF WANDS  [wands-page]
+  The Page of Wands represents the fearless enthusiasm of creative
+  exploration.
+
+KNIGHT OF WANDS  [wands-knight]
+  The Knight of Wands represents the fierce energy of passionate action and
+  bold pursuit.
+
+QUEEN OF WANDS  [wands-queen]
+  The Queen of Wands represents the radiant power of self-assured leadership
+  and creative fire.
+
+KING OF WANDS  [wands-king]
+  The King of Wands represents the commanding presence of visionary
+  leadership and inspired action.
+
+
+——————————————————————————————————————————————————————————————————————————————
+SWORDS
+——————————————————————————————————————————————————————————————————————————————
+
+ACE OF SWORDS  [swords-ace]
+  The Ace of Swords represents the sharp clarity of truth and the power of
+  mental breakthrough.
+
+TWO OF SWORDS  [swords-2]
+  The Two of Swords represents the paralysis of indecision and the refusal
+  to see clearly.
+
+THREE OF SWORDS  [swords-3]
+  The Three of Swords represents the sharp pain of heartbreak and the
+  necessary grief of truth.
+
+FOUR OF SWORDS  [swords-4]
+  The Four of Swords represents the sacred pause of rest and the restoration
+  needed to continue.
+
+FIVE OF SWORDS  [swords-5]
+  The Five of Swords represents the emptiness of victory won through
+  domination and the cost of conflict.
+
+SIX OF SWORDS  [swords-6]
+  The Six of Swords represents the quiet journey of transition and the
+  necessary leaving behind.
+
+SEVEN OF SWORDS  [swords-7]
+  The Seven of Swords represents the slippery slope of deception and the
+  cost of dishonesty.
+
+EIGHT OF SWORDS  [swords-8]
+  The Eight of Swords represents the prison of our own beliefs and the power
+  to free ourselves.
+
+NINE OF SWORDS  [swords-9]
+  The Nine of Swords represents the torment of anxiety and the prison of
+  fearful thoughts.
+
+TEN OF SWORDS  [swords-10]
+  The Ten of Swords represents the finality of painful endings and the
+  promise of what comes after.
+
+PAGE OF SWORDS  [swords-page]
+  The Page of Swords represents the keen curiosity of the mind and the
+  courage to seek truth.
+
+KNIGHT OF SWORDS  [swords-knight]
+  The Knight of Swords represents the fierce pursuit of truth and the
+  courage of direct action.
+
+QUEEN OF SWORDS  [swords-queen]
+  The Queen of Swords represents the power of clear sight and the wisdom of
+  honest discernment.
+
+KING OF SWORDS  [swords-king]
+  The King of Swords represents the mastery of intellect and the authority
+  of clear, fair judgment.
+
+
+——————————————————————————————————————————————————————————————————————————————
+PENTACLES
+——————————————————————————————————————————————————————————————————————————————
+
+ACE OF PENTACLES  [pentacles-ace]
+  The Ace of Pentacles represents the seed of material abundance and the
+  potential for grounded growth.
+
+TWO OF PENTACLES  [pentacles-2]
+  The Two of Pentacles represents the dynamic balance of managing multiple
+  responsibilities.
+
+THREE OF PENTACLES  [pentacles-3]
+  The Three of Pentacles represents the power of collaboration and the
+  mastery built through shared effort.
+
+FOUR OF PENTACLES  [pentacles-4]
+  The Four of Pentacles represents the tension between security and the fear
+  of scarcity.
+
+FIVE OF PENTACLES  [pentacles-5]
+  The Five of Pentacles represents the pain of hardship and the help we
+  sometimes cannot see.
+
+SIX OF PENTACLES  [pentacles-6]
+  The Six of Pentacles represents the flow of generosity and the balance of
+  giving and receiving.
+
+SEVEN OF PENTACLES  [pentacles-7]
+  The Seven of Pentacles represents the patience required between effort and
+  reward.
+
+EIGHT OF PENTACLES  [pentacles-8]
+  The Eight of Pentacles represents the dedication required to achieve
+  mastery through practice.
+
+NINE OF PENTACLES  [pentacles-9]
+  The Nine of Pentacles represents the rewards of self-sufficiency and the
+  pleasure of independence.
+
+TEN OF PENTACLES  [pentacles-10]
+  The Ten of Pentacles represents the culmination of wealth and the legacy
+  we leave behind.
+
+PAGE OF PENTACLES  [pentacles-page]
+  The Page of Pentacles represents the grounded curiosity of learning and
+  the patience of new beginnings.
+
+KNIGHT OF PENTACLES  [pentacles-knight]
+  The Knight of Pentacles represents the steady dedication of consistent
+  effort and reliable progress.
+
+QUEEN OF PENTACLES  [pentacles-queen]
+  The Queen of Pentacles represents the generosity of nurturing and the
+  abundance of grounded care.
+
+KING OF PENTACLES  [pentacles-king]
+  The King of Pentacles represents the mastery of material abundance and the
+  wisdom of grounded leadership.
+
