@@ -227,13 +227,25 @@ export default function AsciiFlower({
     const host = hostRef.current;
     if (!host) return;
     const measure = () => {
-      const room = host.clientWidth || host.parentElement?.clientWidth || window.innerWidth;
+      /*
+       * Clamped to the viewport as well as to the host. These render in both
+       * the mobile and desktop branches at once, and a host inside a container
+       * that does not constrain it reports a width wider than the screen — on
+       * a phone that put the plant's edges off both sides. The screen is the
+       * hard limit whatever the box says.
+       */
+      const measured = host.clientWidth || host.parentElement?.clientWidth || window.innerWidth;
+      const room = Math.min(measured, window.innerWidth * 0.86);
       setFontPx(Math.max(2.4, Math.min(12, room / (COLS * ADVANCE))));
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(host);
-    return () => ro.disconnect();
+    window.addEventListener('resize', measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
   }, []);
 
   useEffect(() => {

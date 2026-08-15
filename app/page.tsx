@@ -129,6 +129,9 @@ function localDateString(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+/** One full open-and-close of the loading flower. */
+const MIN_LOADING_MS = 2600;
+
 interface JournalEntry {
   date: string;
   cardId: string;
@@ -144,6 +147,18 @@ export default function Home() {
   const [isReversed, setIsReversed] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  /**
+   * The loader is a flower that takes a moment to open, and the work behind it
+   * usually finishes before it has. Cutting it off mid-unfurl made the app feel
+   * like it flinched, so the screen is held for one full breath either way.
+   */
+  const loadStartedAt = useRef(Date.now());
+  const finishLoading = () => {
+    const elapsed = Date.now() - loadStartedAt.current;
+    const remaining = Math.max(0, MIN_LOADING_MS - elapsed);
+    if (remaining === 0) setIsLoading(false);
+    else setTimeout(() => setIsLoading(false), remaining);
+  };
   const [dateString, setDateString] = useState('');
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [viewingPastCard, setViewingPastCard] = useState(false);
@@ -210,7 +225,7 @@ export default function Home() {
     const onboardingComplete = localStorage.getItem('onboardingComplete');
     if (!onboardingComplete) {
       setShowOnboarding(true);
-      setIsLoading(false);
+      finishLoading();
     } else {
       loadTodaysCard();
       loadJournalEntries();
@@ -271,10 +286,10 @@ export default function Home() {
         loadJournalEntries();
       }
 
-      setIsLoading(false);
+      finishLoading();
     } catch (error) {
       console.error('Failed to load card:', error);
-      setIsLoading(false);
+      finishLoading();
     }
   };
 
