@@ -994,7 +994,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           >
             {isLoadingWelcome && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <AsciiFlower color="rgba(238, 244, 224, 0.7)" label="reading your chart" />
+                <AsciiFlower color={LIME} label="reading your chart" />
               </div>
             )}
 
@@ -1077,7 +1077,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ backgroundColor: '#172211' }}>
         <div className="flex flex-col items-center gap-6">
-          <AsciiFlower color="#C9F24E" label="preparing your reading" />
+          <AsciiFlower color={LIME} label="preparing your reading" />
           {/* The pixel face, small: this line belongs to the machine doing the
               work, not to the interface asking for something. */}
           <p
@@ -1405,7 +1405,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                           <>
                             {isLoadingWelcome && (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <AsciiFlower color="rgba(23, 34, 17, 0.55)" label="reading your chart" />
+                                <AsciiFlower color={COBALT} weight={500} label="reading your chart" />
                               </div>
                             )}
 

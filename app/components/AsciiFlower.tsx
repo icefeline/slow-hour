@@ -193,6 +193,8 @@ interface AsciiFlowerProps {
   script?: ScriptName;
   /** Defaults to currentColor so it inherits from wherever it is dropped. */
   color?: string;
+  /** DM Mono ships 300/400/500. 500 carries better on a pale ground. */
+  weight?: 300 | 400 | 500;
   /** Announced to assistive tech; the art itself is hidden from it. */
   label?: string;
   className?: string;
@@ -203,12 +205,15 @@ export default function AsciiFlower({
   width = 'min(86vw, 520px)',
   script = 'begin again',
   color,
+  weight = 400,
   label = 'loading',
   className,
   style,
 }: AsciiFlowerProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [frame, setFrame] = useState('');
+  /** Row window of the drawing, measured once at full bloom. */
+  const cropRef = useRef<[number, number] | null>(null);
 
   /**
    * Character size, from the room it actually has.
@@ -241,19 +246,13 @@ export default function AsciiFlower({
     const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const start = performance.now();
 
-    const draw = () => {
+    const build = (breath: number): string[] => {
       /*
        * Unfurl, hold, fold back. A pure triangle touches full bloom for a
        * single frame, so almost every glance caught the plant half open and it
        * read as an unfinished drawing rather than a flower. It now spends a
        * third of the breath fully open, which is the state the design shows.
        */
-      const phase = still ? 0.5 : ((performance.now() - start) % BREATH_MS) / BREATH_MS;
-      const breath =
-        phase < 0.34 ? phase / 0.34
-        : phase < 0.66 ? 1
-        : 1 - (phase - 0.66) / 0.34;
-
       paintPlant(ctx, canvas.width, canvas.height, breath);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -283,7 +282,45 @@ export default function AsciiFlower({
         }
         lines.push(line.replace(/\s+$/, ''));
       }
-      setFrame(lines.join('\n'));
+
+      /*
+       * Crop to where the plant actually is.
+       *
+       * The canvas reserves sky above the bloom and ground below the leaves, so
+       * the drawing's mass sits well below the middle of the full grid — dropped
+       * into a centred box it reads as hanging low. The window is measured once,
+       * at full bloom, and reused for every frame: the plant only ever shrinks
+       * inward from open, so the window always contains it and the block never
+       * changes height as it breathes.
+       */
+      return lines;
+    };
+
+    /*
+     * Measure the window from the open plant, before anything is shown.
+     *
+     * The canvas reserves sky above the bloom and ground below the leaves, so
+     * the drawing's mass sits below the middle of the full grid and reads as
+     * hanging low in a centred box. Cropping to the open state is what makes it
+     * sit true — and it has to be the open state, since the plant only ever
+     * shrinks inward from there. Measured from a closed bud the window would be
+     * a few rows tall and clip the bloom the moment it opened.
+     */
+    const open = build(1);
+    let top = 0;
+    let bottom = open.length - 1;
+    while (top < bottom && open[top].trim() === '') top++;
+    while (bottom > top && open[bottom].trim() === '') bottom--;
+    cropRef.current = [top, bottom];
+
+    const draw = () => {
+      const phase = still ? 0.5 : ((performance.now() - start) % BREATH_MS) / BREATH_MS;
+      const breath =
+        phase < 0.34 ? phase / 0.34
+        : phase < 0.66 ? 1
+        : 1 - (phase - 0.66) / 0.34;
+      const lines = build(breath);
+      setFrame(lines.slice(top, bottom + 1).join('\n'));
     };
 
     draw();
@@ -314,6 +351,7 @@ export default function AsciiFlower({
         style={{
           margin: 0,
           fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+          fontWeight: weight,
           fontSize: `${fontPx}px`,
           /*
            * The sampling cell is 3 wide by 5 tall, so the rendered cell has to
@@ -326,6 +364,14 @@ export default function AsciiFlower({
           color: color ?? 'currentColor',
           whiteSpace: 'pre',
           userSelect: 'none',
+          /*
+           * Optical centring. The plant is rooted at the bottom of its grid and
+           * crowns around 40% of the way down, so the top eighth of the block is
+           * always empty — centring the box therefore hangs the visible drawing
+           * low. Lifting it by half that empty band puts the plant itself in the
+           * middle, which is what the eye is measuring.
+           */
+          transform: 'translateY(-6%)',
           /*
            * Emphatically not text-align: center. Every line is a row of the
            * picture and they only line up when they all start at the same x —
