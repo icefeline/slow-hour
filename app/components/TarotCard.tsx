@@ -8,6 +8,7 @@ import {
   styles, type MarginRow,
 } from './card-page';
 import { clockTime, formatOrb, lifetimeDraws, noteShares } from '@/lib/utils/card-readout';
+import { cardScents } from '@/lib/data/card-scents';
 import { getHere } from '@/lib/utils/here';
 import CardSlotReveal from './CardSlotReveal';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
@@ -137,6 +138,14 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
   /** The date this reading is for — a past card keeps its own, not today's. */
   const readingDate = cardDate ?? todayKey();
+
+  /**
+   * How many notes this card's recipe holds. Recipes run five to eleven, so the
+   * margin's percentage column is as long as the distill list beside it rather
+   * than a fixed six.
+   */
+  const scent = cardScents[card.id];
+  const noteCount = scent ? scent.top.length + scent.heart.length + scent.base.length : 0;
 
   /**
    * The margin's draw count.
@@ -470,7 +479,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
       <div className={styles.col}>
         <CardName name={card.name} />
 
-        <Plate left={marginRows} shares={noteShares(card.id)}>
+        <Plate left={marginRows} shares={noteShares(card.id, noteCount)}>
           {/* The app's own card element, carried over untouched — the plate
               holds it, it doesn't re-implement it.
 

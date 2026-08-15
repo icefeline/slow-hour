@@ -12,31 +12,56 @@
  */
 
 import { seededRandom } from './card-utils';
-import { SCENT_RELATIONS, type ScentRelation } from '../data/card-scents';
+import type { CardScent } from '../data/card-scents';
 
 /**
  * The verb column in the distill list.
  *
- * The accord's relations are written as phrases ("STEADIED BY") because that is
- * how they read in prose; the list wants the bare verb so the column is one
- * word wide at every row. Same six relations, same order — this is a rendering
- * of SCENT_RELATIONS, not a second source of truth.
+ * A recipe has as many notes as it has — five to eleven across the deck — so
+ * the verbs cannot be a fixed list of six. Each tier draws from its own pool in
+ * order, which keeps the word honest: a top note can open or lift or cool, and
+ * a base note grounds or binds, because that is what those tiers do. Assigning
+ * verbs by position alone would end up calling a base note BRIGHTENS.
+ *
+ * Two are pinned. The first note always OPENS and the last always CLOSES,
+ * whatever the counts, so every card's list reads as one arc from first meeting
+ * to last trace rather than as three lists stacked.
+ *
+ * The pools are longer than any tier currently needs. A tier that somehow ran
+ * past its pool repeats the last verb rather than falling off the end, which is
+ * the least wrong thing to print.
  */
-const RELATION_VERBS: Record<ScentRelation, string> = {
-  'OPENS WITH': 'OPENS',
-  'STEADIED BY': 'STEADIES',
-  'COOLED BY': 'COOLS',
-  'WARMED BY': 'WARMS',
-  'DEEPENED BY': 'DEEPENS',
-  'CLOSES ON': 'CLOSES',
-};
+const TIER_VERBS = {
+  top: ['OPENS', 'LIFTS', 'BRIGHTENS', 'COOLS', 'SHARPENS'],
+  heart: ['STEADIES', 'WARMS', 'ROUNDS', 'SOFTENS', 'SWEETENS', 'DRIES'],
+  base: ['DEEPENS', 'SMOKES', 'GROUNDS', 'BINDS', 'CLOSES'],
+} as const;
 
-export function relationVerb(relation: string): string {
-  return RELATION_VERBS[relation as ScentRelation] ?? relation;
+export interface DistillRow {
+  note: string;
+  verb: string;
+  tier: keyof CardScent;
+}
+
+/** Every note a card carries, in tier order, each with what it does. */
+export function distillRows(scent: CardScent): DistillRow[] {
+  const rows: DistillRow[] = [];
+  (['top', 'heart', 'base'] as const).forEach(tier => {
+    const pool = TIER_VERBS[tier];
+    scent[tier].forEach((note, i) => {
+      rows.push({ note, verb: pool[Math.min(i, pool.length - 1)], tier });
+    });
+  });
+
+  if (rows.length > 0) {
+    rows[0] = { ...rows[0], verb: 'OPENS' };
+    rows[rows.length - 1] = { ...rows[rows.length - 1], verb: 'CLOSES' };
+  }
+  return rows;
 }
 
 /**
- * Six percentages for a card's accord, indexed 01–06 against the distill list.
+ * A percentage per note, indexed against the distill list.
  *
  * These are a proportion of the accord, not a measurement — no perfumer weighed
  * anything. What matters is that a card's numbers never change between readings
@@ -48,7 +73,7 @@ export function relationVerb(relation: string): string {
  * or two either way; it goes onto the largest share, where it is least visible,
  * which is what guarantees the column sums to exactly 100.
  */
-export function noteShares(cardId: string, count = SCENT_RELATIONS.length): number[] {
+export function noteShares(cardId: string, count: number): number[] {
   const FLOOR = 8;
   const weights = Array.from({ length: count }, (_, i) => seededRandom(`${cardId}-note-${i}`));
   const total = weights.reduce((sum, w) => sum + w, 0);

@@ -123,10 +123,21 @@ const buildShuffleData = () => {
   });
 };
 
-// Use local calendar date (not UTC) so midnight in user's timezone triggers the new card
-function localDateString(): string {
-  const d = new Date();
+/**
+ * A date as the reader's own calendar has it, never UTC.
+ *
+ * Every date key in the app is local — the card is for the day you are living
+ * in, not the day in Greenwich. Mixing the two is invisible in Europe and wrong
+ * for eight hours a day east of it: a reader at UTC+8 between midnight and 8am
+ * gets yesterday's ISO date, so anything comparing the two decides the day is
+ * not today and quietly disappears.
+ */
+function toLocalDateString(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function localDateString(): string {
+  return toLocalDateString(new Date());
 }
 
 /** One full open-and-close of the loading flower. */
@@ -478,8 +489,10 @@ export default function Home() {
    * flickered on each character would be noise rather than reassurance.
    */
   const renderInputBlock = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const isToday = dateString === today;
+    // Local, because dateString is. This compared against the UTC date and so
+    // hid the whole block — prompt, textarea and saved line — for the first
+    // hours of every day east of Greenwich.
+    const isToday = dateString === localDateString();
     const reflection = localStorage.getItem(`reflection-${dateString}`) || '';
 
     // A past day with nothing written has no log to show.
@@ -565,7 +578,7 @@ export default function Home() {
     // Convert to dates and save cards
     usedDates.forEach(dayOfYear => {
       const date = new Date(year, 0, dayOfYear + 1);
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = toLocalDateString(date);
       const randomCard = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
       const isReversed = Math.random() > 0.5;
 
@@ -593,7 +606,7 @@ export default function Home() {
       setIsReversed(reversed);
       setIsRevealed(true);
       setCurrentView('card');
-      setDateString(new Date().toISOString().split('T')[0]);
+      setDateString(localDateString());
     }
   };
 
@@ -810,7 +823,7 @@ export default function Home() {
               window.scrollTo({ top: 0, behavior: 'instant' });
               setCurrentView('card');
             }}
-            currentDate={new Date().toISOString().split('T')[0]}
+            currentDate={localDateString()}
           />
         )}
       </div>
