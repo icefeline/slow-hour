@@ -8,6 +8,7 @@
  * - Insight structure templates
  */
 
+import type { SkyReadout } from './card-readout';
 import { CardArchetype, getCardArchetype, getRandomCardPhrase } from '../data/card-archetypes';
 import { getRandomTransitOpener, getTimingPhrase, planetMeanings } from '../data/transit-templates';
 import { getRandomHousePhrase, getHouseEmotionalResonance, getRandomHouseQuestion, houseContexts } from '../data/house-contexts';
@@ -43,6 +44,21 @@ export interface GeneratedInsight {
     aspectType: string;
     aspectMeaning: string;
     phaseMeaning: string;
+  };
+  /**
+   * The reading page's margin column, cached alongside the insight.
+   *
+   * Kept with the reading rather than recomputed on open, so a card pulled up
+   * six months later reports the sky it was actually drawn under. Optional
+   * because readings cached before this existed have none, and the page omits
+   * the rows it has no number for.
+   */
+  readout?: {
+    /** Degrees from exact, for the margin's orb row. */
+    orb: number | null;
+    /** Whether the aspect is at peak — the log line's EXACT: YES/NO. */
+    exact: boolean;
+    sky: SkyReadout | null;
   };
 }
 

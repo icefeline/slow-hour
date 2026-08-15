@@ -13,15 +13,15 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  /* Reading text is the mincho serif; the mono is chrome. The handwritten face
-     is reserved for the two places it earns — the card name and the keywords
-     orbiting it. */
-  font-family: var(--font-biz-udmincho), serif;
+  /* Reading text is DM Sans; the mono is chrome. The handwritten face is
+     reserved for the splash and onboarding, which are the two places it
+     earns. */
+  font-family: var(--font-dm-sans), sans-serif;
 }
 
 /* Controls stay mono: buttons, the nav, and anything you operate rather than
-   read. The journal field is the exception and sets the serif itself, since
-   what you type there is reading text. */
+   read. The journal field is the exception and sets the reading face itself,
+   since what you type there is reading text. */
 button, input, textarea, select {
   font-family: var(--font-dm-mono), ui-monospace, monospace;
 }
@@ -123,27 +123,6 @@ button, input, textarea, select {
 
 .kaleidoscope-layer-3 {
   animation: kaleidoscope-layer-3 30s ease-in-out infinite;
-}
-
-/* Circular marquee animation for keywords */
-@keyframes circular-revolve {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(68px) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg) translateX(68px) rotate(-360deg);
-  }
-}
-
-@media (min-width: 768px) {
-  @keyframes circular-revolve {
-    0% {
-      transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg);
-    }
-    100% {
-      transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg);
-    }
-  }
 }
 
 /* Accessible focus styles for keyboard navigation */

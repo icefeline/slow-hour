@@ -7,7 +7,8 @@ import Onboarding from './components/Onboarding';
 import TearOffPage from './components/TearOffPage';
 import GroundTexture from './components/GroundTexture';
 import CardSelector from './components/CardSelector';
-import { BODY_TYPE, LABEL_TYPE } from './components/type';
+import { LABEL_TYPE } from './components/type';
+import cardPage from './components/card-page/card-page.module.css';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
@@ -439,9 +440,58 @@ export default function Home() {
     loadJournalEntries();
   };
 
+  /**
+   * Length of the reflection as last committed, so the saved line can appear on
+   * blur. A length rather than the text itself: nothing here needs the content,
+   * and holding a second copy of it in state would only invite the two to drift.
+   */
+  const [savedLength, setSavedLength] = useState(0);
+
   const handleJournalChange = (value: string) => {
     localStorage.setItem(`reflection-${dateString}`, value);
     loadJournalEntries(); // Refresh entries
+  };
+
+  /**
+   * SPEC §10, the input block, handed to TarotCard so it renders inside the
+   * reading page's own ground and measure. The state stays here: the text and
+   * its per-date key belong to the page, not to the card.
+   *
+   * The saved line is the confirmation the spec asks for and updates on blur —
+   * writing happens on every keystroke as it always has, but a line that
+   * flickered on each character would be noise rather than reassurance.
+   */
+  const renderInputBlock = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = dateString === today;
+    const reflection = localStorage.getItem(`reflection-${dateString}`) || '';
+
+    // A past day with nothing written has no log to show.
+    if (!isToday && !reflection.trim()) return null;
+
+    return (
+      <section className={`${cardPage.col} ${cardPage.input}`}>
+        <div className={cardPage.prompt}>&gt; INPUT YOUR_THOUGHTS</div>
+        {isToday ? (
+          <textarea
+            aria-label="Write your reflection on today's card"
+            rows={4}
+            placeholder="spill your thoughts here"
+            defaultValue={reflection}
+            onChange={(e) => handleJournalChange(e.target.value)}
+            onBlur={(e) => setSavedLength(e.target.value.trim().length)}
+          />
+        ) : (
+          <div className={cardPage.entry}>{reflection}</div>
+        )}
+        {/* Only a log that has something in it can confirm itself. */}
+        {(isToday ? savedLength > 0 : reflection.trim().length > 0) && (
+          <div className={cardPage.saved}>
+            &gt; SAVED TO {dateString}.LOG <span className={cardPage.cursor}>_</span>
+          </div>
+        )}
+      </section>
+    );
   };
 
   const handleDateClick = (date: string) => {
@@ -653,8 +703,10 @@ export default function Home() {
       {/* Content */}
       <div className="pt-safe-nav flex-1">
         {currentView === 'card' && card && (
-          <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12">
-            {/* Date */}
+          <div className={isRevealed ? 'py-6 md:py-10' : 'max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12'}>
+            {/* Once revealed, the reading page governs its own measure
+                (1080px), so the wrapper steps out of the way. Sealed, the
+                tear-off still wants the narrow column. */}
             <div className="text-center mb-4 md:mb-8">
               <p
                 className="text-[#C9F24E]"
@@ -682,6 +734,7 @@ export default function Home() {
                 artVisibleEarly={!isRevealed}
                 userName={localStorage.getItem('userName') || undefined}
                 cardDate={dateString}
+                footer={isRevealed ? renderInputBlock() : undefined}
               />
               {!isRevealed && (
                 <TearOffPage onTear={handleTearReveal} disabled={isAnimating} />
@@ -728,39 +781,6 @@ export default function Home() {
               </>
             )}
 
-            {/* Reflection Area */}
-            {isRevealed && (() => {
-              const today = new Date().toISOString().split('T')[0];
-              const isToday = dateString === today;
-              const reflection = localStorage.getItem(`reflection-${dateString}`) || '';
-
-              // Only show reflection section if it's today OR if there's a past reflection
-              if (!isToday && !reflection.trim()) {
-                return null;
-              }
-
-              return (
-                <div className="mt-12 w-full">
-                  <h3 className="text-[#C9F24E] mb-4 md:mb-6" style={LABEL_TYPE}>
-                    talk about it
-                  </h3>
-                  {isToday ? (
-                    <textarea
-                      aria-label="Write your reflection on today's card"
-                      className="w-full h-48 bg-[#172211] text-[#F7F4E6] border border-[#C9F24E]/30 hover:border-[#C9F24E]/50 focus:border-[#C9F24E] rounded-xl p-4 md:p-6 focus:outline-none resize-none leading-relaxed placeholder:text-[#F7F4E6]/40"
-                      placeholder="spill your thoughts here"
-                      onChange={(e) => handleJournalChange(e.target.value)}
-                      defaultValue={reflection}
-                      style={BODY_TYPE}
-                    />
-                  ) : (
-                    <div className="bg-[#172211] border border-[#C9F24E]/20 rounded-xl p-4 md:p-6 text-[#F7F4E6] leading-relaxed" style={BODY_TYPE}>
-                      {reflection}
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
           </div>
         )}
 

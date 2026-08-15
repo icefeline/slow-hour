@@ -38,11 +38,41 @@ slow garden is a meditative daily tarot app for self-reflection. not prediction,
 
 never use raw hex values in components — use Tailwind classes mapped to these. if a colour isn't in the design system, ask before adding it.
 
+the table above is the app's chrome. the accent in the code is `#C9F24E` and the paper
+`#F7F4E6` — the card reading page carries the full token set (see below), and the rest of
+the app has drifted onto those two.
+
 ### typography
 - **Instrument Serif (italic)** — the "slow garden" wordmark on the splash screen only
-- **Reenie Beanie** — handwritten feel, used for headings, card names, UI labels
-- **VT323** — monospace pixel font, used for the year calendar view
+- **Reenie Beanie** — handwritten feel. splash and onboarding only now; it left the
+  card reading page when that page moved to its own spec (see below)
+- **VT323** — monospace pixel font: the year calendar view, and all machine copy
+- **DM Mono** — micro-labels and list voice (`LABEL_TYPE` in `app/components/type.ts`)
+- **DM Sans** — reading copy on the card page only
+- **BIZ UDMincho** — body copy elsewhere in the app (`BODY_TYPE`)
 - body text inherits system sans; keep it minimal
+
+### the card reading page
+
+`app/components/TarotCard.tsx` and `app/components/card-page/` are built to their own
+spec — the design bundle's `build/SPEC.md`, with `build/card-page.html` as the reference
+render. That page does not follow the palette or the faces above. Its rules:
+
+- **three voices, strictly assigned.** VT323 for machine copy and the whole lime module,
+  headline included; DM Mono for the keyword and note lists and micro-labels; DM Sans for
+  the meaning copy and the textarea. Nothing else, and no handwritten face anywhere.
+- **the card name is the headline** — 138px uppercase in paper white, not a lime
+  handwritten sprawl.
+- **every rule is dotted**, except the 2px-on-5px spine between the body columns.
+- **one accent.** Lime is spent on the `>` prompts and the module ground, nothing else.
+- **numbers must be real.** The margin figures are computed or omitted, never faked —
+  see `lib/utils/card-readout.ts` and `lib/utils/sky.ts`.
+- **nothing animates** below the card. The trailing `_` cursor is the only exception; the
+  tear-off and slot reveal above it are untouched.
+
+Its colour tokens live twice, deliberately: as `READING` in `app/components/type.ts` for
+TypeScript and as custom properties in `card-page.module.css` for CSS. They are the same
+table from SPEC §2 — change one, change the other.
 
 the splash wordmark is sized on mobile from a single `--wm` unit — `min(42vw, 34dvh)`,
 width-driven until the screen is too short — and in px against the 647px device-frame

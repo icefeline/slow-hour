@@ -4,7 +4,7 @@
  * counted, the notes catalogued, the date stamped — and a privacy policy is
  * none of those; it is the one place in the app speaking plainly as a person.
  */
-const SERIF = 'var(--font-biz-udmincho), serif';
+const SANS = 'var(--font-dm-sans), sans-serif';
 const MONO = 'var(--font-dm-mono), ui-monospace, monospace';
 
 /** Lime page, ink type — the tear-off calendar's palette, not the app's dark ground. */
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
   return (
     <main
       className="min-h-screen px-6 py-16"
-      style={{ background: LIME, color: INK, fontFamily: SERIF }}
+      style={{ background: LIME, color: INK, fontFamily: SANS }}
     >
       <div className="max-w-2xl mx-auto">
         <h1 className="mb-1" style={{ fontSize: H1, lineHeight: 1.1, fontWeight: 700 }}>

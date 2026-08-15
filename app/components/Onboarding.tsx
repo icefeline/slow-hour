@@ -18,6 +18,7 @@ import {
   fieldStyle, obValue, obPx, LIME, BONE,
   COBALT, INK,
 } from './onboarding-ui';
+import { clearHere, getHere, hasHere } from '@/lib/utils/here';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -64,6 +65,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   // Whether Claude reads their chart. Off means the plain card meaning only —
   // no API call, no quota spent. Default on, but it is a real choice.
   const [personalise, setPersonalise] = useState(true);
+
+  /**
+   * Whether the reader lets the app see where they are.
+   *
+   * Only feeds the reading page's sunrise and sunset — the sun came up over
+   * wherever they are this morning, which is not necessarily where their chart
+   * was cast. Off by default, and asked for here rather than mid-reveal: a
+   * browser permission dialog landing on the card as it opens is the wrong beat
+   * for that moment.
+   *
+   * The switch follows the browser, not the intent: if the reader declines the
+   * dialog it goes back off, because leaving it on would promise rows the
+   * margin can never fill.
+   */
+  const [useLocation, setUseLocation] = useState(false);
+  useEffect(() => { setUseLocation(hasHere()); }, []);
+
+  const handleLocationToggle = async (on: boolean) => {
+    if (!on) {
+      clearHere();
+      setUseLocation(false);
+      return;
+    }
+    setUseLocation(!!(await getHere({ ask: true })));
+  };
 
   // Error states
   const [dateError, setDateError] = useState('');
@@ -899,7 +925,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 </span>
                 <ObToggle tone="dark" scale={mobileScale} on={personalise} onChange={setPersonalise} label="read my chart" />
               </div>
-              <ObHint tone="dark" scale={mobileScale}>YOU CAN TURN THIS OFF ANY DAY</ObHint>
+              <div style={{ ...fieldStyle('dark', mobileScale, useLocation), padding: `0 ${obPx(16, mobileScale)} 0 ${obPx(18, mobileScale)}` }}>
+                <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, mobileScale), color: BONE }}>
+                  USE MY LOCATION
+                </span>
+                <ObToggle tone="dark" scale={mobileScale} on={useLocation} onChange={handleLocationToggle} label="use my location" />
+              </div>
+              <ObHint tone="dark" scale={mobileScale}>LOCATION ONLY SETS YOUR SUNRISE AND SUNSET</ObHint>
+              <ObHint tone="dark" scale={mobileScale}>YOU CAN TURN THESE OFF ANY DAY</ObHint>
             </ObFields>
             <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
@@ -1413,7 +1446,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                               </span>
                               <ObToggle tone="light" scale={DESKTOP_SCALE} on={personalise} onChange={setPersonalise} label="read my chart" />
                             </div>
-                            <ObHint tone="light" scale={DESKTOP_SCALE}>YOU CAN TURN THIS OFF ANY DAY</ObHint>
+                            <div style={{ ...fieldStyle('light', DESKTOP_SCALE, useLocation), padding: `0 ${obPx(16, DESKTOP_SCALE)} 0 ${obPx(18, DESKTOP_SCALE)}` }}>
+                              <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, DESKTOP_SCALE), color: INK }}>
+                                USE MY LOCATION
+                              </span>
+                              <ObToggle tone="light" scale={DESKTOP_SCALE} on={useLocation} onChange={handleLocationToggle} label="use my location" />
+                            </div>
+                            <ObHint tone="light" scale={DESKTOP_SCALE}>LOCATION ONLY SETS YOUR SUNRISE AND SUNSET</ObHint>
+                            <ObHint tone="light" scale={DESKTOP_SCALE}>YOU CAN TURN THESE OFF ANY DAY</ObHint>
                           </ObFields>
                           <ObCta scale={DESKTOP_SCALE} onClick={handleNext} />
                         </>

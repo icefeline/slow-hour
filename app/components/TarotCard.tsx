@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
-import { getActiveMeaning, getActiveKeywords, formatSuite } from '@/lib/utils/card-utils';
-import { getCardIcon } from './card-icons';
-import { ActiveInsight } from './ActiveInsight';
-import { ScentNotes } from './ScentNotes';
-import { BODY_TYPE, LABEL_TYPE } from './type';
+import { getActiveMeaning, getActiveKeywords } from '@/lib/utils/card-utils';
+import {
+  CardName, Distill, Keywords, Meaning, Module, Plate, Readout, StateLine,
+  styles, type MarginRow,
+} from './card-page';
+import { clockTime, formatOrb, lifetimeDraws, noteShares } from '@/lib/utils/card-readout';
+import { getHere } from '@/lib/utils/here';
 import CardSlotReveal from './CardSlotReveal';
 import { generateInsight, TransitData, GeneratedInsight } from '@/lib/utils/insight-generator-v2';
 import type { ActiveTransit } from '@/lib/types/astrology';
@@ -24,6 +26,12 @@ interface TarotCardProps {
   artVisibleEarly?: boolean;
   userName?: string;
   cardDate?: string; // YYYY-MM-DD of when the card was drawn; defaults to today
+  /**
+   * SPEC §10, the input block. Rendered inside the reading page so it sits on
+   * the page's own ground and at its measure, but owned by the caller — the
+   * reflection text and its per-date storage key live in page.tsx.
+   */
+  footer?: ReactNode;
 }
 
 // Memory types
@@ -123,10 +131,47 @@ function convertToTransitData(transit: ActiveTransit): TransitData {
   };
 }
 
-export default function TarotCard({ card, isReversed, isRevealed, animateReveal, artVisibleEarly, userName, cardDate }: TarotCardProps) {
+export default function TarotCard({ card, isReversed, isRevealed, animateReveal, artVisibleEarly, userName, cardDate, footer }: TarotCardProps) {
   const activeMeaning = getActiveMeaning(card, isReversed);
   const activeKeywords = getActiveKeywords(card, isReversed);
-  const CardIcon = getCardIcon(card.id);
+
+  /** The date this reading is for — a past card keeps its own, not today's. */
+  const readingDate = cardDate ?? todayKey();
+
+  /**
+   * The margin's draw count.
+   *
+   * Read once on mount rather than during render: localStorage is not available
+   * on the server, and counting it inline would make the first client render
+   * disagree with the markup React shipped.
+   */
+  const [draws, setDraws] = useState(0);
+  useEffect(() => setDraws(lifetimeDraws()), [readingDate]);
+
+  /**
+   * When the card was drawn. The draw is recorded against the date, not the
+   * minute, so the time is the reader's first visit to this card — held in its
+   * own key rather than inferred, since inferring it would print a different
+   * "drawn" time every time the page was opened.
+   */
+  const [drawnAt, setDrawnAt] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isRevealed) return;
+    try {
+      const key = `drawn-at-${readingDate}`;
+      let stamp = localStorage.getItem(key);
+      if (!stamp) {
+        // Only today's card can be stamped now; an older card opened for the
+        // first time has no honest draw time and simply omits the row.
+        if (readingDate !== todayKey()) return;
+        stamp = new Date().toISOString();
+        localStorage.setItem(key, stamp);
+      }
+      setDrawnAt(stamp);
+    } catch {
+      // storage unavailable — the row is left out rather than guessed
+    }
+  }, [isRevealed, readingDate]);
 
   // State for generated insight — load from cache immediately on mount
   // Uses cardDate (the date the card was drawn) so past cards hit their original cached insight
@@ -234,6 +279,13 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
 
       const cardSeed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) / 10000;
 
+      // Where the reader is, for the margin's sunrise and sunset.
+      //
+      // Never asks here — onboarding's "use my location" toggle owns the
+      // permission dialog, so the reveal is never interrupted by one. Without a
+      // fix this resolves null immediately and those two rows are simply absent.
+      const here = await getHere();
+
       const memory = loadMemory();
       const memoryNotes = memory.memoryNotes;
       const recentCards = memory.readings.slice(0, 7).map(r =>
@@ -251,7 +303,8 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
           cardId: card.id,
           isReversed,
           memoryNotes,
-          recentCards
+          recentCards,
+          here
         })
       });
 
@@ -291,6 +344,13 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
             aspectType: dominantTransit.aspect,
             aspectMeaning: '',
             phaseMeaning: '',
+          },
+          // Frozen with the reading: reopening this card next year should show
+          // the sky it was drawn under, not the sky at the moment of reopening.
+          readout: {
+            orb: typeof dominantTransit.orb === 'number' ? dominantTransit.orb : null,
+            exact: dominantTransit.phase === 'peak',
+            sky: data.sky ?? null,
           },
         };
 
@@ -340,13 +400,49 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
     return cardId;
   };
 
-  return (
-    <div className="w-full mx-auto">
-      {/* Card Back/Front */}
-      <div className="relative mb-16 md:mb-8">
+  /**
+   * The left margin column (SPEC §03), and the mobile readout that repeats it.
+   *
+   * Built by pushing only the rows that have a real number behind them, so a
+   * reader with no birth location gets a four-row column rather than two rows
+   * of zeroes — SPEC §1.6. The sky and the orb ride along with the cached
+   * insight, which is why a past card's margin is that day's, not today's.
+   */
+  const buildMarginRows = (): MarginRow[] => {
+    const rows: MarginRow[] = [];
+    const readout = generatedInsight?.readout;
+
+    const drawn = clockTime(drawnAt);
+    if (drawn) rows.push({ value: drawn, label: 'drawn' });
+
+    // On the clock of the place the sun actually rose over, not the reader's.
+    const zone = readout?.sky?.zone;
+    const sunrise = clockTime(readout?.sky?.sunrise, zone);
+    if (sunrise) rows.push({ value: sunrise, label: 'sunrise' });
+
+    const sunset = clockTime(readout?.sky?.sunset, zone);
+    if (sunset) rows.push({ value: sunset, label: 'sunset' });
+
+    const { moonIllumination, moonDirection } = readout?.sky ?? {};
+    if (moonIllumination !== null && moonIllumination !== undefined && moonDirection) {
+      rows.push({ value: `${moonIllumination}%`, label: moonDirection });
+    }
+
+    const orb = formatOrb(readout?.orb);
+    if (orb) rows.push({ value: orb, label: 'orb' });
+
+    if (draws > 0) rows.push({ value: String(draws), label: draws === 1 ? 'draw' : 'draws' });
+
+    return rows;
+  };
+
+  // Sealed card: the tear-off page owns this state, and none of the reading
+  // below exists yet, so the plate stands alone without its margins.
+  if (!isRevealed) {
+    return (
+      <div className="w-full mx-auto">
         <div data-card-image className="aspect-[2/3] w-72 md:w-96 mx-auto rounded-2xl overflow-visible relative">
-          {isRevealed || artVisibleEarly ? (
-            // Card Front - Actual card image
+          {artVisibleEarly ? (
             <div className={`relative w-full h-full rounded-2xl overflow-hidden transform-gpu ${
               isReversed ? 'rotate-180' : ''
             }`}>
@@ -354,21 +450,46 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
                 src={`/cards/${getCardFilename(card.id, card.name)}.png`}
                 alt={card.name}
                 className="w-full h-full object-cover shadow-xl"
-                onError={(e) => {
-                  e.currentTarget.src = card.imagePath;
-                }}
+                onError={(e) => { e.currentTarget.src = card.imagePath; }}
               />
             </div>
           ) : (
-            // Card Back
             <div className="w-full h-full rounded-2xl overflow-hidden shadow-xl">
-              <img
-                src="/card-back.png"
-                alt="Card back"
-                className="w-full h-full object-cover"
-              />
+              <img src="/card-back.png" alt="Card back" className="w-full h-full object-cover" />
             </div>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  const marginRows = buildMarginRows();
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.col}>
+        <CardName name={card.name} />
+
+        <Plate left={marginRows} shares={noteShares(card.id)}>
+          {/* The app's own card element, carried over untouched — the plate
+              holds it, it doesn't re-implement it.
+
+              Sized to match the sealed card above rather than to the spec's
+              214/268px plate: the reveal is a tear, not a cut, and the card
+              changing size at the moment it opens breaks that. */}
+          <div data-card-image className="aspect-[2/3] w-72 md:w-96 mx-auto overflow-visible relative">
+          <div className={`relative w-full h-full overflow-hidden transform-gpu ${
+            isReversed ? 'rotate-180' : ''
+          }`}>
+            <img
+              src={`/cards/${getCardFilename(card.id, card.name)}.png`}
+              alt={card.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = card.imagePath;
+              }}
+            />
+          </div>
 
           {/* Slot reel overlay — renders on top while animating */}
           {showSlot && (
@@ -378,130 +499,47 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
               onComplete={handleSlotComplete}
             />
           )}
-        </div>
-
-        {/* Title sprawled below the card */}
-        {isRevealed && (
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              bottom: 'clamp(-50px, -6vw, -100px)',
-              left: '50%',
-              width: '100vw',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <h3
-              className="text-center"
-              style={{
-                fontSize: 'clamp(80px, 28vw, 200px)',
-                fontFamily: 'var(--font-reenie-beanie), cursive',
-                lineHeight: '0.72',
-                color: '#C9F24E',
-                overflow: 'visible',
-                WebkitTextStroke: '1px #172211',
-                transform: `rotate(-2.3deg) ${isReversed ? 'scaleX(-1)' : ''}`,
-                transformOrigin: 'center center',
-                letterSpacing: '-0.05em',
-                padding: '0',
-              }}
-            >
-              {card.name.toLowerCase()}
-            </h3>
           </div>
-        )}
+        </Plate>
+
+        <StateLine suite={card.suite} isReversed={isReversed} />
+
+        {/* The same figures as the left margin, 2-up. Mobile only. */}
+        <Readout rows={marginRows} />
+
+        {/* 06–08. One column on a phone; at 880px the spine splits it. */}
+        <div className={styles.body}>
+          <div className={styles.left}>
+            <Keywords keywords={activeKeywords} />
+            <Meaning lede={activeMeaning} sub={card.description} />
+          </div>
+
+          <div className={styles.spine} />
+
+          <div className={styles.right}>
+            <Distill cardId={card.id} />
+          </div>
+        </div>
       </div>
 
-      {/* Card Name and Info (only shown when revealed) */}
-      {isRevealed && (
-        <div className="w-full space-y-6 md:space-y-12 animate-fade-in">
-
-          {/* Keywords - Circular Marquee */}
-          <div className="relative w-36 h-36 md:w-64 md:h-64 mx-auto mt-10 mb-0 md:mt-24 md:mb-0">
-            {activeKeywords.slice(0, 5).map((keyword, index) => {
-              const totalKeywords = Math.min(activeKeywords.length, 5);
-              const startAngle = (index / totalKeywords) * 360;
-              const animationDelay = -(index / totalKeywords) * 20; // Stagger start positions
-              // Scale font down when 5 keywords to avoid crowding on mobile
-              const mobileFontSize = totalKeywords >= 5 ? 'clamp(16px, 3.5vw, 32px)' : 'clamp(20px, 4vw, 32px)';
-
-              return (
-                <span
-                  key={index}
-                  className="absolute text-[#C9F24E]"
-                  style={{
-                    fontSize: mobileFontSize,
-                    fontFamily: 'var(--font-reenie-beanie), cursive',
-                    left: '50%',
-                    top: '50%',
-                    transformOrigin: '0 0',
-                    animation: 'circular-revolve 20s linear infinite',
-                    animationDelay: `${animationDelay}s`,
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {keyword.toLowerCase()}
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Meaning */}
-          <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>meaning</h4>
-            <p className="text-[#F7F4E6]" style={BODY_TYPE}>{activeMeaning.toLowerCase()}</p>
-          </div>
-
-          {/* Scent notes — sits between the traditional meaning and the
-              personalised read. Renders nothing for cards without an accord. */}
-          <ScentNotes cardId={card.id} />
-
-          {/* Active Insight — omitted entirely when the reader opted out, so the
-              card and its traditional meaning stand on their own. */}
-          {!personalisationOn() ? null : insightError ? (
-            <div>
-              <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>what this could mean for you</h4>
-              <div>
-                <p className="text-[#F7F4E6] opacity-60" style={BODY_TYPE}>
-                  couldn&apos;t connect to the reading right now.
-                </p>
-                <button
-                  onClick={() => setInsightError(null)}
-                  className="mt-3 text-[#C9F24E] opacity-70 hover:opacity-100 transition-opacity"
-                  style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
-                >
-                  try again ↻
-                </button>
-              </div>
-            </div>
-          ) : (
-            <ActiveInsight
-              keyPhrase={generatedInsight?.keyPhrase || ""}
-              insight={generatedInsight?.insight || ""}
-              action={generatedInsight?.action || ""}
-              transitInfo={generatedInsight?.transitInfo || ""}
-              userName={userName}
-              transitExplanation={generatedInsight?.transitExplanation || {
-                transitingPlanet: "",
-                transitingPlanetMeaning: "",
-                natalPlanet: "",
-                natalPlanetMeaning: "",
-                aspectType: "",
-                aspectMeaning: "",
-                phaseMeaning: ""
-              }}
-              isLoading={isGenerating}
-              isRateLimited={isRateLimited}
-            />
-          )}
-
-          {/* Description */}
-          <div>
-            <h4 className="text-[#C9F24E] mb-2 md:mb-4" style={LABEL_TYPE}>about this card</h4>
-            <p className="text-[#F7F4E6]" style={BODY_TYPE}>{card.description.toLowerCase()}</p>
-          </div>
-        </div>
+      {/* 09. Omitted entirely when the reader opted out, so the card and its
+          traditional meaning stand on their own. */}
+      {personalisationOn() && (
+        <Module
+          keyPhrase={generatedInsight?.keyPhrase || ''}
+          insight={generatedInsight?.insight || ''}
+          action={generatedInsight?.action}
+          transitExplanation={generatedInsight?.transitExplanation}
+          exact={generatedInsight?.readout?.exact}
+          isLoading={isGenerating}
+          isRateLimited={isRateLimited}
+          hasError={!!insightError}
+          onRetry={() => setInsightError(null)}
+        />
       )}
-    </div>
+
+      {footer}
+    </main>
   );
+
 }

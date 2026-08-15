@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Reenie_Beanie, VT323, Instrument_Serif, DM_Mono, BIZ_UDMincho } from "next/font/google";
+import { Reenie_Beanie, VT323, Instrument_Serif, DM_Mono, DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -27,12 +27,13 @@ const dmMono = DM_Mono({
   variable: '--font-dm-mono',
 });
 
-const bizUdMincho = BIZ_UDMincho({
-  // 700 is here for the privacy page's headings and links — without it the
-  // browser synthesises a fake bold by smearing the outlines.
-  weight: ['400', '700'],
+// The app's reading face: body copy everywhere, the reading page's meaning
+// copy, the reflection textarea, and the privacy page. 700 carries the privacy
+// page's headings and links, which would otherwise be synthesised into a smear.
+const dmSans = DM_Sans({
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
-  variable: '--font-biz-udmincho',
+  variable: '--font-dm-sans',
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -98,7 +99,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="slow garden" />
       </head>
-      <body className={`${reenieBeanie.variable} ${vt323.variable} ${instrumentSerif.variable} ${dmMono.variable} ${bizUdMincho.variable} antialiased`}>
+      <body className={`${reenieBeanie.variable} ${vt323.variable} ${instrumentSerif.variable} ${dmMono.variable} ${dmSans.variable} antialiased`}>
         {children}
         <Analytics />
       </body>

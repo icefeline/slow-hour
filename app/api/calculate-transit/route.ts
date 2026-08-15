@@ -7,6 +7,8 @@ import { buildVedicContext, describeVedicContext } from '@/lib/utils/vedic-signa
 import { cardPlanetAffinity } from '@/lib/data/insight-structure-templates';
 import { getCardArchetype, cardArchetypes } from '@/lib/data/card-archetypes';
 import { sanitizeText, isValidDate, isValidTime } from '@/lib/utils/validate';
+import { skyFor } from '@/lib/utils/sky';
+import { zoneForCoordinates } from '@/lib/utils/birth-instant';
 
 
 const HOUSE_THEMES: Record<number, string> = {
@@ -23,6 +25,30 @@ const HOUSE_THEMES: Record<number, string> = {
   11: 'community, future, and belonging',
   12: 'inner world, patterns, and solitude',
 };
+
+/**
+ * The sky where the reader is.
+ *
+ * `here` comes from the browser and is therefore untrusted: anything that isn't
+ * a real coordinate pair is treated as absent, which costs the two sun rows and
+ * nothing else. The zone is derived from the same coordinates so the times are
+ * printed on the reader's own clock.
+ */
+function readerSky(at: Date, here: unknown) {
+  const coords = here as { latitude?: unknown; longitude?: unknown } | null | undefined;
+  const latitude = Number(coords?.latitude);
+  const longitude = Number(coords?.longitude);
+
+  const usable =
+    Number.isFinite(latitude) && Number.isFinite(longitude) &&
+    Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180 &&
+    !(latitude === 0 && longitude === 0);
+
+  // Moon phase needs no location, so an unlocated reader still gets that row.
+  if (!usable) return skyFor(at, 0, 0, null);
+
+  return skyFor(at, latitude, longitude, zoneForCoordinates(latitude, longitude));
+}
 
 interface ClaudeInsight {
   keyPhrase: string;
@@ -198,7 +224,7 @@ Return only valid JSON, no markdown, no extra text.`;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { birthDate, birthTime, birthLocation, seed, cardId, isReversed, memoryNotes, recentCards } = body;
+    const { birthDate, birthTime, birthLocation, seed, cardId, isReversed, memoryNotes, recentCards, here } = body;
 
     if (!birthDate || !isValidDate(birthDate)) {
       return NextResponse.json(
@@ -294,6 +320,13 @@ export async function POST(request: Request) {
       dominantTransit,
       allTransits: activeTransits,
       claudeInsight,
+      // The reading page's margin column.
+      //
+      // Sunrise and sunset are for where the READER is, not where their chart
+      // was cast — the sun came up over wherever they are this morning. The
+      // client sends those coordinates when it has them; without them the rows
+      // are dropped rather than answered with a sunrise somewhere else.
+      sky: readerSky(now, here),
       vedic: {
         mahadasha: vedic.dasha?.maha.lord ?? null,
         antardasha: vedic.dasha?.antar.lord ?? null,
