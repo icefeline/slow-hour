@@ -86,6 +86,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
    */
   const [useLocation, setUseLocation] = useState(false);
   const [locationBlocked, setLocationBlocked] = useState(false);
+  /**
+   * Whether they have already tried once since being refused.
+   *
+   * A page cannot open the browser's own permission settings — no API exists,
+   * deliberately. What it can do is ask again, which works when the reader
+   * merely dismissed the dialog and does nothing once they have actually
+   * denied. So the note offers the retry first, and only points at the lock
+   * icon after that retry has also come back empty, rather than sending
+   * everyone hunting through settings they may not need.
+   */
+  const [locationRetried, setLocationRetried] = useState(false);
   useEffect(() => {
     // The stored preference is what the reader chose; a cached fix is proof they
     // once said yes. Either is enough to show the switch on.
@@ -98,14 +109,18 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const handleLocationToggle = async (on: boolean) => {
     setUseLocation(on);
-    setLocationBlocked(false);
     if (!on) {
       clearHere();
+      setLocationBlocked(false);
+      setLocationRetried(false);
       return;
     }
     // The switch is already on; this only decides whether the browser will
     // actually hand over a fix, and says so if it won't.
-    setLocationBlocked(!(await getHere({ ask: true })));
+    const wasBlocked = locationBlocked;
+    const granted = !!(await getHere({ ask: true }));
+    setLocationBlocked(!granted);
+    setLocationRetried(granted ? false : wasBlocked);
   };
 
   // Error states
@@ -937,22 +952,24 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               title={<>ENABLE<br />PERMISSIONS</>}
               sub={<>BOTH ARE OPTIONAL, AND BOTH CAN BE<br />TURNED OFF ANY DAY.</>}
             />
-            <ObFields scale={mobileScale}>
+            <ObFields scale={mobileScale} top={330}>
               <ObPermission
                 tone="dark" scale={mobileScale} label="READ MY CHART"
                 on={personalise} onChange={setPersonalise}
               >
-                LETS THE GARDEN READ YOUR CHART AND THE SKY IT IS MOVING THROUGH, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT BE ASKING OF YOU TODAY.
+                READS YOUR CHART AGAINST TODAY'S SKY, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT MEAN FOR YOU.
               </ObPermission>
               <ObPermission
                 tone="dark" scale={mobileScale} label="USE MY LOCATION"
                 on={useLocation} onChange={handleLocationToggle}
               >
-                LETS THE GARDEN KNOW WHERE YOU ARE, SO IT CAN TELL WHEN YOUR SUN RISES AND SETS AND WHAT THE MOON IS DOING OVERHEAD.
+                SETS YOUR SUNRISE, SUNSET AND MOON PHASE FROM WHERE YOU ACTUALLY ARE.
               </ObPermission>
               {locationBlocked && (
-                <ObHint tone="dark" scale={mobileScale}>
-                  YOUR BROWSER IS BLOCKING LOCATION — ALLOW IT IN SITE SETTINGS
+                <ObHint tone="dark" scale={mobileScale} onClick={() => handleLocationToggle(true)}>
+                  {locationRetried
+                    ? 'STILL BLOCKED — ALLOW LOCATION FROM THE LOCK ICON IN YOUR ADDRESS BAR'
+                    : 'YOUR BROWSER BLOCKED LOCATION — TAP TO ASK AGAIN'}
                 </ObHint>
               )}
             </ObFields>
@@ -1461,22 +1478,24 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             title={<>ENABLE<br />PERMISSIONS</>}
                             sub={<>BOTH ARE OPTIONAL, AND BOTH CAN BE<br />TURNED OFF ANY DAY.</>}
                           />
-                          <ObFields scale={DESKTOP_SCALE}>
+                          <ObFields scale={DESKTOP_SCALE} top={330}>
                             <ObPermission
                               tone="light" scale={DESKTOP_SCALE} label="READ MY CHART"
                               on={personalise} onChange={setPersonalise}
                             >
-                              LETS THE GARDEN READ YOUR CHART AND THE SKY IT IS MOVING THROUGH, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT BE ASKING OF YOU TODAY.
+                              READS YOUR CHART AGAINST TODAY'S SKY, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT MEAN FOR YOU.
                             </ObPermission>
                             <ObPermission
                               tone="light" scale={DESKTOP_SCALE} label="USE MY LOCATION"
                               on={useLocation} onChange={handleLocationToggle}
                             >
-                              LETS THE GARDEN KNOW WHERE YOU ARE, SO IT CAN TELL WHEN YOUR SUN RISES AND SETS AND WHAT THE MOON IS DOING OVERHEAD.
+                              SETS YOUR SUNRISE, SUNSET AND MOON PHASE FROM WHERE YOU ACTUALLY ARE.
                             </ObPermission>
                             {locationBlocked && (
-                              <ObHint tone="light" scale={DESKTOP_SCALE}>
-                                YOUR BROWSER IS BLOCKING LOCATION — ALLOW IT IN SITE SETTINGS
+                              <ObHint tone="light" scale={DESKTOP_SCALE} onClick={() => handleLocationToggle(true)}>
+                                {locationRetried
+                                  ? 'STILL BLOCKED — ALLOW LOCATION FROM THE LOCK ICON IN YOUR ADDRESS BAR'
+                                  : 'YOUR BROWSER BLOCKED LOCATION — CLICK TO ASK AGAIN'}
                               </ObHint>
                             )}
                           </ObFields>

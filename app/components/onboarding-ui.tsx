@@ -93,12 +93,21 @@ export function ObHead({
 
 /** The block the fields sit in — same top edge on every screen. */
 export function ObFields({
-  scale, stack = false, children,
-}: { scale: number; stack?: boolean; children: React.ReactNode }) {
+  scale, stack = false, top = 406, children,
+}: {
+  scale: number; stack?: boolean;
+  /**
+   * Where the field block starts, in design px. The default suits a step of
+   * single-line fields; a step with taller ones starts higher so it doesn't
+   * grow down into the CTA.
+   */
+  top?: number;
+  children: React.ReactNode;
+}) {
   return (
     <div
       style={{
-        position: 'absolute', left: px(24, scale), right: px(24, scale), top: px(406, scale),
+        position: 'absolute', left: px(24, scale), right: px(24, scale), top: px(top, scale),
         display: 'flex', flexDirection: 'column', gap: stack ? px(16, scale) : 0,
       }}
     >
@@ -141,16 +150,34 @@ export function ObTag({ tone, scale, required }: { tone: Tone; scale: number; re
   );
 }
 
-export function ObHint({ tone, scale, children }: { tone: Tone; scale: number; children: React.ReactNode }) {
+export function ObHint({
+  tone, scale, onClick, children,
+}: {
+  tone: Tone; scale: number;
+  /** Makes the hint actionable — used where the note is also the way out. */
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  const style: React.CSSProperties = {
+    marginTop: px(10, scale), fontFamily: MONO, fontSize: px(9, scale),
+    letterSpacing: '0.2em', color: bodyOf(tone), opacity: tone === 'light' ? 0.45 : 0.6,
+    lineHeight: 1.8, textAlign: 'left',
+  };
+
+  if (!onClick) return <div style={style}>{children}</div>;
+
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
       style={{
-        marginTop: px(10, scale), fontFamily: MONO, fontSize: px(9, scale),
-        letterSpacing: '0.2em', color: bodyOf(tone), opacity: tone === 'light' ? 0.45 : 0.6,
+        ...style,
+        background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+        textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: px(4, scale),
       }}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
@@ -182,20 +209,32 @@ export function ObPermission({
         borderRadius: 0,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: PIXEL, fontSize: px(30, scale), color: bodyOf(tone), lineHeight: 1 }}>
-          {label}
-        </span>
+      {/* Two columns, not two rows: the copy is measured against its own
+          column, so a long line wraps inside it instead of running on under the
+          switch. minWidth:0 is what lets a flex child actually wrap. */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: px(14, scale) }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span style={{
+            display: 'block', fontFamily: PIXEL, fontSize: px(30, scale),
+            color: bodyOf(tone), lineHeight: 1,
+          }}>
+            {label}
+          </span>
+          <div
+            style={{
+              // Tighter tracking than the other mono notes on purpose: this is
+              // the only place onboarding sets a full sentence in caps, and at
+              // .14em it wrapped to six lines on a phone and pushed the box into
+              // the CTA below it.
+              marginTop: px(9, scale), fontFamily: MONO, fontSize: px(8.5, scale),
+              letterSpacing: '0.07em', lineHeight: 1.65,
+              color: bodyOf(tone), opacity: tone === 'light' ? 0.55 : 0.65,
+            }}
+          >
+            {children}
+          </div>
+        </div>
         <ObToggle tone={tone} scale={scale} on={on} onChange={onChange} label={label.toLowerCase()} />
-      </div>
-      <div
-        style={{
-          marginTop: px(10, scale), fontFamily: MONO, fontSize: px(8.5, scale),
-          letterSpacing: '0.14em', lineHeight: 1.7,
-          color: bodyOf(tone), opacity: tone === 'light' ? 0.55 : 0.65,
-        }}
-      >
-        {children}
       </div>
     </div>
   );
