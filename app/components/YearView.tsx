@@ -494,7 +494,15 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
           >
             {/* Drag handle — touch target for swipe-to-close */}
             <div
-              className="sticky top-0 bg-[#172211] pt-4 pb-3 flex justify-center rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
+              className="sticky top-0 pt-4 pb-8 -mb-5 flex justify-center rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
+              /* Solid behind the handle, then fading out beneath it. The bar
+                 used to be a flat fill, so content scrolling under it was cut
+                 off along a hard horizontal line. The negative margin lets the
+                 fade overlap the content rather than reserving space for it. */
+              style={{
+                background:
+                  'linear-gradient(to bottom, #172211 0%, #172211 46%, rgba(23,34,17,0.85) 68%, rgba(23,34,17,0) 100%)',
+              }}
               onTouchStart={handleDrawerTouchStart}
               onTouchMove={handleDrawerTouchMove}
               onTouchEnd={handleDrawerTouchEnd}
