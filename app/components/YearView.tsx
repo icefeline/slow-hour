@@ -258,17 +258,20 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
 
   // No ground of its own: an opaque fill on the root painted over the fixed
   // GroundTexture, so the year sat on flat green while the reading page sat on
-  // paper tooth. The two views share one screen and should share its floor. The
-  // sticky header below keeps its gradient, which is a scrim for the content
-  // scrolling under it rather than a background.
-  // And no top padding on the root either: it sat between the nav and the
-  // sticky header, so at scroll 0 the gradient started a couple of dozen pixels
-  // down the screen with bare ground showing above it. Invisible while this
-  // view painted its own flat fill, obvious the moment the texture came
-  // through. That space now lives inside the header, so the scrim is flush to
-  // the nav and the year keeps the air it had.
+  // paper tooth. The two views share one screen and should share its floor.
+  //
+  // The year travels before it pins. A sticky element whose natural position is
+  // already at its pinned offset never moves, which is why the header sat
+  // motionless at the top no matter how far the page scrolled. The spacer above
+  // it gives it somewhere to come from: at rest the year sits below the nav, and
+  // it rises with the page until the header catches at --nav-h. The spacer is
+  // outside the header, so the gradient still reaches the nav the moment it
+  // pins rather than floating below it.
   return (
     <div className="relative min-h-screen">
+
+      {/* What the year rises through. */}
+      <div className="h-10 md:h-16" />
 
       {/* Sticky header */}
       <div
@@ -278,9 +281,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
            content visible between the two the moment the nav resized. */
         style={{ top: 'var(--nav-h, 3.5rem)' }}
       >
-        {/* Carries the root's old top padding as well as its own, so the year
-            sits exactly where it did before. */}
-        <div className="text-center pt-9 md:pt-16 px-4 md:px-8">
+        {/* Kept tight: this padding is inside the sticky box, so it is the gap
+            between the nav and the year once pinned. */}
+        <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
           <h1
             className="text-[#C9F24E] mb-1"
             /* The pixel face, as on the tear-off calendar — this is the same

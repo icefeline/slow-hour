@@ -6,6 +6,7 @@ import YearView from './components/YearView';
 import Onboarding from './components/Onboarding';
 import TearOffPage from './components/TearOffPage';
 import GroundTexture from './components/GroundTexture';
+import AsciiFlower from './components/AsciiFlower';
 import CardSelector from './components/CardSelector';
 import { LABEL_TYPE } from './components/type';
 import cardPage from './components/card-page/card-page.module.css';
@@ -583,8 +584,8 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#172211]">
-        <div className="text-[#C9F24E] text-lg" style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#172211] text-[#C9F24E]">
+        <AsciiFlower label="loading slow garden" />
       </div>
     );
   }
