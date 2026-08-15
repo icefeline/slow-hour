@@ -146,6 +146,35 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   const currentMonthRef = useRef<HTMLDivElement>(null);
   const yearHeaderRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Whether the header has caught on the nav.
+   *
+   * The gradient is a scrim for content passing underneath, so it has nothing
+   * to do until something is passing. At rest the year sits below the nav with
+   * clear ground above it, and a band of gradient starting a few dozen pixels
+   * down the screen read as a misplaced object rather than as a fade. It is
+   * painted only once the header is actually pinned.
+   */
+  const [isPinned, setIsPinned] = useState(false);
+  useEffect(() => {
+    const header = yearHeaderRef.current;
+    if (!header) return;
+    const check = () => {
+      const navH = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--nav-h'),
+      ) || (window.innerWidth >= 768 ? 80 : 56);
+      // A pixel of slack: sub-pixel layout means the two are rarely exactly equal.
+      setIsPinned(header.getBoundingClientRect().top <= navH + 1);
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
+
   const daysWithCards = journalEntries.length;
 
   const cardLookup = useMemo(() => {
@@ -276,7 +305,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
       {/* Sticky header */}
       <div
         ref={yearHeaderRef}
-        className="sticky z-20 bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0 pb-3 md:pb-8"
+        className={`sticky z-20 pb-3 md:pb-8 transition-opacity duration-300 ${
+          isPinned ? 'bg-gradient-to-b from-[#172211] via-[#172211] to-[#172211]/0' : ''
+        }`}
         /* Flush against the nav: a hard-coded offset left a strip of scrolling
            content visible between the two the moment the nav resized. */
         style={{ top: 'var(--nav-h, 3.5rem)' }}
@@ -452,7 +483,7 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
           />
           {/* Drawer panel */}
           <div
-            className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[85vh] overflow-y-auto animate-slide-up border-t-2 border-[#C9F24E]/30"
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-[#172211] rounded-t-3xl shadow-2xl z-50 max-h-[94vh] overflow-y-auto animate-slide-up border-t-2 border-[#C9F24E]/30"
             role="dialog"
             aria-modal="true"
             aria-label={`Card reading for ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`}
@@ -471,11 +502,21 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
               <div className="w-12 h-1.5 bg-[#C9F24E]/40 rounded-full" />
             </div>
 
-            <div className="px-4 pb-6 pt-2">
-              <div className="text-center mb-4">
+            {/* No horizontal padding of its own: the reading page rendered
+                inside carries the 20px gutter, and stacking the two left the
+                card measurably narrower here than on the main screen. */}
+            <div className="pb-6 pt-2">
+              <div className="text-center mb-4 px-4">
                 <p
-                  className="text-[#C9F24E] text-xl tracking-wider"
-                  style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+                  className="text-[#C9F24E]"
+                  /* The same date line as the main screen, rather than a
+                     drawer-sized one — it was three times the size there and
+                     took the room the card wanted. */
+                  style={{
+                    fontSize: 'clamp(11px, 2.4vw, 13px)',
+                    letterSpacing: '0.18em',
+                    fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
+                  }}
                 >
                   {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
@@ -496,16 +537,16 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
                 const reflection = localStorage.getItem(`reflection-${selectedDate}`);
                 if (reflection && reflection.trim()) {
                   return (
-                    <div className="mt-4 max-w-sm mx-auto">
+                    <div className="mt-4 px-5">
                       <h3
-                        className="text-3xl text-[#C9F24E] mb-2"
-                        style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+                        className="text-[#C9F24E] mb-2"
+                        style={{ ...LABEL_TYPE, fontSize: 'clamp(9px, 2.2vw, 11px)' }}
                       >
                         reflection
                       </h3>
                       <div
-                        className="bg-[#172211] border-2 border-[#C9F24E]/20 rounded-xl p-4 text-[#F7F4E6] text-2xl leading-relaxed"
-                        style={{ fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
+                        className="text-[#F7F4E6] leading-relaxed"
+                        style={{ fontFamily: 'var(--font-dm-sans), sans-serif', fontSize: 'clamp(14px, 3.4vw, 16px)' }}
                       >
                         {reflection}
                       </div>
