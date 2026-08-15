@@ -6,6 +6,43 @@ import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 import { LABEL_TYPE } from './type';
 
+/**
+ * The dissolve under the drawer's handle, as a mask.
+ *
+ * Written once because the tint above it has to follow the same curve: two
+ * gradients easing differently over the same pixels is itself a seam.
+ *
+ * It reaches zero at 85%, not at the bottom. backdrop-filter stops blurring at
+ * its element's edge whatever the mask says, and that stop is a hard line — so
+ * the last stretch of the band is left painting nothing at all, which puts the
+ * blur's own boundary inside fully transparent pixels where it cannot be seen.
+ */
+/**
+ * Progressive blur under the drawer's handle.
+ *
+ * One blurred layer cannot dissolve, however carefully it is masked: a mask
+ * fades what the layer paints, but backdrop-filter still blurs at full strength
+ * right up to the element's edge and then stops, so the boundary between
+ * blurred and sharp stays a hard line wherever you put it.
+ *
+ * Stacking solves it. Each layer blurs a little more than the one below and is
+ * masked to a shorter band, so going down the stack the layers drop away one at
+ * a time and the total blur ramps to nothing instead of ending. Radii double
+ * because perceived blur is roughly logarithmic — evenly spaced radii read as
+ * an uneven ramp.
+ */
+const BLUR_LAYERS = [
+  { blur: 1, stops: '#000 0%, #000 74%, transparent 100%' },
+  { blur: 2, stops: '#000 0%, #000 52%, transparent 78%' },
+  { blur: 4, stops: '#000 0%, #000 32%, transparent 56%' },
+  { blur: 8, stops: '#000 0%, #000 14%, transparent 36%' },
+] as const;
+
+/** The tint, following the same curve as the stack it sits over. */
+const SHEET_TINT =
+  'linear-gradient(to bottom, rgba(23,34,17,0.7) 0%, rgba(23,34,17,0.5) 34%, ' +
+  'rgba(23,34,17,0.26) 58%, rgba(23,34,17,0.08) 80%, rgba(23,34,17,0) 100%)';
+
 interface JournalEntry {
   date: string;
   cardId: string;
@@ -494,40 +531,39 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
           >
             {/* Drag handle — touch target for swipe-to-close */}
             <div
-              className="sticky top-0 pt-4 pb-8 -mb-5 flex justify-center rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
-              /*
-               * Frosted rather than filled. A flat bar cut content along a hard
-               * line, and an opaque gradient still hid it outright; blurring
-               * what passes underneath keeps it present but out of focus, which
-               * reads as depth instead of as an edge.
-               *
-               * The mask is what makes it soft. backdrop-filter has no falloff
-               * of its own, so without one the blur would stop dead at the bar's
-               * bottom and simply move the hard line rather than remove it. The
-               * mask fades the whole layer, tint and blur together. The negative
-               * margin lets it overlap the content instead of reserving space.
-               */
-              style={{
-                background:
-                  'linear-gradient(to bottom, rgba(23,34,17,0.78) 0%, rgba(23,34,17,0.5) 55%, rgba(23,34,17,0) 100%)',
-                backdropFilter: 'blur(14px)',
-                WebkitBackdropFilter: 'blur(14px)',
-                maskImage:
-                  'linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 76%, transparent 100%)',
-                WebkitMaskImage:
-                  'linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 76%, transparent 100%)',
-              }}
+              className="sticky top-0 h-16 -mb-16 pt-4 flex justify-center items-start rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
               onTouchStart={handleDrawerTouchStart}
               onTouchMove={handleDrawerTouchMove}
               onTouchEnd={handleDrawerTouchEnd}
             >
-              <div className="w-12 h-1.5 bg-[#C9F24E]/40 rounded-full" />
+              {BLUR_LAYERS.map(({ blur, stops }) => (
+                <div
+                  key={blur}
+                  aria-hidden="true"
+                  className="absolute inset-0 pointer-events-none rounded-t-3xl"
+                  style={{
+                    backdropFilter: `blur(${blur}px)`,
+                    WebkitBackdropFilter: `blur(${blur}px)`,
+                    maskImage: `linear-gradient(to bottom, ${stops})`,
+                    WebkitMaskImage: `linear-gradient(to bottom, ${stops})`,
+                  }}
+                />
+              ))}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none rounded-t-3xl"
+                style={{ background: SHEET_TINT }}
+              />
+              <div className="relative w-12 h-1.5 bg-[#C9F24E]/40 rounded-full" />
             </div>
 
             {/* No horizontal padding of its own: the reading page rendered
                 inside carries the 20px gutter, and stacking the two left the
                 card measurably narrower here than on the main screen. */}
-            <div className="pb-6 pt-2">
+            {/* Starts below the fade, not under it: the band overlaps the
+                content by design, and the date is the first thing it would
+                otherwise sit on top of. */}
+            <div className="pb-6 pt-6">
               <div className="text-center mb-4 px-4">
                 <p
                   className="text-[#C9F24E]"
