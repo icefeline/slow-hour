@@ -242,10 +242,17 @@ export default function AsciiFlower({
     const start = performance.now();
 
     const draw = () => {
-      // Triangle: open on the way out, fold on the way back. Held open for a
-      // reader who asked the interface to stop moving.
+      /*
+       * Unfurl, hold, fold back. A pure triangle touches full bloom for a
+       * single frame, so almost every glance caught the plant half open and it
+       * read as an unfinished drawing rather than a flower. It now spends a
+       * third of the breath fully open, which is the state the design shows.
+       */
       const phase = still ? 0.5 : ((performance.now() - start) % BREATH_MS) / BREATH_MS;
-      const breath = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+      const breath =
+        phase < 0.34 ? phase / 0.34
+        : phase < 0.66 ? 1
+        : 1 - (phase - 0.66) / 0.34;
 
       paintPlant(ctx, canvas.width, canvas.height, breath);
 
@@ -289,7 +296,16 @@ export default function AsciiFlower({
     <div
       ref={hostRef}
       className={className}
-      style={{ width, maxWidth: '100%', flexShrink: 0, ...style }}
+      style={{
+        width,
+        maxWidth: '100%',
+        flexShrink: 0,
+        // Centres the drawing as one block, in whatever it is dropped into.
+        marginInline: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
+        ...style,
+      }}
       role="status"
       aria-label={label}
     >
@@ -310,9 +326,14 @@ export default function AsciiFlower({
           color: color ?? 'currentColor',
           whiteSpace: 'pre',
           userSelect: 'none',
-          // The cell is wider than the glyph advance at this size; nudging the
-          // block keeps the plant centred in whatever it is dropped into.
-          textAlign: 'center',
+          /*
+           * Emphatically not text-align: center. Every line is a row of the
+           * picture and they only line up when they all start at the same x —
+           * centring each line by its own length shears the plant apart, which
+           * looks like a half-drawn flower rather than a misalignment. The
+           * block is centred by the host below instead.
+           */
+          textAlign: 'left',
         }}
       >
         {frame}
