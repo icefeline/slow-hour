@@ -495,13 +495,27 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             {/* Drag handle — touch target for swipe-to-close */}
             <div
               className="sticky top-0 pt-4 pb-8 -mb-5 flex justify-center rounded-t-3xl z-10 cursor-grab active:cursor-grabbing"
-              /* Solid behind the handle, then fading out beneath it. The bar
-                 used to be a flat fill, so content scrolling under it was cut
-                 off along a hard horizontal line. The negative margin lets the
-                 fade overlap the content rather than reserving space for it. */
+              /*
+               * Frosted rather than filled. A flat bar cut content along a hard
+               * line, and an opaque gradient still hid it outright; blurring
+               * what passes underneath keeps it present but out of focus, which
+               * reads as depth instead of as an edge.
+               *
+               * The mask is what makes it soft. backdrop-filter has no falloff
+               * of its own, so without one the blur would stop dead at the bar's
+               * bottom and simply move the hard line rather than remove it. The
+               * mask fades the whole layer, tint and blur together. The negative
+               * margin lets it overlap the content instead of reserving space.
+               */
               style={{
                 background:
-                  'linear-gradient(to bottom, #172211 0%, #172211 46%, rgba(23,34,17,0.85) 68%, rgba(23,34,17,0) 100%)',
+                  'linear-gradient(to bottom, rgba(23,34,17,0.78) 0%, rgba(23,34,17,0.5) 55%, rgba(23,34,17,0) 100%)',
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                maskImage:
+                  'linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 76%, transparent 100%)',
+                WebkitMaskImage:
+                  'linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,0.55) 76%, transparent 100%)',
               }}
               onTouchStart={handleDrawerTouchStart}
               onTouchMove={handleDrawerTouchMove}
