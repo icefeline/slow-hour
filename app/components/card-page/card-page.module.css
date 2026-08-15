@@ -47,7 +47,10 @@
   padding: 8px 0 0;
 }
 
-.page p { margin: 0; text-wrap: pretty; }
+/* Greedy wrapping on purpose. `text-wrap: pretty` buys orphan avoidance by
+   pulling words down a line, which on a phone column leaves paragraphs visibly
+   short of their own padding — the fill matters more here than the last line. */
+.page p { margin: 0; }
 
 .col { padding-inline: var(--pad); }
 
@@ -215,7 +218,10 @@
   margin: 22px var(--pad) 0;
   background: var(--lime);
   color: var(--lime-ink);
-  padding: 18px 18px 20px;
+  /* 14px, not the reference's 18: the box is already inset by the page gutter,
+     and stacking both left its copy measurably narrower than the body text it
+     sits under. */
+  padding: 18px 14px 20px;
 }
 
 .log {

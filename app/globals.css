@@ -161,12 +161,6 @@ input.rounded-3xl:focus-within {
   }
 }
 
-/* Continuous marquee — offset measured in JS and set as --marquee-offset */
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(var(--marquee-offset, -25%)); }
-}
-
 /* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; }

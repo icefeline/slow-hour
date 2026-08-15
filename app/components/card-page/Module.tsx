@@ -63,10 +63,11 @@ interface ModuleProps {
  * utterance rather than as a card with a title on it. The log lines sit inside
  * the module rather than above it (SPEC §1.4).
  *
- * This replaced ActiveInsight on the reading page. It keeps that component's
- * three states — waiting, rate-limited, and the read itself — and drops its
- * scrolling transit ticker, which was the last animated thing below the card.
- * The explanation the ticker used to open is still here, as a static toggle.
+ * This replaced the old ActiveInsight panel, which has since been deleted. It
+ * keeps that component's three states — waiting, rate-limited, and the read
+ * itself — and drops its scrolling transit ticker, the last animated thing
+ * below the card. The explanation the ticker used to open is still here, as a
+ * static toggle.
  */
 export function Module({
   keyPhrase,
