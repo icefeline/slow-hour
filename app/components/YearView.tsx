@@ -513,7 +513,10 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
             {/* No horizontal padding of its own: the reading page rendered
                 inside carries the 20px gutter, and stacking the two left the
                 card measurably narrower here than on the main screen. */}
-            <div className="pb-6 pt-2">
+            {/* Starts below the fade rather than inside it. The handle's
+                gradient overlaps the content by design, and the date is the
+                first thing it reaches. */}
+            <div className="pb-6 pt-8">
               <div className="text-center mb-4 px-4">
                 <p
                   className="text-[#C9F24E]"
