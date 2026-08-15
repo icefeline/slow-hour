@@ -261,8 +261,14 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
   // paper tooth. The two views share one screen and should share its floor. The
   // sticky header below keeps its gradient, which is a scrim for the content
   // scrolling under it rather than a background.
+  // And no top padding on the root either: it sat between the nav and the
+  // sticky header, so at scroll 0 the gradient started a couple of dozen pixels
+  // down the screen with bare ground showing above it. Invisible while this
+  // view painted its own flat fill, obvious the moment the texture came
+  // through. That space now lives inside the header, so the scrim is flush to
+  // the nav and the year keeps the air it had.
   return (
-    <div className="relative min-h-screen pt-6 md:pt-12">
+    <div className="relative min-h-screen">
 
       {/* Sticky header */}
       <div
@@ -272,7 +278,9 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
            content visible between the two the moment the nav resized. */
         style={{ top: 'var(--nav-h, 3.5rem)' }}
       >
-        <div className="text-center pt-3 md:pt-4 px-4 md:px-8">
+        {/* Carries the root's old top padding as well as its own, so the year
+            sits exactly where it did before. */}
+        <div className="text-center pt-9 md:pt-16 px-4 md:px-8">
           <h1
             className="text-[#C9F24E] mb-1"
             /* The pixel face, as on the tear-off calendar — this is the same
