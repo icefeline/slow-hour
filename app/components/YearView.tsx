@@ -256,8 +256,13 @@ export default function YearView({ year, journalEntries, onDateClick, onNavigate
     }
   };
 
+  // No ground of its own: an opaque fill on the root painted over the fixed
+  // GroundTexture, so the year sat on flat green while the reading page sat on
+  // paper tooth. The two views share one screen and should share its floor. The
+  // sticky header below keeps its gradient, which is a scrim for the content
+  // scrolling under it rather than a background.
   return (
-    <div className="relative min-h-screen bg-[#172211] pt-6 md:pt-12">
+    <div className="relative min-h-screen pt-6 md:pt-12">
 
       {/* Sticky header */}
       <div

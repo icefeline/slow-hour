@@ -45,12 +45,13 @@ export default function PrivacyPolicy() {
     >
       <div className="max-w-2xl mx-auto">
         <h1
-          className="mb-1"
           style={{ fontFamily: TERM, fontSize: H1, lineHeight: 1, letterSpacing: '0.01em' }}
         >
           &gt; PRIVACY POLICY
         </h1>
-        <p className="mb-14 opacity-60" style={{ fontFamily: MONO, fontSize: 'clamp(10px, 2.2vw, 12px)', letterSpacing: '0.18em' }}>
+        {/* Given its own air rather than tucked under the title: it is a
+            separate fact about the page, not a subtitle to it. */}
+        <p className="mt-5 mb-16 opacity-60" style={{ fontFamily: MONO, fontSize: 'clamp(10px, 2.2vw, 12px)', letterSpacing: '0.18em' }}>
           last updated: august 2026
         </p>
 
