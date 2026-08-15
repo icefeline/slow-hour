@@ -14,11 +14,14 @@ const DESKTOP_SCALE = 909 / 748;
 const WELCOME_PX = 26;
 import AsciiFlower from './AsciiFlower';
 import {
-  ObBack, ObHead, ObFields, ObTag, ObHint, ObToggle, ObCta,
+  ObBack, ObHead, ObFields, ObTag, ObHint, ObToggle, ObPermission, ObCta,
   fieldStyle, obValue, obPx, LIME, BONE,
   COBALT, INK,
 } from './onboarding-ui';
 import { clearHere, getHere, hasHere } from '@/lib/utils/here';
+
+/** The reader's answer to "use my location", kept next to the personalise flag. */
+const LOCATION_KEY = 'slow-garden-use-location';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -75,20 +78,34 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
    * browser permission dialog landing on the card as it opens is the wrong beat
    * for that moment.
    *
-   * The switch follows the browser, not the intent: if the reader declines the
-   * dialog it goes back off, because leaving it on would promise rows the
-   * margin can never fill.
+   * This is the reader's stated preference and nothing else moves it. An
+   * earlier version set it from whatever the browser answered, which made the
+   * switch impossible to turn on once a dialog had been dismissed — it looked
+   * broken, because from the reader's side it was. A browser that refuses is
+   * now reported underneath instead of silently overriding the choice.
    */
   const [useLocation, setUseLocation] = useState(false);
-  useEffect(() => { setUseLocation(hasHere()); }, []);
+  const [locationBlocked, setLocationBlocked] = useState(false);
+  useEffect(() => {
+    // The stored preference is what the reader chose; a cached fix is proof they
+    // once said yes. Either is enough to show the switch on.
+    try {
+      setUseLocation(localStorage.getItem(LOCATION_KEY) === 'true' || hasHere());
+    } catch {
+      setUseLocation(hasHere());
+    }
+  }, []);
 
   const handleLocationToggle = async (on: boolean) => {
+    setUseLocation(on);
+    setLocationBlocked(false);
     if (!on) {
       clearHere();
-      setUseLocation(false);
       return;
     }
-    setUseLocation(!!(await getHere({ ask: true })));
+    // The switch is already on; this only decides whether the browser will
+    // actually hand over a fix, and says so if it won't.
+    setLocationBlocked(!(await getHere({ ask: true })));
   };
 
   // Error states
@@ -264,6 +281,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         localStorage.setItem('userBirthLocation', birthLocation);
       }
       localStorage.setItem('slow-garden-personalise', personalise ? 'true' : 'false');
+      localStorage.setItem(LOCATION_KEY, useLocation ? 'true' : 'false');
       localStorage.setItem('onboardingComplete', 'true');
       onComplete();
     }
@@ -594,6 +612,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       if (birthTime && !noKnowBirthTime) localStorage.setItem('userBirthTime', birthTime);
       if (birthLocation) localStorage.setItem('userBirthLocation', birthLocation);
       localStorage.setItem('slow-garden-personalise', personalise ? 'true' : 'false');
+      localStorage.setItem(LOCATION_KEY, useLocation ? 'true' : 'false');
       localStorage.setItem('onboardingComplete', 'true');
       setTimeout(() => onComplete(), 2000);
     }, 1000);
@@ -915,24 +934,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               tone="dark"
               scale={mobileScale}
               tight
-              title={<>WANT IT<br />PERSONALISED?</>}
-              sub={<>SLOW GARDEN CAN GROW AND EVOLVE<br />WITH YOUR INTERACTION. COMPLETELY OPTIONAL.</>}
+              title={<>ENABLE<br />PERMISSIONS</>}
+              sub={<>BOTH ARE OPTIONAL, AND BOTH CAN BE<br />TURNED OFF ANY DAY.</>}
             />
             <ObFields scale={mobileScale}>
-              <div style={{ ...fieldStyle('dark', mobileScale, personalise), padding: `0 ${obPx(16, mobileScale)} 0 ${obPx(18, mobileScale)}` }}>
-                <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, mobileScale), color: BONE }}>
-                  READ MY CHART
-                </span>
-                <ObToggle tone="dark" scale={mobileScale} on={personalise} onChange={setPersonalise} label="read my chart" />
-              </div>
-              <div style={{ ...fieldStyle('dark', mobileScale, useLocation), padding: `0 ${obPx(16, mobileScale)} 0 ${obPx(18, mobileScale)}` }}>
-                <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, mobileScale), color: BONE }}>
-                  USE MY LOCATION
-                </span>
-                <ObToggle tone="dark" scale={mobileScale} on={useLocation} onChange={handleLocationToggle} label="use my location" />
-              </div>
-              <ObHint tone="dark" scale={mobileScale}>LOCATION ONLY SETS YOUR SUNRISE AND SUNSET</ObHint>
-              <ObHint tone="dark" scale={mobileScale}>YOU CAN TURN THESE OFF ANY DAY</ObHint>
+              <ObPermission
+                tone="dark" scale={mobileScale} label="READ MY CHART"
+                on={personalise} onChange={setPersonalise}
+              >
+                LETS THE GARDEN READ YOUR CHART AND THE SKY IT IS MOVING THROUGH, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT BE ASKING OF YOU TODAY.
+              </ObPermission>
+              <ObPermission
+                tone="dark" scale={mobileScale} label="USE MY LOCATION"
+                on={useLocation} onChange={handleLocationToggle}
+              >
+                LETS THE GARDEN KNOW WHERE YOU ARE, SO IT CAN TELL WHEN YOUR SUN RISES AND SETS AND WHAT THE MOON IS DOING OVERHEAD.
+              </ObPermission>
+              {locationBlocked && (
+                <ObHint tone="dark" scale={mobileScale}>
+                  YOUR BROWSER IS BLOCKING LOCATION — ALLOW IT IN SITE SETTINGS
+                </ObHint>
+              )}
             </ObFields>
             <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
@@ -1436,24 +1458,27 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             tone="light"
                             scale={DESKTOP_SCALE}
                             tight
-                            title={<>WANT IT<br />PERSONALISED?</>}
-                            sub={<>SLOW GARDEN CAN GROW AND EVOLVE<br />WITH YOUR INTERACTION. COMPLETELY OPTIONAL.</>}
+                            title={<>ENABLE<br />PERMISSIONS</>}
+                            sub={<>BOTH ARE OPTIONAL, AND BOTH CAN BE<br />TURNED OFF ANY DAY.</>}
                           />
                           <ObFields scale={DESKTOP_SCALE}>
-                            <div style={{ ...fieldStyle('light', DESKTOP_SCALE, personalise), padding: `0 ${obPx(16, DESKTOP_SCALE)} 0 ${obPx(18, DESKTOP_SCALE)}` }}>
-                              <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, DESKTOP_SCALE), color: INK }}>
-                                READ MY CHART
-                              </span>
-                              <ObToggle tone="light" scale={DESKTOP_SCALE} on={personalise} onChange={setPersonalise} label="read my chart" />
-                            </div>
-                            <div style={{ ...fieldStyle('light', DESKTOP_SCALE, useLocation), padding: `0 ${obPx(16, DESKTOP_SCALE)} 0 ${obPx(18, DESKTOP_SCALE)}` }}>
-                              <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(30, DESKTOP_SCALE), color: INK }}>
-                                USE MY LOCATION
-                              </span>
-                              <ObToggle tone="light" scale={DESKTOP_SCALE} on={useLocation} onChange={handleLocationToggle} label="use my location" />
-                            </div>
-                            <ObHint tone="light" scale={DESKTOP_SCALE}>LOCATION ONLY SETS YOUR SUNRISE AND SUNSET</ObHint>
-                            <ObHint tone="light" scale={DESKTOP_SCALE}>YOU CAN TURN THESE OFF ANY DAY</ObHint>
+                            <ObPermission
+                              tone="light" scale={DESKTOP_SCALE} label="READ MY CHART"
+                              on={personalise} onChange={setPersonalise}
+                            >
+                              LETS THE GARDEN READ YOUR CHART AND THE SKY IT IS MOVING THROUGH, SO THE CARD CAN OPEN OUT INTO WHAT IT MIGHT BE ASKING OF YOU TODAY.
+                            </ObPermission>
+                            <ObPermission
+                              tone="light" scale={DESKTOP_SCALE} label="USE MY LOCATION"
+                              on={useLocation} onChange={handleLocationToggle}
+                            >
+                              LETS THE GARDEN KNOW WHERE YOU ARE, SO IT CAN TELL WHEN YOUR SUN RISES AND SETS AND WHAT THE MOON IS DOING OVERHEAD.
+                            </ObPermission>
+                            {locationBlocked && (
+                              <ObHint tone="light" scale={DESKTOP_SCALE}>
+                                YOUR BROWSER IS BLOCKING LOCATION — ALLOW IT IN SITE SETTINGS
+                              </ObHint>
+                            )}
                           </ObFields>
                           <ObCta scale={DESKTOP_SCALE} onClick={handleNext} />
                         </>

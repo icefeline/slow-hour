@@ -154,6 +154,53 @@ export function ObHint({ tone, scale, children }: { tone: Tone; scale: number; c
   );
 }
 
+/**
+ * A permission: what it is, what it buys you, and the switch.
+ *
+ * Its own component rather than a `fieldStyle` row because it has two lines and
+ * fieldStyle is a fixed-height flex row — and because the permissions step has
+ * two of these that must be identical to each other on both surfaces. The
+ * description sits inside the box, so the reason is attached to the thing it
+ * explains instead of drifting to a note underneath.
+ */
+export function ObPermission({
+  tone, scale, on, onChange, label, children,
+}: {
+  tone: Tone; scale: number; on: boolean; onChange: (v: boolean) => void;
+  label: string; children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        padding: `${px(16, scale)} ${px(18, scale)}`,
+        border: on
+          ? `1px solid ${tone === 'light' ? COBALT : 'rgba(201,242,78,.6)'}`
+          : `1px solid ${tone === 'light' ? 'rgba(18,50,31,.28)' : 'rgba(238,244,224,.28)'}`,
+        background: on
+          ? (tone === 'light' ? 'rgba(255,255,255,.45)' : 'rgba(12,24,14,.3)')
+          : 'transparent',
+        borderRadius: 0,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontFamily: PIXEL, fontSize: px(30, scale), color: bodyOf(tone), lineHeight: 1 }}>
+          {label}
+        </span>
+        <ObToggle tone={tone} scale={scale} on={on} onChange={onChange} label={label.toLowerCase()} />
+      </div>
+      <div
+        style={{
+          marginTop: px(10, scale), fontFamily: MONO, fontSize: px(8.5, scale),
+          letterSpacing: '0.14em', lineHeight: 1.7,
+          color: bodyOf(tone), opacity: tone === 'light' ? 0.55 : 0.65,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /** Chunky square toggle — deliberately not a pill, to match the field corners. */
 export function ObToggle({
   tone, scale, on, onChange, label,
