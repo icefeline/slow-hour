@@ -835,7 +835,7 @@ export default function Home() {
           className="text-[#F7F4E6] opacity-30 hover:opacity-60 transition-opacity"
           style={{ fontSize: '12px', letterSpacing: '0.14em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
         >
-          privacy policy
+          terms & privacy
         </a>
         <span className="text-[#F7F4E6] opacity-30" style={{ fontSize: '12px' }}>·</span>
         <a
