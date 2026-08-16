@@ -53,7 +53,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'major-5': {
     top: ['bay laurel', 'cardamom'],
-    heart: ['frankincense', 'beeswax'],
+    heart: ['frankincense', 'frangipani', 'beeswax'],
     base: ['sandalwood', 'myrrh'],
   },
   'major-6': {
@@ -72,8 +72,8 @@ export const cardScents: Record<string, CardScent> = {
     base: ['sandalwood', 'immortelle'],
   },
   'major-9': {
-    top: ['hinoki', 'sage'],
-    heart: ['frankincense', 'palo santo'],
+    top: ['hinoki', 'mugwort'],
+    heart: ['frankincense', 'garden sage'],
     base: ['cedar', 'ash'],
   },
   'major-10': {
@@ -103,7 +103,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'major-15': {
     top: ['blackcurrant bud', 'ginger'],
-    heart: ['tuberose', 'tobacco', 'cacao'],
+    heart: ['tuberose', 'ylang ylang', 'tobacco', 'cacao'],
     base: ['labdanum', 'oud', 'birch tar'],
   },
   'major-16': {
@@ -113,8 +113,8 @@ export const cardScents: Record<string, CardScent> = {
   },
   'major-17': {
     top: ['neroli', 'mimosa'],
-    heart: ['blue lotus', 'rose water'],
-    base: ['white musk', 'iris'],
+    heart: ['rose water', 'iris'],
+    base: ['white musk'],
   },
   'major-18': {
     top: ['mugwort', 'seaweed'],
@@ -128,7 +128,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'major-20': {
     top: ['frankincense', 'bergamot'],
-    heart: ['hyssop', 'tuberose'],
+    heart: ['hyssop', 'frangipani'],
     base: ['myrrh', 'oud'],
   },
   'major-21': {
@@ -163,12 +163,12 @@ export const cardScents: Record<string, CardScent> = {
   },
   'cups-6': {
     top: ['peach', 'mandarin'],
-    heart: ['rose', 'honey', 'chamomile'],
+    heart: ['pandan', 'rose', 'honey', 'chamomile'],
     base: ['vanilla', 'orris'],
   },
   'cups-7': {
     top: ['blackcurrant bud', 'star anise'],
-    heart: ['jasmine grandiflorum', 'blue lotus', 'tuberose'],
+    heart: ['jasmine grandiflorum', 'ylang ylang', 'tuberose'],
     base: ['poppy', 'myrrh'],
   },
   'cups-8': {
@@ -188,12 +188,12 @@ export const cardScents: Record<string, CardScent> = {
   },
   'cups-page': {
     top: ['yuzu', 'elderflower'],
-    heart: ['violet', 'blue lotus'],
+    heart: ['violet', 'water lily'],
     base: ['white musk', 'seaweed'],
   },
   'cups-knight': {
     top: ['bergamot', 'neroli'],
-    heart: ['rose', 'jasmine sambac', 'iris'],
+    heart: ['rose', 'jasmine sambac', 'ylang ylang'],
     base: ['sandalwood', 'ambergris'],
   },
   'cups-queen': {
@@ -207,7 +207,7 @@ export const cardScents: Record<string, CardScent> = {
     base: ['oakmoss', 'myrrh', 'ambergris'],
   },
   'swords-ace': {
-    top: ['yuzu', 'black pepper'],
+    top: ['yuzu', 'kaffir lime leaf'],
     heart: ['violet leaf', 'vetiver'],
     base: ['hinoki'],
   },
@@ -277,7 +277,7 @@ export const cardScents: Record<string, CardScent> = {
     base: ['cedar', 'vetiver', 'oakmoss'],
   },
   'wands-ace': {
-    top: ['ginger', 'pink pepper'],
+    top: ['torch ginger', 'ginger', 'pink pepper'],
     heart: ['dragon\'s blood', 'cinnamon'],
     base: ['cedar'],
   },
@@ -337,7 +337,7 @@ export const cardScents: Record<string, CardScent> = {
     base: ['cedar', 'birch tar'],
   },
   'wands-queen': {
-    top: ['pink pepper', 'bergamot'],
+    top: ['torch ginger', 'pink pepper', 'bergamot'],
     heart: ['rose', 'cinnamon', 'saffron', 'honey'],
     base: ['sandalwood', 'labdanum'],
   },
@@ -358,7 +358,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'pentacles-3': {
     top: ['cardamom', 'black pepper'],
-    heart: ['hay', 'beeswax', 'tobacco'],
+    heart: ['pandan', 'hay', 'beeswax', 'tobacco'],
     base: ['sandalwood', 'cedar', 'oakmoss'],
   },
   'pentacles-4': {
@@ -393,7 +393,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'pentacles-10': {
     top: ['fig', 'cardamom'],
-    heart: ['rose', 'honey', 'tobacco', 'patchouli'],
+    heart: ['pandan', 'rose', 'honey', 'tobacco', 'patchouli'],
     base: ['sandalwood', 'oakmoss', 'vetiver', 'beeswax', 'orris'],
   },
   'pentacles-page': {
@@ -408,7 +408,7 @@ export const cardScents: Record<string, CardScent> = {
   },
   'pentacles-queen': {
     top: ['fig', 'cardamom'],
-    heart: ['rose', 'honey', 'champaca', 'fenugreek'],
+    heart: ['pandan', 'rose', 'honey', 'champaca', 'fenugreek'],
     base: ['sandalwood', 'beeswax', 'oakmoss'],
   },
   'pentacles-king': {
