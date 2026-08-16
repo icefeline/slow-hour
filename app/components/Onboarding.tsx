@@ -1018,10 +1018,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 </div>
                 {readingBody && (
                   <div
+                    /* The pixel face here too, as on desktop — the reading is
+                       one voice and was arriving in two. Set smaller than the
+                       title so the hierarchy survives, and the block above it
+                       scrolls rather than growing, so a long reading can never
+                       reach the card below. */
                     style={{
-                      fontFamily: 'var(--font-dm-mono), ui-monospace, monospace',
-                      fontSize: obPx(14, mobileScale), letterSpacing: '0.05em',
-                      lineHeight: 1.7, color: BONE, textTransform: 'uppercase',
+                      fontFamily: 'var(--font-vt323), monospace',
+                      fontSize: obPx(24, mobileScale), letterSpacing: '0.01em',
+                      lineHeight: 1.2, color: BONE, textTransform: 'uppercase',
+                      textShadow: '0 2px 16px rgba(0,0,0,.5)',
                       whiteSpace: 'pre-line',
                     }}
                   >

@@ -10,6 +10,7 @@ import AsciiFlower from './components/AsciiFlower';
 import CardSelector from './components/CardSelector';
 import { LABEL_TYPE } from './components/type';
 import cardPage from './components/card-page/card-page.module.css';
+import { CardName } from './components/card-page';
 import { TarotCard as TarotCardType } from '@/lib/types/tarot';
 import { tarotDeck } from '@/lib/data/tarot-deck';
 
@@ -732,7 +733,7 @@ export default function Home() {
       {/* Content */}
       <div className="pt-safe-nav flex-1">
         {currentView === 'card' && card && (
-          <div className={isRevealed ? 'py-6 md:py-10' : 'max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-12'}>
+          <div className={isRevealed ? 'py-6 md:py-10' : 'max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10'}>
             {/* Once revealed, the reading page governs its own measure
                 (1080px), so the wrapper steps out of the way. Sealed, the
                 tear-off still wants the narrow column. */}
@@ -749,6 +750,32 @@ export default function Home() {
                 }).toLowerCase()}
               </p>
             </div>
+
+            {/*
+              The card name's space, held open before the tear.
+
+              Once revealed the reading page puts the name above the card, which
+              used to push the card down the screen at the moment of opening —
+              the one moment it should be still. Rendering the real name here,
+              invisible, reserves exactly its height for this card at this width,
+              so the card sits where it will sit and the tear develops the page
+              around it rather than moving it.
+
+              It goes above the anchor, not inside: TearOffPage is absolute
+              inset-0 within the anchor and centres itself there, so anything
+              added inside would drag the calendar off the card.
+            */}
+            {!isRevealed && (
+              <div aria-hidden="true" className="pointer-events-none" style={{ visibility: 'hidden' }}>
+                <div className={cardPage.page}>
+                  <div className={cardPage.col}>
+                    <CardName name={card.name} />
+                  </div>
+                </div>
+                {/* the plate's own margin above the card */}
+                <div className="h-[18px] md:h-[26px]" />
+              </div>
+            )}
 
             {/* Card Display — ref wraps TarotCard so getBoundingClientRect gives exact card position.
                 While unrevealed, the tear-off page covers the card; tearing it is the reveal. */}
@@ -769,12 +796,6 @@ export default function Home() {
                 <TearOffPage onTear={handleTearReveal} disabled={isAnimating} />
               )}
             </div>
-
-            {!isRevealed && (
-              <p className="text-[#F7F4E6] mt-6 text-center opacity-60" style={{ fontSize: 'clamp(13px, 3vw, 16px)', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}>
-                take a moment to centre yourself
-              </p>
-            )}
 
             {/* Shuffle Animation Overlay — transforms driven entirely by JS refs, not React state */}
             {isAnimating && (
