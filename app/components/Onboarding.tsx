@@ -155,6 +155,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   // Claude-generated welcome message for step 3
   const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
+
+  /**
+   * The size the reading is set at on a phone, chosen so the whole thing fits.
+   *
+   * The reading is written by a model and its length varies by a factor of two,
+   * so no fixed size fits every one of them. Scrolling was the previous answer
+   * and it was the wrong one: this screen is a single held moment, not a
+   * document. So the type shrinks until the reading fits the space instead.
+   *
+   * Measured against the FULL text rather than the typed-so-far, or the size
+   * would step down as the words arrived and the whole block would reflow on
+   * every keystroke. The greeting keeps its 3:2 ratio to the body.
+   */
+  const messageRef = useRef<HTMLDivElement>(null);
+  const [readingPx, setReadingPx] = useState(24);
   const [isLoadingWelcome, setIsLoadingWelcome] = useState(false);
 
   const totalSteps = 4; // 0: splash, 1: name, 2: birth, 3: personalisation, 4: reading
@@ -232,6 +247,109 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
    * mid-typewriter the blank line does not exist yet, so splitting the partial
    * string puts the whole message in the title and it renders at 36px.
    */
+  useEffect(() => {
+    const host = messageRef.current;
+    if (!host || !welcomeMessage) return;
+
+    const fit = () => {
+      const available = host.clientHeight;
+      if (!available) return;
+
+      const probe = document.createElement('div');
+      probe.style.cssText = [
+        'position:absolute', 'visibility:hidden', 'pointer-events:none',
+        `width:${host.clientWidth}px`, 'display:flex', 'flex-direction:column',
+        `gap:${obPx(14, mobileScale)}`, 'text-transform:uppercase',
+        'white-space:pre-line', 'font-family:var(--font-vt323), monospace',
+      ].join(';');
+      const title = document.createElement('div');
+      const body = document.createElement('div');
+      const [fullTitle, fullBody] = splitReading(welcomeMessage);
+      title.textContent = fullTitle;
+      body.textContent = fullBody;
+      // letter-spacing changes where lines break, so the probe must carry it
+      body.style.letterSpacing = '0.01em';
+      probe.append(title, body);
+      host.parentElement?.appendChild(probe);
+
+      // Step down rather than solve: the relationship between size and wrapped
+      // height is not smooth enough to invert, and a dozen reflows of one
+      // hidden element costs nothing on a screen that is already waiting.
+      let px = 24;
+      for (; px > 13; px -= 1) {
+        title.style.fontSize = obPx(px * 1.5, mobileScale);
+        title.style.lineHeight = '1';
+        body.style.fontSize = obPx(px, mobileScale);
+        body.style.lineHeight = '1.2';
+        if (probe.scrollHeight <= available) break;
+      }
+      probe.remove();
+      setReadingPx(px);
+    };
+
+    /*
+     * Driven by the box, not by the window, and always a frame late.
+     *
+     * A window resize listener fires before layout has settled, so the first
+     * version read the old height and concluded the text still fit. Watching
+     * the container itself catches every reason it can change size, and the
+     * rAF makes sure what is measured is the height it actually ended up.
+     */
+    let frame = 0;
+    let lastHeight = -1;
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const h = host.clientHeight;
+        if (h === lastHeight) return;
+        lastHeight = h;
+        fit();
+      });
+    };
+
+    schedule();
+    const observer = new ResizeObserver(schedule);
+    observer.observe(host);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [welcomeMessage, mobileScale]);
+
+  /**
+   * Where the greeting ends and the reading begins.
+   *
+   * Shared with the fit measurement below, which has to wrap the text exactly
+   * as the render will or it measures a different number of lines. An earlier
+   * version split the two differently and consistently under-measured.
+   */
+  const splitReading = (full: string): [string, string] => {
+    let title = full.split(/\n\s*\n/)[0];
+    if (title.length === full.length) {
+      const firstSentence = full.match(/^[^.!?]*[.!?]/);
+      if (firstSentence) title = firstSentence[0];
+    }
+    return [title, full.slice(title.length).replace(/^\s+/, '')];
+  };
+
+  /**
+   * The check that actually guarantees it.
+   *
+   * The probe above predicts the size before the words arrive, so the type
+   * never steps while typing. This watches what really rendered and takes
+   * another point off if it still spills — a probe can be wrong, but the
+   * element's own scrollHeight cannot. One point at a time, so a correction is
+   * a nudge rather than a jump, and never below the floor.
+   */
+  useEffect(() => {
+    const host = messageRef.current;
+    if (!host || !welcomeMessage || readingPx <= 13) return;
+    const frame = requestAnimationFrame(() => {
+      if (host.scrollHeight > host.clientHeight) setReadingPx(px => Math.max(13, px - 1));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [welcomeMessage, readingPx, displayedText]);
+
   const readingParts = () => {
     const full = welcomeMessage ?? '';
     // Prefer the blank line the prompt asks for, but the model does not always
@@ -1004,12 +1122,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   paddingLeft: obPx(24, mobileScale), paddingRight: obPx(24, mobileScale),
                   display: 'flex', flexDirection: 'column',
                   gap: obPx(14, mobileScale),
-                  flex: '1 1 auto', minHeight: 0, overflowY: 'auto',
+                  // Fits by shrinking, so it never scrolls and never clips.
+                  flex: '1 1 auto', minHeight: 0, overflow: 'hidden',
                 }}
+                ref={messageRef}
               >
                 <div
                   style={{
-                    fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(36, mobileScale),
+                    fontFamily: 'var(--font-vt323), monospace',
+                    fontSize: obPx(readingPx * 1.5, mobileScale),
                     lineHeight: 1, color: LIME, textShadow: '0 2px 16px rgba(0,0,0,.5)',
                     textTransform: 'uppercase',
                   }}
@@ -1025,7 +1146,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                        reach the card below. */
                     style={{
                       fontFamily: 'var(--font-vt323), monospace',
-                      fontSize: obPx(24, mobileScale), letterSpacing: '0.01em',
+                      fontSize: obPx(readingPx, mobileScale), letterSpacing: '0.01em',
                       lineHeight: 1.2, color: BONE, textTransform: 'uppercase',
                       textShadow: '0 2px 16px rgba(0,0,0,.5)',
                       whiteSpace: 'pre-line',

@@ -737,7 +737,13 @@ export default function Home() {
             {/* Once revealed, the reading page governs its own measure
                 (1080px), so the wrapper steps out of the way. Sealed, the
                 tear-off still wants the narrow column. */}
-            <div className="text-center mb-4 md:mb-8">
+            {/* Hidden rather than absent while sealed: it develops in with the
+                rest of the page, and its space is already held so the card
+                below it does not move when it appears. */}
+            <div
+              className="text-center mb-4 md:mb-8"
+              style={{ visibility: isRevealed ? 'visible' : 'hidden' }}
+            >
               <p
                 className="text-[#C9F24E]"
                 style={{ fontSize: 'clamp(12px, 2.6vw, 15px)', letterSpacing: '0.18em', fontFamily: 'var(--font-dm-mono), ui-monospace, monospace' }}
