@@ -741,7 +741,11 @@ export default function Home() {
                 rest of the page, and its space is already held so the card
                 below it does not move when it appears. */}
             <div
-              className="text-center mb-4 md:mb-8"
+              /* Sits as close to the name as the name sits to the card. The
+                 page's own 8px top padding and the name's 4px margin are part
+                 of that gap, so this carries the remainder: 6 + 12 = 18 on a
+                 phone, 14 + 12 = 26 on a desktop, matching .plate's margin. */
+              className="text-center mb-1.5 md:mb-3"
               style={{ visibility: isRevealed ? 'visible' : 'hidden' }}
             >
               <p

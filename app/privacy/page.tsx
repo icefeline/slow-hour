@@ -31,14 +31,14 @@ const TERM = 'var(--font-vt323), monospace';
 const INK = '#172211';
 const LIME = '#C9F24E';
 
-const CONTACT = 'hello@slowww.garden';
-
 /* VT323 reads small for its point size, so the headings carry more px than the
    sans would want at the same visual weight. */
 const H1 = 'clamp(34px, 7.5vw, 54px)';
 const H2 = 'clamp(24px, 4.4vw, 32px)';
 const H3 = 'clamp(19px, 3.4vw, 24px)';
 const BODY = 'clamp(15px, 2.2vw, 19px)';
+/** The standfirst, a step up from the body it introduces. */
+const LEDE = 'clamp(18px, 2.9vw, 24px)';
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -86,14 +86,22 @@ export default function TermsAndPrivacy() {
           last updated: august 2026
         </p>
 
-        <p className="mt-10 mb-16" style={{ fontSize: BODY, lineHeight: 1.7 }}>
-          slow garden is a web app that draws you one tarot card a day and writes a short
-          reflection to go with it. it runs entirely in your browser. there is no account,
-          no login, and no database anywhere with your name in it, which makes most of what
-          follows shorter than you might expect. jump to{' '}
-          <a href="#terms" className="underline" style={{ fontWeight: 700 }}>the terms</a> or{' '}
-          <a href="#privacy" className="underline" style={{ fontWeight: 700 }}>the privacy policy</a>.
-        </p>
+        {/* The one paragraph anyone reads, so it is set like a standfirst and
+            framed the way the reading page frames its own blocks. Dotted on
+            ink, since the rule is the app's, not a border for its own sake. */}
+        <div
+          className="mt-10 mb-16"
+          style={{ border: `1px dotted ${INK}`, padding: 'clamp(20px, 4vw, 30px)' }}
+        >
+          <p style={{ fontSize: LEDE, lineHeight: 1.55 }}>
+            slow garden is a web app that draws you one tarot card a day and writes a short
+            reflection to go with it. it runs entirely in your browser. there is no account,
+            no login, and no database anywhere with your name in it, which makes most of what
+            follows shorter than you might expect. jump to{' '}
+            <a href="#terms" className="underline" style={{ fontWeight: 700 }}>the terms</a> or{' '}
+            <a href="#privacy" className="underline" style={{ fontWeight: 700 }}>the privacy policy</a>.
+          </p>
+        </div>
 
         {/* ── TERMS ────────────────────────────────────────────────────── */}
         <Section id="terms" title="TERMS OF USE">
@@ -219,11 +227,8 @@ export default function TermsAndPrivacy() {
 
           <Clause title="who&apos;s responsible">
             <p>
-              slow garden is made and run by one individual, not a company. for anything on
-              this page, including a request about your data, write to{' '}
-              <a href={`mailto:${CONTACT}`} className="underline" style={{ fontWeight: 700 }}>
-                {CONTACT}
-              </a>.
+              slow garden is made and run by one individual, not a company. a contact address
+              for questions about this page will be published here shortly.
             </p>
           </Clause>
 
@@ -346,8 +351,8 @@ export default function TermsAndPrivacy() {
             <p>
               slow garden isn&apos;t intended for anyone under 13, and we don&apos;t knowingly
               collect anything from them. since there are no accounts, there&apos;s nothing
-              for us to look up or delete, but if you&apos;re a parent and want to talk about
-              it, write to us at the address above.
+              for us to look up or delete, and clearing the browser removes everything the
+              app has kept.
             </p>
           </Clause>
 
