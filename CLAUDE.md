@@ -21,7 +21,9 @@ slow garden is a meditative daily tarot app for self-reflection. not prediction,
 - **Tailwind CSS v4**
 - **@anthropic-ai/sdk** — insight generation via `claude-haiku-4-5-20251001`
 - **astronomy-engine** — natal chart + transit calculations (Vedic sidereal, Lahiri ayanamsa)
-- **@upstash/redis + @upstash/ratelimit** — rate limiting (5 readings/day)
+- **@upstash/redis + @upstash/ratelimit** — per-IP abuse guards, set far above human
+  use to bound cost (see `middleware.ts`). the product's free quota is a separate,
+  client-side count of 3 reading-days in `TarotCard.tsx` — an IP is not a person.
 - **@vercel/analytics** — usage analytics
 
 ---
@@ -128,10 +130,20 @@ all user data lives in localStorage. no backend persistence.
 
 | key | type | description |
 |---|---|---|
-| `slow-hour-user` | `{ name, birthDate, birthTime?, birthLocation?, sunSign }` | user profile from onboarding |
-| `slow-hour-readings` | `DailyReading[]` | full history of all card draws |
-| `slow-hour-memory` | `string[]` | last 10 AI-generated memoryNotes for personalisation |
-| `slow-hour-insight-[date]-[cardId]` | `ClaudeInsight` | cached insight per card per date |
+the keys grew in two eras and were never unified, so there is no single prefix
+to filter on — see the reset snippet in `.claude/skills/onboarding-preview.md`.
+
+| key | type | description |
+|---|---|---|
+| `userName`, `userBirthdate`, `userBirthTime`, `userBirthLocation` | `string` | profile, stored as four flat keys rather than one object |
+| `onboardingComplete`, `cardRevealed`, `lastDrawDate` | `string` | flow state |
+| `card-[date]`, `reversed-[date]` | `string` / `boolean` | the draw for a given day |
+| `reflection-[date]` | `string` | the reader's own writing for that day |
+| `insight-[cardId]-[date]` | `GeneratedInsight` | cached insight per card per date |
+| `slow-garden-memory` | `{ readings, memoryNotes }` | last 30 readings + 10 memoryNotes for personalisation. was `slowHourMemory` before the rename; `TarotCard.tsx` still reads the old key as a fallback so existing readers keep their notes |
+| `slow-garden-personalise` | `'false'` when opted out | whether to call Claude at all |
+| `slow-garden-reading-days` | `string[]` | the days that spent free quota (3 max) |
+| `slow-garden-use-location`, `slow-garden-here` | — | location consent + resolved place |
 
 ---
 
@@ -188,11 +200,16 @@ npm run test:watch
 ## environment variables
 
 ```
-ANTHROPIC_API_KEY        # required — Claude insight generation
-UPSTASH_REDIS_REST_URL   # required — rate limiting
-UPSTASH_REDIS_REST_TOKEN # required — rate limiting
+SLOW_GARDEN_ANTHROPIC_KEY  # required — Claude insight generation
+UPSTASH_REDIS_REST_URL   # required — abuse guards
+UPSTASH_REDIS_REST_TOKEN # required — abuse guards
 ELEVENLABS_API_KEY       # planned — voice feature
 ```
+
+the Anthropic var carries a `SLOW_GARDEN_` prefix, not the SDK's default
+`ANTHROPIC_API_KEY` — see `.env.example`. if the Upstash pair is absent the
+limiters go null and every route runs unguarded, so they are required in
+production even though the app boots without them.
 
 ---
 

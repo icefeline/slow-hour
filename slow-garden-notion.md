@@ -52,7 +52,7 @@ All secrets live in `.env.local` (local) and Vercel Environment Variables (produ
 
 | Variable | Purpose |
 |---|---|
-| `SLOW_HOUR_ANTHROPIC_KEY` | Claude API key for generating personalised readings |
+| `SLOW_GARDEN_ANTHROPIC_KEY` | Claude API key for generating personalised readings |
 | `UPSTASH_REDIS_REST_URL` | Upstash Redis endpoint for rate limiting |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis auth token |
 
@@ -157,7 +157,7 @@ daily-tarot-app/
 ### Immediate — before next deploy
 - [ ] **Commit + push pending security fixes** — 9 files modified, 4 untracked (`validate.ts`, `CardSlotReveal.tsx`, security backlog doc, new bg assets). Local `main` is also 11 commits ahead of `origin/main` from the onboarding polish work — needs a push.
 - [ ] **Rotate Anthropic + Upstash API keys** — flagged critical in the 2026-03-18 audit, still open (see backlog #1)
-- [ ] **Resolve remaining security backlog items** — #10 Vercel Analytics contradicts "no tracking" privacy copy, #11 no server-side caching for Nominatim geocode calls, #12 partial reset doesn't clear `slow-hour-memory`
+- [ ] **Resolve remaining security backlog items** — #10 Vercel Analytics contradicts "no tracking" privacy copy, #11 no server-side caching for Nominatim geocode calls, #12 partial reset doesn't clear `slow-garden-memory`
 
 ### High Priority
 - [ ] **Push notifications** — daily "your card is ready" reminder via Web Push API. Biggest retention driver for a daily habit app. Works as PWA, no App Store needed.
@@ -496,7 +496,7 @@ memoryNote stored to localStorage for future readings
 ## 📝 Notes
 
 - All user data is **localStorage only** — no server-side storage currently. Data is lost if user clears browser or switches device.
-- The `SLOW_HOUR_ANTHROPIC_KEY` env var name is intentional (avoids conflicts with default `ANTHROPIC_API_KEY`).
+- The `SLOW_GARDEN_ANTHROPIC_KEY` env var name is intentional (avoids conflicts with default `ANTHROPIC_API_KEY`).
 - Card draw: truly random via `Math.random()`, stored to localStorage immediately. Consistent for the whole day once drawn. Different every day.
 - Reversed cards: 30% probability, randomly assigned at first draw for the day.
 - Birth time defaults to noon, birth location defaults to equator (0,0 UTC) when not provided — Claude is told when this is the case and adjusts accordingly.

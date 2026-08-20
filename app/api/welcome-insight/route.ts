@@ -161,7 +161,7 @@ export async function POST(request: Request) {
       ? `no birth time, but the Moon stayed in one nakshatra all that day — janma nakshatra and moon rashi are still exact; no lagna`
       : `no birth time, and the Moon changed nakshatra that day — treat the janma nakshatra as the likelier of two; no lagna`;
 
-    const apiKey = process.env.SLOW_HOUR_ANTHROPIC_KEY;
+    const apiKey = process.env.SLOW_GARDEN_ANTHROPIC_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }

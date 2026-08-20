@@ -184,9 +184,9 @@ Write a JSON object with exactly these four fields:
 
 Return only valid JSON, no markdown, no extra text.`;
 
-  const apiKey = process.env.SLOW_HOUR_ANTHROPIC_KEY;
+  const apiKey = process.env.SLOW_GARDEN_ANTHROPIC_KEY;
   if (!apiKey) {
-    console.error('SLOW_HOUR_ANTHROPIC_KEY not set');
+    console.error('SLOW_GARDEN_ANTHROPIC_KEY not set');
     return null;
   }
 

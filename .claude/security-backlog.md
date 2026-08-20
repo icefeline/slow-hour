@@ -79,7 +79,7 @@ Nominatim requires ≤ 1 req/sec. No server-side enforcement; only client deboun
 
 ### 12. Partial reset doesn't clear memory notes — ⬜ OPEN
 **File:** `app/page.tsx` lines 180–187
-Full reset clears everything, but partial reset preserves `slow-hour-memory`.
+Full reset clears everything, but partial reset preserves `slow-garden-memory`.
 - Document this, or add selective clear option
 
 ---

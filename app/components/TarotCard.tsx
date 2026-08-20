@@ -47,7 +47,7 @@ interface ReadingMemory {
   keyPhrase: string;
 }
 
-interface SlowHourMemory {
+interface SlowGardenMemory {
   readings: ReadingMemory[];
   memoryNotes: string[];
 }
@@ -78,29 +78,44 @@ function saveCachedInsight(cardId: string, insight: GeneratedInsight, date?: str
   }
 }
 
-function loadMemory(): SlowHourMemory {
+const MEMORY_KEY = 'slow-garden-memory';
+/**
+ * The same store under the app's former name. Read-only and never written
+ * again: anyone who drew a card before the rename still has their notes here,
+ * and dropping the fallback would silently empty their personalisation while
+ * leaving the app looking healthy. Safe to delete once the old key is gone from
+ * the field — there is no server copy to restore from, so err on the side of
+ * leaving it.
+ */
+const LEGACY_MEMORY_KEY = 'slowHourMemory';
+
+function loadMemory(): SlowGardenMemory {
   try {
-    const raw = localStorage.getItem('slowHourMemory');
+    const raw =
+      localStorage.getItem(MEMORY_KEY) ?? localStorage.getItem(LEGACY_MEMORY_KEY);
     if (!raw) return { readings: [], memoryNotes: [] };
-    return JSON.parse(raw) as SlowHourMemory;
+    return JSON.parse(raw) as SlowGardenMemory;
   } catch {
     return { readings: [], memoryNotes: [] };
   }
 }
 
 function saveMemory(
-  memory: SlowHourMemory,
+  memory: SlowGardenMemory,
   newReading: ReadingMemory,
   memoryNote: string | undefined
 ): void {
   try {
-    const updated: SlowHourMemory = {
+    const updated: SlowGardenMemory = {
       readings: [newReading, ...memory.readings].slice(0, 30),
       memoryNotes: memoryNote
         ? [memoryNote, ...memory.memoryNotes].slice(0, 10)
         : memory.memoryNotes,
     };
-    localStorage.setItem('slowHourMemory', JSON.stringify(updated));
+    // Writes land on the new key only; loadMemory() has already carried any
+    // legacy notes forward into `memory`, so the first save migrates them.
+    localStorage.setItem(MEMORY_KEY, JSON.stringify(updated));
+    localStorage.removeItem(LEGACY_MEMORY_KEY);
   } catch {
     // localStorage write failed (private browsing, quota exceeded, etc.)
   }

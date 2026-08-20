@@ -69,7 +69,7 @@ public/
   cards/                  # card image assets
   device-frame-deck.png   # desktop onboarding frame
   card-back.png           # card back image
-  slow-hour-logo.png      # wordmark
+  slow-garden-logo.png    # wordmark
 ```
 
 ---

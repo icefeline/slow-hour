@@ -8,8 +8,18 @@ Reset the app to a fresh state and walk through the full onboarding flow.
 
 2. Clear all slow garden localStorage keys by running in the browser console:
    ```js
+   // The app's keys are not all under one prefix — the profile and per-day
+   // entries predate the `slow-garden-` convention, so a prefix filter alone
+   // silently clears nothing and the walkthrough starts mid-flow.
    Object.keys(localStorage)
-     .filter(k => k.startsWith('slow-hour'))
+     .filter(k =>
+       k.startsWith('slow-garden-') ||
+       /^(card|reflection|reversed|insight)-/.test(k) ||
+       ['userName', 'userBirthdate', 'userBirthTime', 'userBirthLocation',
+        'onboardingComplete', 'cardRevealed', 'lastDrawDate', 'slowHourMemory',
+        'notificationsEnabled', 'notificationTime', 'notificationTimeoutId',
+        'testSeed'].includes(k)
+     )
      .forEach(k => localStorage.removeItem(k))
    location.reload()
    ```
