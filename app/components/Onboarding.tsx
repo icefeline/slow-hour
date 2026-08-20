@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import InAppBrowserNotice from './InAppBrowserNotice';
 
 /** Desktop panel is 909 tall; the design canvas is 748, so it scales to fit exactly. */
 const DESKTOP_SCALE = 909 / 748;
@@ -944,6 +945,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 }}
               />
             </div>
+
+            {/* Sits above the CTA rather than over the wordmark: the reader
+                should meet the name first, and the notice only matters at the
+                moment they are about to commit details to this browser. */}
+            <InAppBrowserNotice scale={mobileScale} />
 
             {/* Continue — the same CTA the rest of the onboarding uses */}
             <ObCta scale={mobileScale} onClick={handleNext} />
