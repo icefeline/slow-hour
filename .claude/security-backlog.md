@@ -62,10 +62,17 @@ Assumes `data` is an array and `data[0].address` exists without checking.
 1000 requests/day = ~40/hour is generous for an app with 1 draw/day.
 - Reduced to 10/24h for `calculate-transit` (see #3).
 
-### 10. Vercel Analytics vs. "no tracking" privacy promise — ⬜ OPEN
+### 10. Vercel Analytics vs. "no tracking" privacy promise — ✅ RESOLVED 2026-08-20
 **File:** `app/layout.tsx`
 `<Analytics />` sends usage data to Vercel. CLAUDE.md says "no tracking".
-- Either remove `<Analytics />` or update the privacy copy
+- Re-checked against the live page: `app/privacy/page.tsx` already discloses Vercel's
+  visitor counts, that they are cookieless and carry no personal data, and why there is
+  no consent banner. The reader-facing promise was never the inaccurate one.
+- The stale claim was in CLAUDE.md's philosophy section ("no servers, no tracking"),
+  now corrected there.
+- ⚠️ Re-opens the moment PostHog lands: event capture and session replay are a
+  different order of thing from a cookieless page count, and would need their own
+  clause on the privacy page in the same commit.
 
 ---
 

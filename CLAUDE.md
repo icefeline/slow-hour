@@ -9,7 +9,12 @@ slow garden is a meditative daily tarot app for self-reflection. not prediction,
 - reflection over prediction: never tell the user what will happen or what they should do
 - noticing over prescribing: the "try this" action is about paying attention, not changing behaviour
 - tone: lowercase, conversational, intimate — like a letter from a thoughtful friend, not a self-help app
-- privacy-first: all data stays in localStorage. no accounts, no servers, no tracking
+- privacy-first: every reading, reflection and birth detail stays in localStorage.
+  no accounts, no database, nothing with a name in it. but not *no servers* and not
+  *no tracking* — the app calls its own API routes for readings and geocoding, and
+  ships Vercel's cookieless visitor counts. `app/privacy/page.tsx` states this
+  accurately and is the source of truth; when a data practice changes, it changes in
+  the same commit.
 
 ---
 
