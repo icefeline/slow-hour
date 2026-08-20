@@ -67,8 +67,25 @@ export async function middleware(request: NextRequest) {
   // If Upstash is unreachable (outage, network blip), fail open rather than
   // taking the whole route down — a rate limiter should never be a single
   // point of failure for the app.
+  //
+  // Failing open needs a deadline to mean anything. Measured against an
+  // unreachable Upstash, the client held the request for about six seconds
+  // before erroring: the route did survive the outage, but every reading would
+  // have taken six seconds longer to arrive, on every request, for as long as
+  // the outage lasted. Past the budget we let the request through unmetered —
+  // the guard exists to bound cost during abuse, not to be worth stalling
+  // every reader over.
+  const LIMITER_BUDGET_MS = 1000;
+
   try {
-    const { success, limit, remaining, reset } = await limiter.limit(ip);
+    const verdict = await Promise.race([
+      limiter.limit(ip),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), LIMITER_BUDGET_MS)),
+    ]);
+
+    if (!verdict) return NextResponse.next();
+
+    const { success, limit, remaining, reset } = verdict;
 
     if (!success) {
       return new NextResponse(

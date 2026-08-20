@@ -544,14 +544,50 @@ export default function Home() {
   };
 
   const handleReset = () => {
-    // Only reset today's card, keep all historical data
+    /*
+     * Development only. Resets today and leaves history alone.
+     *
+     * "Today" is more than the card: the cached insight is keyed by card AND
+     * date, so leaving it behind means the next draw can surface the previous
+     * card's reading against a new card. The draw timestamp and today's entry
+     * in the reading-day quota are the same kind of leftover — without them a
+     * reset day still shows the old "drawn at" and still counts against the
+     * seven free readings, which makes testing the quota impossible.
+     *
+     * Memory notes survive on purpose. They are the app's accumulated sense of
+     * a person across many days, not a property of today, and wiping them here
+     * would make every reset also a test of the cold-start prompt. Use the full
+     * reset for that.
+     */
     const today = localDateString();
     localStorage.removeItem('lastDrawDate');
     localStorage.removeItem('cardRevealed');
     localStorage.removeItem(`card-${today}`);
     localStorage.removeItem(`reversed-${today}`);
     localStorage.removeItem(`reflection-${today}`);
+    localStorage.removeItem(`drawn-at-${today}`);
     localStorage.removeItem('testSeed'); // clean up old workaround
+
+    // Cached insights are keyed insight-[cardId]-[date]; the card id is not
+    // known here (it is about to be redrawn), so clear every insight for today.
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('insight-') && key.endsWith(`-${today}`)) {
+        localStorage.removeItem(key);
+      }
+    }
+
+    // Give today's free reading back, so the quota can be exercised repeatedly.
+    try {
+      const days = JSON.parse(localStorage.getItem('slow-garden-reading-days') || '[]');
+      if (Array.isArray(days)) {
+        localStorage.setItem(
+          'slow-garden-reading-days',
+          JSON.stringify(days.filter((d: unknown) => d !== today))
+        );
+      }
+    } catch {
+      // malformed quota store — leave it; the full reset clears it outright
+    }
 
     // Reset view — next loadTodaysCard will draw a fresh random card
     setCurrentView('card');
