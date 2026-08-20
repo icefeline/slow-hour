@@ -227,7 +227,11 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
   }, [card.id, cardDate]);
 
   /*
-   * The free quota: 3 personalised readings per person.
+   * The free quota: 7 personalised readings per person.
+   *
+   * Seven rather than three because this is a daily app, and a wall on day
+   * three arrives before the habit that would make anyone want to pass it.
+   * A week is long enough to find out whether the thing is for you.
    *
    * Counted as distinct DAYS that consumed a reading, not as fetches — a retry
    * after an error, or re-opening the same day, must not burn quota. A day is
@@ -252,7 +256,7 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
     }
   };
 
-  const FREE_READING_DAYS = 3;
+  const FREE_READING_DAYS = 7;
   const READING_DAYS_KEY = 'slow-garden-reading-days';
 
   const getReadingDays = (): string[] => {

@@ -16,7 +16,7 @@ const redis = makeRedis();
 /*
  * These are ABUSE GUARDS, not the product's free-reading quota.
  *
- * The quota — 3 free readings per person — is per-user and lives in
+ * The quota — 7 free readings per person — is per-user and lives in
  * localStorage (see TarotCard). It cannot live here: an IP is not a person.
  * Mobile carriers and offices put hundreds of people behind one address, so an
  * IP limit tight enough to be a quota would lock out real users the moment two

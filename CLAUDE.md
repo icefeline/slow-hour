@@ -147,7 +147,7 @@ to filter on — see the reset snippet in `.claude/skills/onboarding-preview.md`
 | `insight-[cardId]-[date]` | `GeneratedInsight` | cached insight per card per date |
 | `slow-garden-memory` | `{ readings, memoryNotes }` | last 30 readings + 10 memoryNotes for personalisation. was `slowHourMemory` before the rename; `TarotCard.tsx` still reads the old key as a fallback so existing readers keep their notes |
 | `slow-garden-personalise` | `'false'` when opted out | whether to call Claude at all |
-| `slow-garden-reading-days` | `string[]` | the days that spent free quota (3 max) |
+| `slow-garden-reading-days` | `string[]` | the days that spent free quota (7 max) |
 | `slow-garden-use-location`, `slow-garden-here` | — | location consent + resolved place |
 
 ---
