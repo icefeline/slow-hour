@@ -1,3 +1,5 @@
+const { withSentryConfig } = require('@sentry/nextjs');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -15,4 +17,18 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withSentryConfig(nextConfig, {
+  org: 'slow-garden',
+  project: 'slow-garden',
+
+  // Source maps are uploaded at build time so stack traces name real lines
+  // instead of minified soup, then deleted from the bundle so they are not
+  // served to the public.
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+
+  // Routes Sentry's own browser requests through the app's origin, so ad
+  // blockers do not silently drop error reports.
+  tunnelRoute: '/monitoring',
+});

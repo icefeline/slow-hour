@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1&addressdetails=1`,
       {
         headers: {
-          'User-Agent': 'SlowHourTarotApp/1.0 (daily tarot readings)',
+          'User-Agent': 'SlowGardenTarotApp/1.0 (daily tarot readings)',
           'Accept-Language': 'en',
         },
       }

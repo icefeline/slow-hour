@@ -291,6 +291,16 @@ export default function TermsAndPrivacy() {
                 the visitor counts. those counts are cookieless and carry no personal data,
                 which is why you&apos;ve never seen a consent banner here.
               </li>
+              <li>
+                <span className="underline" style={{ fontWeight: 700 }}>sentry</span> tells us
+                when the app breaks, on servers in the european union. it gets the error and
+                the line of code that caused it. it does not get your name, your birth date,
+                time or place, your reading, or anything you&apos;ve written &mdash; those are
+                stripped out before the report leaves your device or our server, by a filter
+                that works on the shape of the data rather than a list of places to look, so
+                new code is covered the day it&apos;s written. we don&apos;t record your
+                screen.
+              </li>
             </ul>
           </Clause>
 
