@@ -131,6 +131,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   useEffect(() => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
+    // Again after the browser has laid the step out and settled. A single
+    // synchronous call runs before that and loses to anything the browser
+    // decides to scroll afterwards.
+    const frame = requestAnimationFrame(() => window.scrollTo(0, 0));
+    return () => cancelAnimationFrame(frame);
   }, [currentStep]);
 
   const handleLocationToggle = async (on: boolean) => {
@@ -244,6 +249,36 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       vv.removeEventListener('scroll', handler);
     };
   }, []);
+
+  /*
+   * When the keyboard goes back down, the step is whole again.
+   *
+   * Focusing a field makes the browser scroll it into view, which is right —
+   * you want to see what you are typing into. Dismissing the keyboard should
+   * undo that, and on Safari and Brave it effectively does. Chrome leaves the
+   * page where the focus scroll put it, so the step stays pushed up with its
+   * back link and first line off the top, and the reader has to scroll back by
+   * hand to see the screen they are already on.
+   *
+   * Watched on the falling edge only — when the keyboard was up and now is not.
+   * Scrolling on the rising edge would fight the browser at the moment it is
+   * bringing the field into view, which is the one time that scroll is wanted.
+   *
+   * Deferred a frame because the viewport is still settling as the keyboard
+   * animates away, and a scroll issued mid-collapse is measured against a
+   * height that is about to change.
+   */
+  const keyboardWasUp = useRef(false);
+  useEffect(() => {
+    const isUp = keyboardHeight > 0;
+    const wasUp = keyboardWasUp.current;
+    keyboardWasUp.current = isUp;
+    if (wasUp && !isUp) {
+      const frame = requestAnimationFrame(() => window.scrollTo(0, 0));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [keyboardHeight]);
+
 
   // Compute the scale so the device frame + content area always fit within the viewport
   useEffect(() => {
