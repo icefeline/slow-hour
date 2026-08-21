@@ -984,7 +984,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
               <ObHint tone="dark" scale={mobileScale}>STORED ON YOUR DEVICE ONLY</ObHint>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} lift={keyboardHeight} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} />
           </div>
         );
 
@@ -1066,7 +1066,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 )}
               </div>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} lift={keyboardHeight} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} />
           </div>
         );
 

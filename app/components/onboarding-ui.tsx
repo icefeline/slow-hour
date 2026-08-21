@@ -273,18 +273,26 @@ export function ObToggle({
 }
 
 export function ObCta({
-  scale, onClick, disabled = false, label = 'CONTINUE', lift = 0,
+  scale, onClick, disabled = false, label = 'CONTINUE',
 }: {
   scale: number; onClick: () => void; disabled?: boolean; label?: string;
-  /**
-   * Height of the on-screen keyboard, in px. When it is up, the CTA's usual
-   * home is underneath it, so the user has to dismiss the keyboard before they
-   * can even see the button. Given a lift, the CTA goes fixed and sits just
-   * above the keyboard instead — one tap to continue rather than done-then-tap.
-   */
-  lift?: number;
 }) {
-  const lifted = lift > 0;
+  /*
+   * The CTA stays at the bottom of the step and does not chase the keyboard.
+   *
+   * It used to go `position: fixed` with `bottom: keyboardHeight + 12` so it
+   * would sit just above the keyboard. That works where the keyboard shrinks
+   * the layout viewport, and iOS Safari does not shrink it — so "336px up from
+   * the bottom" was measured against a viewport that still believed it was
+   * full height, and the button landed in the middle of the screen, across the
+   * field the reader was typing into. Chrome on iOS is the same engine and did
+   * the same thing; Brave's toolbar behaviour hid it, which is why it looked
+   * right in one browser and broken in two.
+   *
+   * Sitting still is the fix. The fields now start under the heading, so the
+   * one being typed into is visible with the keyboard up, and the button is
+   * where it has always been when the keyboard closes.
+   */
   return (
     <button
       onClick={onClick}
@@ -293,10 +301,9 @@ export function ObCta({
       // move the button out from under the finger mid-tap
       onPointerDown={(e) => { e.preventDefault(); }}
       style={{
-        position: lifted ? 'fixed' : 'absolute',
+        position: 'absolute',
         left: px(24, scale), right: px(24, scale),
-        bottom: lifted ? `${lift + 12}px` : px(34, scale),
-        zIndex: lifted ? 40 : undefined,
+        bottom: px(34, scale),
         height: px(62, scale), background: LIME, color: INK,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: `0 ${px(22, scale)}`, border: 'none', borderRadius: 0,
