@@ -1049,7 +1049,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     placeholder="CITY, COUNTRY"
                     value={birthLocation}
                     onChange={(e) => handleLocationChange(e.target.value)}
-                    style={{ ...obValue(mobileScale), color: BONE }}
+                    style={{ ...obValue(mobileScale), color: BONE, textTransform: 'uppercase' }}
                   />
                   <ObTag tone="dark" scale={mobileScale} required={false} />
                 </div>
@@ -1516,7 +1516,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                                   placeholder="CITY, COUNTRY"
                                   value={birthLocation}
                                   onChange={(e) => handleLocationChange(e.target.value)}
-                                  style={{ ...obValue(DESKTOP_SCALE), color: INK }}
+                                  style={{ ...obValue(DESKTOP_SCALE), color: INK, textTransform: 'uppercase' }}
                                 />
                                 <ObTag tone="light" scale={DESKTOP_SCALE} required={false} />
                               </div>
