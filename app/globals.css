@@ -10,9 +10,28 @@
   --accent: #C9F24E;
 }
 
+/*
+ * The ground is painted on the root as well as on body, and the page cannot be
+ * dragged off it.
+ *
+ * Body's background does propagate to the canvas when html has none, but only
+ * where a browser implements that; Brave and Firefox were showing bare white
+ * above the page instead. Stating it on html removes the question.
+ *
+ * `overscroll-behavior: none` stops the rubber-band drag past the top and
+ * bottom, which is what was exposing flat colour behind the onboarding in the
+ * first place — the animated background fills the screen, so the only way to
+ * see past it was to pull the whole page away from it.
+ */
+html {
+  background: var(--background);
+  overscroll-behavior: none;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
+  overscroll-behavior: none;
   /* Reading text is DM Sans; the mono is chrome. The handwritten face is
      reserved for the splash and onboarding, which are the two places it
      earns. */
