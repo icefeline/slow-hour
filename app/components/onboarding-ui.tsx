@@ -353,9 +353,13 @@ export function ObCta({
    *
    * `bottom: 0` on a fixed element is the bottom of the LAYOUT viewport, and
    * Chrome on iOS draws its toolbar over that rather than shortening it — so a
-   * fixed button sat underneath the toolbar with a sliver showing. `100dvh` is
-   * the dynamic viewport: it excludes whatever browser chrome is currently on
-   * screen, in every browser, without measuring anything ourselves.
+   * fixed button sat underneath the toolbar with a sliver showing.
+   *
+   * `svh`, not `dvh`. The dynamic unit tracks browser chrome as it hides and
+   * reappears, which means the shell resizes while you scroll — Brave responded
+   * to that by rescaling the whole page on focus. The small unit is the
+   * viewport with the chrome showing and it never changes value, so the button
+   * clears the toolbar in every browser and still cannot move.
    *
    * The shell takes no pointer events so it cannot swallow taps meant for the
    * page behind it; the button turns them back on for itself.
@@ -365,7 +369,7 @@ export function ObCta({
       style={{
         position: 'fixed',
         left: 0, right: 0, top: 0,
-        height: '100dvh',
+        height: '100svh',
         pointerEvents: 'none',
         zIndex: 40,
       }}
