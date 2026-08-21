@@ -969,8 +969,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 moment they are about to commit details to this browser. */}
             <InAppBrowserNotice scale={mobileScale} />
 
-            {/* Continue — the same CTA the rest of the onboarding uses */}
-            <ObCta scale={mobileScale} onClick={handleNext} />
+            {/* Continue — the same CTA the rest of the onboarding uses, and
+                anchored the same way. Left on the canvas it sat under Chrome's
+                bottom toolbar, which overlays the layout viewport rather than
+                shortening it. */}
+            <ObCta scale={mobileScale} onClick={handleNext} viewportFixed />
           </div>
         );
 
@@ -1002,7 +1005,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
               <ObHint tone="dark" scale={mobileScale}>STORED ON YOUR DEVICE ONLY</ObHint>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} viewportFixed />
           </div>
         );
 
@@ -1084,7 +1087,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 )}
               </div>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} viewportFixed />
           </div>
         );
 
@@ -1120,7 +1123,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 </ObHint>
               )}
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} />
+            {/* Same anchoring as the two steps before it, so the button does
+                not shift position as you move through onboarding. */}
+            <ObCta scale={mobileScale} onClick={handleNext} viewportFixed />
           </div>
         );
 

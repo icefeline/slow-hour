@@ -273,9 +273,17 @@ export function ObToggle({
 }
 
 export function ObCta({
-  scale, onClick, disabled = false, label = 'CONTINUE',
+  scale, onClick, disabled = false, label = 'CONTINUE', viewportFixed = false,
 }: {
   scale: number; onClick: () => void; disabled?: boolean; label?: string;
+  /**
+   * Pin to the bottom of the browser window rather than to the step's canvas.
+   *
+   * Mobile only. On the desktop layout the CTA belongs to the device frame
+   * drawn on the page, and pinning it to the window would strand it at the
+   * bottom of the browser instead of inside the frame.
+   */
+  viewportFixed?: boolean;
 }) {
   /*
    * The CTA stays at the bottom of the step and does not chase the keyboard.
@@ -293,7 +301,7 @@ export function ObCta({
    * one being typed into is visible with the keyboard up, and the button is
    * where it has always been when the keyboard closes.
    */
-  return (
+  const button = (
     <button
       onClick={onClick}
       disabled={disabled}
@@ -301,9 +309,27 @@ export function ObCta({
       // move the button out from under the finger mid-tap
       onPointerDown={(e) => { e.preventDefault(); }}
       style={{
+        /*
+         * Fixed to the window, at the bottom, and that is the whole of it.
+         *
+         * Every previous version tied the button to something that moves: the
+         * scaled canvas, a measured container height, an offset computed from
+         * the keyboard. Each of those moves differently in each browser —
+         * Safari's URL bar, Chrome's, Brave scaling the page to fit when a
+         * field is focused — which is why one button managed to look wrong in
+         * three different ways on the same phone.
+         *
+         * Anchored to the viewport it cannot drift, because there is nothing
+         * left for it to drift with. With the keyboard up it sits behind the
+         * keyboard, which is where the bottom of the window is; the field
+         * being typed into is visible without it, and it is back the moment
+         * the keyboard closes.
+         */
         position: 'absolute',
         left: px(24, scale), right: px(24, scale),
-        bottom: px(34, scale),
+        bottom: viewportFixed
+          ? `calc(env(safe-area-inset-bottom, 0px) + ${px(20, scale)})`
+          : px(34, scale),
         height: px(62, scale), background: LIME, color: INK,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: `0 ${px(22, scale)}`, border: 'none', borderRadius: 0,
@@ -318,6 +344,36 @@ export function ObCta({
       <span>{label}</span>
       <span>→</span>
     </button>
+  );
+
+  if (!viewportFixed) return button;
+
+  /*
+   * The shell is what makes "bottom" mean the bottom of what you can see.
+   *
+   * `bottom: 0` on a fixed element is the bottom of the LAYOUT viewport, and
+   * Chrome on iOS draws its toolbar over that rather than shortening it — so a
+   * fixed button sat underneath the toolbar with a sliver showing. `100dvh` is
+   * the dynamic viewport: it excludes whatever browser chrome is currently on
+   * screen, in every browser, without measuring anything ourselves.
+   *
+   * The shell takes no pointer events so it cannot swallow taps meant for the
+   * page behind it; the button turns them back on for itself.
+   */
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        left: 0, right: 0, top: 0,
+        height: '100dvh',
+        pointerEvents: 'none',
+        zIndex: 40,
+      }}
+    >
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{ pointerEvents: 'auto' }}>{button}</div>
+      </div>
+    </div>
   );
 }
 
