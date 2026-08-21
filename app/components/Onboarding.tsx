@@ -193,23 +193,22 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       const base = baseViewportRef.current;
 
       /*
-       * "Shorter than last time, same width" is not enough to mean the
-       * keyboard.
+       * The scale must not react to height, ever.
        *
-       * On iOS the keyboard does not touch innerHeight at all — it reduces the
-       * VISUAL viewport and leaves the layout viewport believing it is full
-       * height. What does change innerHeight there is Safari's URL bar
-       * collapsing and expanding as you scroll. So this test was reading a
-       * toolbar as a keyboard: once the bar had collapsed the taller height was
-       * latched, and when the bar came back the container stayed too tall for
-       * the screen and the page grew a scrollbar with no keyboard in sight.
+       * It is derived from the viewport, and anything derived from height gets
+       * recomputed every time a browser toolbar slides in or out — which is
+       * constantly, while scrolling. The result is the whole page visibly
+       * resizing under the reader's hands. The keyboard does the same thing on
+       * Android, where it genuinely does shrink innerHeight.
        *
-       * The visual viewport is the honest signal. A real keyboard opens a gap
-       * between innerHeight and visualViewport.height; a toolbar does not.
+       * Width is the only honest trigger: it changes on rotation and on nothing
+       * else. The height still feeds the scale, so a landscape phone gets a
+       * scale that fits — it is just sampled at rotation rather than tracked.
+       *
+       * Nothing depends on a measured height any more; the layout is sized in
+       * svh, which the browser keeps correct on its own.
        */
-      const vv = window.visualViewport;
-      const keyboardOpen = vv ? h - vv.height > 120 : false;
-      if (base && w === base.w && h < base.h && keyboardOpen) return;
+      if (base && w === base.w) return;
       baseViewportRef.current = { w, h };
       setIsMobile(w < 768);
       setMobileScale(Math.min(w / 356, h / 748));
@@ -973,7 +972,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 anchored the same way. Left on the canvas it sat under Chrome's
                 bottom toolbar, which overlays the layout viewport rather than
                 shortening it. */}
-            <ObCta scale={mobileScale} onClick={handleNext} viewportFixed />
+            <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
         );
 
@@ -1005,7 +1004,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               </div>
               <ObHint tone="dark" scale={mobileScale}>STORED ON YOUR DEVICE ONLY</ObHint>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} viewportFixed />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromName} />
           </div>
         );
 
@@ -1087,7 +1086,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 )}
               </div>
             </ObFields>
-            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} viewportFixed />
+            <ObCta scale={mobileScale} onClick={handleNext} disabled={!canContinueFromBirthdate} />
           </div>
         );
 
@@ -1125,7 +1124,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             </ObFields>
             {/* Same anchoring as the two steps before it, so the button does
                 not shift position as you move through onboarding. */}
-            <ObCta scale={mobileScale} onClick={handleNext} viewportFixed />
+            <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
         );
 
