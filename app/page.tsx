@@ -664,26 +664,12 @@ export default function Home() {
       <GroundTexture />
 
       {/* Navigation Header with Backdrop Blur */}
-      {/*
-        z-50 and a layer of its own.
-
-        The tear-off calendar carries `will-change: transform` so the drag stays
-        smooth, which promotes it to its own compositing layer — and on iOS
-        Safari a promoted layer can paint over a `position: fixed` sibling that
-        should be above it, so the calendar scrolled across the nav instead of
-        under it. Raising z-index alone does not settle it, because the two are
-        being composited rather than painted in order; the nav has to be
-        promoted too, which `translateZ(0)` does. `isolation` keeps anything
-        added inside the nav from escaping its stack.
-      */}
-      <div ref={navRef} className="fixed top-0 left-0 right-0 z-50" style={{
+      <div ref={navRef} className="fixed top-0 left-0 right-0 z-30" style={{
         background: 'rgba(23, 34, 17, 0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(206, 241, 123, 0.2)',
         paddingTop: 'env(safe-area-inset-top, 0px)',
-        transform: 'translateZ(0)',
-        isolation: 'isolate',
       }}>
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-4 flex items-center justify-between">
           {/* Logo */}

@@ -50,21 +50,15 @@ export function ObBack({ tone, scale, onClick }: { tone: Tone; scale: number; on
 }
 
 export function ObHead({
-  tone, scale, title, sub, eyebrow = '▸ ASKING', tight = false, top = 106,
+  tone, scale, title, sub, eyebrow = '▸ ASKING', tight = false,
 }: {
   tone: Tone; scale: number; title: React.ReactNode; sub?: React.ReactNode;
   eyebrow?: string; tight?: boolean;
-  /**
-   * Where the heading block starts, in design px. Raised when the keyboard is
-   * up so the whole step still fits the shortened viewport — see
-   * `keyboardUp` in Onboarding.
-   */
-  top?: number;
 }) {
   return (
     <div
       style={{
-        position: 'absolute', left: px(24, scale), right: px(24, scale), top: px(top, scale),
+        position: 'absolute', left: px(24, scale), right: px(24, scale), top: px(106, scale),
         display: 'flex', flexDirection: 'column', gap: px(12, scale),
       }}
     >

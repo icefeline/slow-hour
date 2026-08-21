@@ -108,44 +108,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   }, []);
 
-  /*
-   * The background video stops and stays stopped.
-   *
-   * Chrome pauses a looping background video when the page is hidden, when the
-   * software keyboard takes focus, and under battery saver — and having paused
-   * it, does not always resume. The page is then sitting on a single frozen
-   * frame, which reads as the app having hung at exactly the moment a message
-   * appears and the reader is waiting on it.
-   *
-   * Nothing here forces playback against a browser that is refusing on
-   * purpose: play() is asked for and its rejection ignored, so an
-   * autoplay-blocked or data-saver browser simply keeps its still frame.
-   */
-  const bgVideoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const resume = () => {
-      const video = bgVideoRef.current;
-      if (!video || document.hidden || !video.paused) return;
-      void video.play().catch(() => {
-        // autoplay refused — a still background is an acceptable outcome
-      });
-    };
-
-    document.addEventListener('visibilitychange', resume);
-    window.addEventListener('focus', resume);
-    window.addEventListener('pageshow', resume);
-    // The keyboard opening and closing shows up as a resize, not as a focus
-    // event, on the browsers where this happens.
-    window.addEventListener('resize', resume);
-
-    return () => {
-      document.removeEventListener('visibilitychange', resume);
-      window.removeEventListener('focus', resume);
-      window.removeEventListener('pageshow', resume);
-      window.removeEventListener('resize', resume);
-    };
-  }, []);
-
   const handleLocationToggle = async (on: boolean) => {
     setUseLocation(on);
     if (!on) {
@@ -461,33 +423,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   /** Steps drawn on the fixed 356x748 design canvas. */
   const isDesignStep = currentStep >= 1 && currentStep <= 4;
-
-  /*
-   * The steps close up while the keyboard is open.
-   *
-   * Steps 1–3 are drawn on a 356x748 canvas with everything absolutely placed:
-   * the heading at 106, the fields at 406, a CTA near the bottom. With the
-   * keyboard up the reader has roughly 500px of a 748px canvas, so the browser
-   * scrolls to keep the focused field visible and takes the heading off the
-   * top with it — you are typing into a field whose question you can no longer
-   * read, and the CTA is somewhere below the fold.
-   *
-   * Rather than scale the whole canvas down, which shrinks the type at exactly
-   * the moment it is being read, the empty middle is what gives: the heading
-   * rises and the fields come up to meet it, the way the permissions step
-   * already sits. Nothing changes size, and the step still fits.
-   *
-   * The CTA needs no help — ObCta already goes fixed above the keyboard when
-   * given a lift.
-   */
-  const keyboardUp = keyboardHeight > 0;
-  /** Design-px positions for the two states. */
-  const HEAD_TOP = keyboardUp ? 34 : 106;
-  /**
-   * Clears the heading block — eyebrow, up to two title lines, and a
-   * subheading — with the same 24px rhythm the rest of the canvas uses.
-   */
-  const FIELDS_TOP = keyboardUp ? 254 : 406;
 
   const canContinueFromName = name.trim().length > 0;
   const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
@@ -1030,9 +965,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               scale={mobileScale}
               title={<>WHAT&apos;S<br />YOUR NAME?</>}
               sub="FIRST NAME IS FINE"
-              top={HEAD_TOP}
             />
-            <ObFields scale={mobileScale} top={FIELDS_TOP}>
+            <ObFields scale={mobileScale}>
               <div style={fieldStyle('dark', mobileScale, true, true)}>
                 <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, mobileScale), color: LIME }}>&gt;</span>
                 <input
@@ -1060,9 +994,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               scale={mobileScale}
               title={<>WHEN WERE<br />YOU BORN?</>}
               sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
-              top={HEAD_TOP}
             />
-            <ObFields scale={mobileScale} stack top={FIELDS_TOP}>
+            <ObFields scale={mobileScale} stack>
               <div>
                 <div style={fieldStyle('dark', mobileScale, birthDate.length > 0)}>
                   <input
@@ -1305,37 +1238,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         transition: shouldCrumble ? 'opacity 1s ease-out, filter 1s ease-out' : 'none',
       }}
     >
-      {/*
-        Background video and its overlay are both `fixed`, and sized to the
-        LARGE viewport (100vw/100lvh) rather than to this container.
-        `min-h-screen` resolves to the small viewport on iOS, which stops the
-        video short of wherever Safari's toolbars are, leaving a band of flat
-        ground at the top and bottom. Fixed + large-viewport paints under the
-        chrome, so the background runs edge to edge and stays still while the
-        toolbars collapse rather than resizing with them.
-
-        `object-cover` keeps the framing; nothing is stretched.
-      */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        /* Some mobile browsers pause a looping background video when the tab
-           is backgrounded or the keyboard takes focus, and never resume it —
-           the page then sits on a frozen frame. Nudged back on visibility. */
-        ref={bgVideoRef}
-        className="fixed inset-0 object-cover -z-10"
-        style={{ width: '100vw', height: '100lvh', minHeight: '100vh' }}
-      >
+      {/* Background video */}
+      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
         <source src="/onboarding-bg.mp4" type="video/mp4" />
       </video>
 
       {/* Dark overlay so text is readable over video */}
-      <div
-        className="fixed inset-0 bg-[#172211]/60 -z-10 pointer-events-none"
-        style={{ width: '100vw', height: '100lvh', minHeight: '100vh' }}
-      />
+      <div className="absolute inset-0 bg-[#172211]/60" />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
       <div
@@ -1355,12 +1264,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
            * any phone wider than the scaled canvas; the fields inset themselves
            * by their own 24 design-px padding, which is the only gutter wanted.
            */
-          <div className={`flex-1 flex justify-center w-full ${keyboardUp ? 'items-start' : 'items-center'}`}>
+          <div className="flex-1 flex items-center justify-center w-full">
             <div
               className="relative w-full"
-              /* Top-anchored and clamped to what the keyboard leaves, so the
-                 browser has no overflow to scroll and the heading stays put. */
-              style={{ height: keyboardUp ? Math.max(0, baseHeight - keyboardHeight) : 748 * mobileScale }}
+              style={{ height: 748 * mobileScale }}
             >
               {renderStepContent()}
             </div>
