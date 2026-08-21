@@ -28,6 +28,31 @@ const { withSentryConfig } = require('@sentry/nextjs');
  */
 const isDev = process.env.NODE_ENV === 'development';
 
+/*
+ * Sentry's ingest host, read off the DSN so the two cannot drift apart.
+ *
+ * The plan was for `tunnelRoute` to make this unnecessary by routing reports
+ * through /monitoring on our own origin. It does not take effect under
+ * Turbopack — /monitoring 404s on the deployed site and never appeared in the
+ * build's route list — so the browser talks to Sentry directly, and a
+ * 'self'-only connect-src silently swallowed every client-side error report.
+ * The SDK loaded, the events were captured, and the network call was refused:
+ * error tracking that looks installed and reports nothing.
+ *
+ * Naming the host fixes that. The cost is the one tunnelling was for: an ad
+ * blocker that recognises the ingest domain can still drop reports, so
+ * client-side error volume reads as a floor rather than a true count.
+ */
+const sentryOrigin = (() => {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn) return '';
+  try {
+    return new URL(dsn).origin;
+  } catch {
+    return '';
+  }
+})();
+
 const csp = [
   "default-src 'self'",
   // Vercel Analytics is only same-origin (/_vercel/insights/script.js) once
@@ -41,7 +66,7 @@ const csp = [
   "media-src 'self'",
   // Sentry tunnels through /monitoring and Vercel's analytics beacon posts to
   // /_vercel/insights — both same-origin, so nothing external is needed.
-  `connect-src 'self' https://va.vercel-scripts.com${isDev ? ' ws: http://localhost:*' : ''}`,
+  `connect-src 'self' https://va.vercel-scripts.com${sentryOrigin ? ' ' + sentryOrigin : ''}${isDev ? ' ws: http://localhost:*' : ''}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
