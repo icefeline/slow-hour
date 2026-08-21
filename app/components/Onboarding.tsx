@@ -996,11 +996,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               tone="dark"
               scale={mobileScale}
               title={<>WHEN WERE<br />YOU BORN?</>}
-              sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
+              sub="SLOW GARDEN READS A VEDIC CHART."
             />
-            {/* Same as the name step, a little lower: this heading's
-                subheading runs to two lines. */}
-            <ObFields scale={mobileScale} stack top={348}>
+            <ObFields scale={mobileScale} stack top={330}>
               <div>
                 <div style={fieldStyle('dark', mobileScale, birthDate.length > 0)}>
                   <input
@@ -1439,7 +1437,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             title={<>WHAT&apos;S<br />YOUR NAME?</>}
                             sub="FIRST NAME IS FINE"
                           />
-                          <ObFields scale={DESKTOP_SCALE}>
+                          <ObFields scale={DESKTOP_SCALE} top={330}>
                             <div style={fieldStyle('light', DESKTOP_SCALE, true, true)}>
                               <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, DESKTOP_SCALE), color: COBALT }}>&gt;</span>
                               <input
@@ -1465,9 +1463,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                             tone="light"
                             scale={DESKTOP_SCALE}
                             title={<>WHEN WERE<br />YOU BORN?</>}
-                            sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
+                            sub="SLOW GARDEN READS A VEDIC CHART."
                           />
-                          <ObFields scale={DESKTOP_SCALE} stack>
+                          <ObFields scale={DESKTOP_SCALE} stack top={330}>
                             <div>
                               <div style={fieldStyle('light', DESKTOP_SCALE, birthDate.length > 0)}>
                                 <input
