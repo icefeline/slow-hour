@@ -1259,8 +1259,14 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   // ── Main render ───────────────────────────────────────────────────────────
   return (
     <div
-      className="relative min-h-screen w-full overflow-hidden"
+      /* 100svh, not min-h-screen. `100vh` is the LARGE viewport — the height
+         the page would have if the browser's toolbars were hidden — so on
+         Chrome and Safari for iOS it is taller than what you can actually see
+         and the page scrolls with nothing to scroll to. The small viewport unit
+         is the height with the toolbars showing, so the screen fits exactly. */
+      className="relative w-full overflow-hidden"
       style={{
+        minHeight: '100svh',
         opacity: shouldCrumble ? 0 : 1,
         filter: shouldCrumble ? 'blur(20px)' : 'none',
         transition: shouldCrumble ? 'opacity 1s ease-out, filter 1s ease-out' : 'none',
@@ -1281,7 +1287,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         ${currentStep === 4 ? 'overflow-hidden' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}
         /* held at the pre-keyboard height for the same reason the scale is —
            100dvh collapses under the keyboard and drags the layout up with it */
-        style={{ height: baseHeight ? `${baseHeight}px` : '100dvh' }}
+        /* Same reasoning as the wrapper: a fixed unit that already excludes
+           browser chrome, rather than a measured innerHeight that includes the
+           space behind it. It does not change when the keyboard opens either,
+           so the layout stays still and the browser simply scrolls the focused
+           field into view. */
+        style={{ height: '100svh' }}
       >
         {isDesignStep ? (
           /*
