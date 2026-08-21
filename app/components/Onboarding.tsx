@@ -108,6 +108,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   }, []);
 
+  /*
+   * Onboarding opens at the top, and so does every step of it.
+   *
+   * Each step is meant to be met whole — a question, its field, the button.
+   * Two things were putting it in part-scrolled instead. Browsers restore your
+   * previous scroll position when you return to a page, which is right for a
+   * document and wrong for this; and on a first visit a mobile browser will
+   * nudge the page down of its own accord to start collapsing its toolbar,
+   * whenever the document has any overflow at all. Chrome does both, so the
+   * app opened with the top of the step already gone and the first thing a
+   * reader did was scroll up to see what they had opened.
+   *
+   * Keyed to the step, not just to mount: moving between steps does not remount
+   * anything, so without this the second step would inherit wherever the first
+   * one had been left.
+   *
+   * Onboarding only. The card page scrolls for real — it has a reading and a
+   * reflection box below the fold — and forcing that to the top would take the
+   * reader away from whatever they had scrolled down to read.
+   */
+  useEffect(() => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  }, [currentStep]);
+
   const handleLocationToggle = async (on: boolean) => {
     setUseLocation(on);
     if (!on) {
