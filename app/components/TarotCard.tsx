@@ -279,8 +279,28 @@ export default function TarotCard({ card, isReversed, isRevealed, animateReveal,
     }
   };
 
+  /**
+   * Set once a supporter code has been checked by /api/unlock. Holding it
+   * means the quota simply stops applying.
+   *
+   * The code was verified on the server — it cannot be invented — but this
+   * flag is only localStorage, so someone could set it by hand. That is the
+   * same door the quota already leaves open, and it stays open for the same
+   * reason: closing it means accounts.
+   */
+  const UNLOCK_KEY = 'slow-garden-unlocked';
+
+  const isUnlocked = (): boolean => {
+    try {
+      return Boolean(localStorage.getItem(UNLOCK_KEY));
+    } catch {
+      return false;
+    }
+  };
+
   /** Days already paid for stay readable; only a NEW day can exhaust the quota. */
   const hasQuotaFor = (day: string): boolean => {
+    if (isUnlocked()) return true;
     const days = getReadingDays();
     return days.includes(day) || days.length < FREE_READING_DAYS;
   };

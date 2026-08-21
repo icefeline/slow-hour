@@ -28,7 +28,7 @@ slow garden is a meditative daily tarot app for self-reflection. not prediction,
 - **astronomy-engine** — natal chart + transit calculations (Vedic sidereal, Lahiri ayanamsa)
 - **@upstash/redis + @upstash/ratelimit** — per-IP abuse guards, set far above human
   use to bound cost (see `middleware.ts`). the product's free quota is a separate,
-  client-side count of 3 reading-days in `TarotCard.tsx` — an IP is not a person.
+  client-side count of 7 reading-days in `TarotCard.tsx` — an IP is not a person.
 - **@vercel/analytics** — usage analytics
 
 ---
@@ -131,10 +131,10 @@ public/
 
 ## localStorage schema
 
-all user data lives in localStorage. no backend persistence.
+all reader data lives in localStorage. the one exception is the supporter
+record written by `/api/bmc-webhook` (email + code, 90-day expiry), which
+exists only to get a supporter their unlock code.
 
-| key | type | description |
-|---|---|---|
 the keys grew in two eras and were never unified, so there is no single prefix
 to filter on — see the reset snippet in `.claude/skills/onboarding-preview.md`.
 
@@ -149,6 +149,8 @@ to filter on — see the reset snippet in `.claude/skills/onboarding-preview.md`
 | `slow-garden-personalise` | `'false'` when opted out | whether to call Claude at all |
 | `slow-garden-reading-days` | `string[]` | the days that spent free quota (7 max) |
 | `slow-garden-use-location`, `slow-garden-here` | — | location consent + resolved place |
+| `slow-garden-unlocked` | `string` | a verified supporter code; its presence lifts the quota |
+| `slow-garden-webview-noticed` | `'true'` | the in-app-browser notice has been dismissed |
 
 ---
 
@@ -208,6 +210,8 @@ npm run test:watch
 SLOW_GARDEN_ANTHROPIC_KEY  # required — Claude insight generation
 UPSTASH_REDIS_REST_URL   # required — abuse guards
 UPSTASH_REDIS_REST_TOKEN # required — abuse guards
+SLOW_GARDEN_UNLOCK_SECRET # required — signs supporter unlock codes
+BMC_WEBHOOK_SECRET       # required — verifies Buy Me a Coffee webhooks
 ELEVENLABS_API_KEY       # planned — voice feature
 ```
 

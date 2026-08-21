@@ -180,9 +180,26 @@ export default function TermsAndPrivacy() {
 
           <Clause title="if you buy me a coffee">
             <p>
-              the support link is a gift, not a purchase. it buys no features, no priority,
-              and no entitlement to anything, and it isn&apos;t refundable. thank you, all
-              the same.
+              the support link is still a gift rather than a purchase, and it isn&apos;t
+              refundable. what it does do is lift the seven-reading limit, for good. that
+              is a thank-you, not a transaction: the readings you&apos;ve already had are
+              yours either way, and nothing about the app is held back from anyone who
+              doesn&apos;t.
+            </p>
+            <p>
+              buy me a coffee handles the payment and tells us someone supported the app.
+              we never see your card. from your email address we work out a code, send it
+              to you, and you paste it in once &mdash; the code is a signature we can check
+              rather than a lookup, so unlocking still doesn&apos;t create an account and
+              there&apos;s still no record here of who you are. the code is worked out from
+              your address in a way that can&apos;t be turned back into it, so it gives away
+              nothing about you if you lose or share it.
+            </p>
+            <p>
+              your address and your code are kept for ninety days so we can send it and
+              resend it if it goes astray, then deleted. that&apos;s the only thing in slow
+              garden stored on a server rather than on your device, and it exists solely to
+              get you the thing you paid for.
             </p>
           </Clause>
 

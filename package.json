@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "mint": "node --experimental-strip-types scripts/mint-unlock.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
