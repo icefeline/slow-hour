@@ -6,9 +6,9 @@ import { version } from '../../package.json';
  * than inheriting the app's "slow garden".
  */
 export const metadata: Metadata = {
-  title: 'terms & privacy · slow garden',
+  title: 'Terms & Privacy · slow garden',
   description:
-    'what slow garden is, what it is not, and the short list of things that leave your device.',
+    'What slow garden is, what it is not, and the short list of things that leave your device.',
 };
 
 /**
@@ -17,6 +17,14 @@ export const metadata: Metadata = {
  * Headings are machine voice, the prose is not — the reading page established
  * that split, and this is the one place in the app that has to be both a list
  * of what the software does and something a person can actually read.
+ *
+ * This page does NOT follow the app's lowercase house style, deliberately. The
+ * rest of slow garden is lowercase because it is speaking quietly to one
+ * person; this page is a legal document that someone may need to skim for a
+ * single clause, or read carefully before deciding whether to trust the app
+ * with their birth time. Sentence case, real paragraphs and lists are what make
+ * that possible. Lowercase here read as style getting in the way of the one
+ * page where clarity outranks tone.
  *
  * Everything stated here is checked against the code rather than aspired to. If
  * a data practice changes, this page changes in the same commit: a privacy
@@ -68,6 +76,26 @@ function Clause({ title, children }: { title: string; children: React.ReactNode 
   );
 }
 
+/** A bulleted list. `spaced` for entries that run to a sentence or more. */
+function List({ spaced = false, children }: { spaced?: boolean; children: React.ReactNode }) {
+  return (
+    <ul className={`list-disc pl-6 mb-4 ${spaced ? 'space-y-4' : 'space-y-1'}`}>{children}</ul>
+  );
+}
+
+/**
+ * The bolded lead-in that lets a list be skimmed by its labels alone.
+ *
+ * Bold but not underlined. The service names in the old markup were underlined
+ * for emphasis, which was survivable when the page was one long prose block;
+ * with real links now sitting a line or two away — anthropic.com/privacy, the
+ * jump links at the top — underlined bold text reads as something you can
+ * click, and a legal page is the worst place to make someone test that.
+ */
+function Term({ children }: { children: React.ReactNode }) {
+  return <strong style={{ fontWeight: 700 }}>{children}</strong>;
+}
+
 export default function TermsAndPrivacy() {
   return (
     <main
@@ -83,7 +111,7 @@ export default function TermsAndPrivacy() {
           className="mt-5 opacity-60"
           style={{ fontFamily: MONO, fontSize: 'clamp(10px, 2.2vw, 12px)', letterSpacing: '0.18em' }}
         >
-          last updated: august 2026
+          LAST UPDATED: AUGUST 2026
         </p>
 
         {/* The one paragraph anyone reads, so it is set like a standfirst and
@@ -95,191 +123,211 @@ export default function TermsAndPrivacy() {
         >
           <p style={{ fontSize: LEDE, lineHeight: 1.55 }}>
             slow garden is a web app that draws you one tarot card a day and writes a short
-            reflection to go with it. it runs entirely in your browser. there is no account,
-            no login, and no database anywhere with your name in it, which makes most of what
-            follows shorter than you might expect. jump to{' '}
-            <a href="#terms" className="underline" style={{ fontWeight: 700 }}>the terms</a> or{' '}
-            <a href="#privacy" className="underline" style={{ fontWeight: 700 }}>the privacy policy</a>.
+            reflection to go with it. It runs entirely in your browser. There is no account,
+            no login, and no database anywhere with your name in it &mdash; which makes most
+            of what follows shorter than you might expect. Jump to{' '}
+            <a href="#terms" className="underline" style={{ fontWeight: 700 }}>the Terms</a> or{' '}
+            <a href="#privacy" className="underline" style={{ fontWeight: 700 }}>the Privacy Policy</a>.
           </p>
         </div>
 
         {/* ── TERMS ────────────────────────────────────────────────────── */}
         <Section id="terms" title="TERMS OF USE">
-          <Clause title="using slow garden means agreeing to this">
+          <Clause title="Using slow garden means agreeing to this">
             <p>
-              if you use slow garden, you&apos;re agreeing to what&apos;s on this page. if
+              If you use slow garden, you&apos;re agreeing to what&apos;s on this page. If
               some part of it doesn&apos;t sit right with you, the honest answer is to stop
-              using it, and nothing of yours is left behind when you do.
+              using it &mdash; and nothing of yours is left behind when you do.
             </p>
           </Clause>
 
-          <Clause title="you should be at least 13">
+          <Clause title="You should be at least 13">
             <p>
-              slow garden is not built for children. if you&apos;re under 13, please
-              don&apos;t use it. if you&apos;re between 13 and whatever counts as an adult
+              slow garden is not built for children. If you&apos;re under 13, please
+              don&apos;t use it. If you&apos;re between 13 and whatever counts as an adult
               where you live, have a parent or guardian read this with you.
             </p>
           </Clause>
 
-          <Clause title="what you can do with it">
-            <p>
-              use it for yourself, as much as you like, for free. what we&apos;d ask you not
-              to do: script it, scrape it, resell it, try to slip past the rate limits, or
-              use it to build a competing service. the readings are for you, not for
-              republishing as your own.
-            </p>
-          </Clause>
-
-          <Clause title="there is no account, and that cuts both ways">
-            <p>
-              everything slow garden knows about you lives in your browser&apos;s local
-              storage. that&apos;s good for privacy and unforgiving in every other respect.
-              clear your browser data, use private browsing, or switch to another device,
-              and your history is gone. we can&apos;t recover it, because we never had a
-              copy. if a year of readings would hurt to lose, keep your own notes elsewhere.
-            </p>
-          </Clause>
-
-          <Clause title="what you write stays yours">
-            <p>
-              your reflections belong to you. we claim no licence over them and no right to
-              use them, which is easy to promise because they never leave your device in the
-              first place.
-            </p>
-          </Clause>
-
-          <Clause title="what slow garden is not">
+          <Clause title="What you can do with it">
             <p className="mb-4">
-              this matters more than the rest of this page, so plainly: slow garden is for
-              reflection. it is not advice. nothing in it is medical, psychological, legal,
-              or financial guidance, and it should never be used in place of a professional
-              who knows your situation.
+              Use it for yourself, as much as you like, for free. What we&apos;d ask you not
+              to do:
             </p>
-            <p className="mb-4">
-              it does not predict anything. the cards are drawn from the date, the readings
-              are written by a language model, and both can be wrong, strange, or simply
-              unhelpful on a given day. treat a reading as a prompt for your own thinking,
-              never as a fact about your life or as a reason to make a decision you
-              wouldn&apos;t otherwise make.
-            </p>
+            <List>
+              <li>Script or scrape it</li>
+              <li>Resell it, or republish the readings as your own</li>
+              <li>Try to slip past the rate limits</li>
+              <li>Use it to build a competing service</li>
+            </List>
+            <p>The readings are for you.</p>
+          </Clause>
+
+          <Clause title="There is no account, and that cuts both ways">
             <p>
-              if you&apos;re struggling, please talk to someone real. a friend, a doctor, or
+              Everything slow garden knows about you lives in your browser&apos;s local
+              storage. That&apos;s good for privacy and unforgiving in every other respect.
+              Clear your browser data, use private browsing, or switch to another device,
+              and your history is gone. We can&apos;t recover it, because we never had a
+              copy. If a year of readings would hurt to lose, keep your own notes elsewhere.
+            </p>
+          </Clause>
+
+          <Clause title="What you write stays yours">
+            <p>
+              Your reflections belong to you. We claim no licence over them and no right to
+              use them &mdash; which is easy to promise, because they never leave your device
+              in the first place.
+            </p>
+          </Clause>
+
+          <Clause title="What slow garden is not">
+            <p className="mb-4">
+              This matters more than the rest of this page, so plainly:
+            </p>
+            <List spaced>
+              <li>
+                <Term>It is not advice.</Term> Nothing in it is medical, psychological,
+                legal, or financial guidance, and it should never be used in place of a
+                professional who knows your situation.
+              </li>
+              <li>
+                <Term>It does not predict anything.</Term> The cards are drawn from the date
+                and the readings are written by a language model. Both can be wrong, strange,
+                or simply unhelpful on a given day.
+              </li>
+              <li>
+                <Term>It is a prompt, not a verdict.</Term> Treat a reading as something to
+                think against &mdash; never as a fact about your life, or as a reason to make
+                a decision you wouldn&apos;t otherwise make.
+              </li>
+            </List>
+            <p>
+              If you&apos;re struggling, please talk to someone real. A friend, a doctor, or
               a crisis line in your country will all serve you better than an app about
               flowers and tarot cards.
             </p>
           </Clause>
 
-          <Clause title="it may change, and it may stop">
+          <Clause title="It may change, and it may stop">
             <p>
-              slow garden is made by one person and given away. features can change or
+              slow garden is made by one person and given away. Features can change or
               disappear, the app can be offline, and readings are limited so the costs stay
-              survivable. there&apos;s no guarantee it will keep working, and no promise it
-              will still be here next year, though the intention is that it will be.
+              survivable. There&apos;s no guarantee it will keep working, and no promise it
+              will still be here next year &mdash; though the intention is that it will be.
             </p>
           </Clause>
 
-          <Clause title="if you buy me a coffee">
-            <p>
-              the support link is still a gift rather than a purchase, and it isn&apos;t
-              refundable. what it does do is lift the seven-reading limit, for good. that
-              is a thank-you, not a transaction: the readings you&apos;ve already had are
-              yours either way, and nothing about the app is held back from anyone who
+          <Clause title="If you buy me a coffee">
+            <p className="mb-4">
+              The support link is a gift rather than a purchase, and it isn&apos;t
+              refundable. What it does do is lift the seven-reading limit, for good. That is
+              a thank-you, not a transaction: the readings you&apos;ve already had are yours
+              either way, and nothing about the app is held back from anyone who
               doesn&apos;t.
             </p>
+            <p className="mb-4">How the unlock works:</p>
+            <List spaced>
+              <li>
+                <Term>Buy Me a Coffee handles the payment.</Term> We never see your card.
+              </li>
+              <li>
+                <Term>Your code is worked out from your email address.</Term> It&apos;s a
+                signature we can check rather than a record we look up, so unlocking still
+                doesn&apos;t create an account. The code can&apos;t be turned back into your
+                address, so it gives away nothing about you if you lose or share it.
+              </li>
+              <li>
+                <Term>You paste it in once.</Term> That&apos;s the whole of it &mdash; no
+                subscription, nothing to cancel.
+              </li>
+              <li>
+                <Term>Your address and code are kept for 90 days,</Term> so we can send the
+                code and resend it if it goes astray. Then they&apos;re deleted.
+              </li>
+            </List>
             <p>
-              buy me a coffee handles the payment and tells us someone supported the app.
-              we never see your card. from your email address we work out a code, send it
-              to you, and you paste it in once &mdash; the code is a signature we can check
-              rather than a lookup, so unlocking still doesn&apos;t create an account and
-              there&apos;s still no record here of who you are. the code is worked out from
-              your address in a way that can&apos;t be turned back into it, so it gives away
-              nothing about you if you lose or share it.
-            </p>
-            <p>
-              your address and your code are kept for ninety days so we can send it and
-              resend it if it goes astray, then deleted. that&apos;s the only thing in slow
-              garden stored on a server rather than on your device, and it exists solely to
-              get you the thing you paid for.
+              That 90-day record is the only thing in slow garden stored on a server rather
+              than on your device, and it exists solely to get you the thing you paid for.
             </p>
           </Clause>
 
-          <Clause title="provided as it is">
+          <Clause title="Provided as it is">
             <p>
               slow garden is provided as it is, without warranties of any kind, to the
-              fullest extent the law allows. to the same extent, we&apos;re not liable for
+              fullest extent the law allows. To the same extent, we&apos;re not liable for
               any loss arising from using it or from not being able to use it, including
-              lost readings or reflections. some places don&apos;t allow those exclusions; if
+              lost readings or reflections. Some places don&apos;t allow those exclusions; if
               yours is one, they simply don&apos;t apply to you.
             </p>
           </Clause>
 
-          <Clause title="governing law">
+          <Clause title="Governing law">
             <p>
-              these terms are governed by the laws of Singapore, and the courts of Singapore
-              have jurisdiction over any dispute. if you&apos;re a consumer somewhere with
+              These terms are governed by the laws of Singapore, and the courts of Singapore
+              have jurisdiction over any dispute. If you&apos;re a consumer somewhere with
               protections that can&apos;t be waived by agreement, you keep those.
             </p>
           </Clause>
 
-          <Clause title="changes to these terms">
+          <Clause title="Changes to these terms">
             <p>
-              if these terms change, the updated version appears here with a new date at the
-              top. continuing to use slow garden after that means the new version applies.
+              If these terms change, the updated version appears here with a new date at the
+              top. Continuing to use slow garden after that means the new version applies.
             </p>
           </Clause>
         </Section>
 
         {/* ── PRIVACY ──────────────────────────────────────────────────── */}
         <Section id="privacy" title="PRIVACY POLICY">
-          <Clause title="the short version">
+          <Clause title="The short version">
             <p>
-              everything you put into slow garden stays in your browser. we don&apos;t have a
-              database with your name in it, because we don&apos;t have a database. we
+              Everything you put into slow garden stays in your browser. We don&apos;t have a
+              database with your name in it, because we don&apos;t have a database. We
               don&apos;t sell anything, we don&apos;t advertise to you, and there&apos;s
-              nobody here reading your reflections. a few small things do have to leave your
-              device for the app to work at all, and the rest of this is us being specific
-              about which ones.
+              nobody here reading your reflections. A few small things do have to leave your
+              device for the app to work at all, and the rest of this page is us being
+              specific about which ones.
             </p>
           </Clause>
 
-          <Clause title="who&apos;s responsible">
+          <Clause title="Who&apos;s responsible">
             <p>
-              slow garden is made and run by one individual, not a company. a contact address
+              slow garden is made and run by one individual, not a company. A contact address
               for questions about this page will be published here shortly.
             </p>
           </Clause>
 
-          <Clause title="what stays on your device">
+          <Clause title="What stays on your device">
             <p className="mb-4">
-              all of this lives in your browser&apos;s local storage and nowhere else:
+              All of this lives in your browser&apos;s local storage and nowhere else:
             </p>
-            <ul className="list-disc pl-6 space-y-1 mb-4">
-              <li>your first name</li>
-              <li>your birth date, and your birth time and location if you gave them</li>
-              <li>every card you&apos;ve drawn, and the date you drew it</li>
-              <li>anything you&apos;ve written in the reflection box</li>
-              <li>the readings themselves, cached so re-opening a day costs nothing</li>
+            <List>
+              <li>Your first name</li>
+              <li>Your birth date, and your birth time and location if you gave them</li>
+              <li>Every card you&apos;ve drawn, and the date you drew it</li>
+              <li>Anything you&apos;ve written in the reflection box</li>
+              <li>The readings themselves, cached so re-opening a day costs nothing</li>
               <li>
-                a short private note the app keeps after each reading, so tomorrow&apos;s
+                A short private note the app keeps after each reading, so tomorrow&apos;s
                 doesn&apos;t feel like it&apos;s meeting you for the first time
               </li>
-              <li>your settings, including whether personalisation and location are on</li>
-            </ul>
+              <li>Your settings, including whether personalisation and location are on</li>
+            </List>
             <p>
-              we can&apos;t see any of it. it isn&apos;t backed up, synced, or transmitted
+              We can&apos;t see any of it. It isn&apos;t backed up, synced, or transmitted
               anywhere, and clearing your browser data deletes all of it permanently.
             </p>
           </Clause>
 
-          <Clause title="what leaves your device">
-            <p className="mb-4">four outside services are involved, and only these four:</p>
-            <ul className="list-disc pl-6 space-y-4 mb-4">
+          <Clause title="What leaves your device">
+            <p className="mb-4">Five outside services are involved, and only these five:</p>
+            <List spaced>
               <li>
-                <span className="underline" style={{ fontWeight: 700 }}>anthropic</span> writes
-                the personalised part of your reading. your birth details, the card you drew,
-                and those short private notes are sent over so it has something to write
-                from. your name and your reflections are not. their policy covers what
-                happens next:{' '}
+                <Term>Anthropic</Term> writes the personalised part of your reading. Your
+                birth details, the card you drew, and those short private notes are sent over
+                so it has something to write from. Your name and your reflections are not.
+                Their policy covers what happens next:{' '}
                 <a
                   href="https://www.anthropic.com/privacy"
                   target="_blank"
@@ -291,102 +339,109 @@ export default function TermsAndPrivacy() {
                 </a>
               </li>
               <li>
-                <span className="underline" style={{ fontWeight: 700 }}>openstreetmap</span> turns
-                a birth location into coordinates. it receives the place name you typed and
-                nothing else about you.
+                <Term>OpenStreetMap</Term> turns a birth location into coordinates. It
+                receives the place name you typed and nothing else about you.
               </li>
               <li>
-                <span className="underline" style={{ fontWeight: 700 }}>upstash</span> runs the
-                rate limiter, which counts requests per ip address so one busy network
-                can&apos;t drain the whole thing. your ip becomes a short-lived counter and
-                then expires. nothing else about you is attached to it, and if the limiter is
-                unreachable the app carries on rather than locking you out.
+                <Term>Upstash</Term> runs the rate limiter, which counts requests per IP
+                address so one busy network can&apos;t drain the whole thing. Your IP becomes
+                a short-lived counter and then expires. Nothing else about you is attached to
+                it, and if the limiter is unreachable the app carries on rather than locking
+                you out.
               </li>
               <li>
-                <span className="underline" style={{ fontWeight: 700 }}>vercel</span> hosts the
-                app, so it necessarily handles the requests your browser makes, and provides
-                the visitor counts. those counts are cookieless and carry no personal data,
-                which is why you&apos;ve never seen a consent banner here.
+                <Term>Vercel</Term> hosts the app, so it necessarily handles the requests
+                your browser makes, and provides the visitor counts. Those counts are
+                cookieless and carry no personal data, which is why you&apos;ve never seen a
+                consent banner here.
               </li>
               <li>
-                <span className="underline" style={{ fontWeight: 700 }}>sentry</span> tells us
-                when the app breaks, on servers in the european union. it gets the error and
-                the line of code that caused it. it does not get your name, your birth date,
-                time or place, your reading, or anything you&apos;ve written &mdash; those are
-                stripped out before the report leaves your device or our server, by a filter
-                that works on the shape of the data rather than a list of places to look, so
-                new code is covered the day it&apos;s written. we don&apos;t record your
-                screen.
+                <Term>Sentry</Term> tells us when the app breaks, on servers in the European
+                Union. It gets the error and the line of code that caused it. It does not get
+                your name, your birth date, time or place, your reading, or anything
+                you&apos;ve written &mdash; those are stripped out before the report leaves
+                your device or our server, by a filter that works on the shape of the data
+                rather than a list of places to look, so new code is covered the day
+                it&apos;s written. We don&apos;t record your screen.
               </li>
-            </ul>
+            </List>
           </Clause>
 
-          <Clause title="where you are">
+          <Clause title="Where you are">
             <p>
-              if you switch on &ldquo;use my location&rdquo;, your browser asks first and you
-              can say no. we round the coordinates to about a kilometre, keep them on your
+              If you switch on &ldquo;use my location&rdquo;, your browser asks first and you
+              can say no. We round the coordinates to about a kilometre, keep them on your
               device, and send them to our own reading endpoint so it can work out your
-              sunrise, sunset, and moon phase. that&apos;s all they&apos;re for. they
+              sunrise, sunset, and moon phase. That&apos;s all they&apos;re for. They
               don&apos;t go to any third party, they aren&apos;t stored after the request,
-              and turning the setting off forgets them. decline and you lose two lines of the
+              and turning the setting off forgets them. Decline and you lose two lines of the
               margin, nothing else.
             </p>
           </Clause>
 
-          <Clause title="reminders">
+          <Clause title="Reminders">
             <p>
-              daily reminders are scheduled by your own browser, and the time you picked is
-              saved on your device. there&apos;s no push server involved, so we never find
+              Daily reminders are scheduled by your own browser, and the time you picked is
+              saved on your device. There&apos;s no push server involved, so we never find
               out whether you opened the app.
             </p>
           </Clause>
 
-          <Clause title="how long anything is kept">
-            <p>
-              on your device, until you delete it. on our side there is nothing to keep: the
-              readings aren&apos;t stored, and the rate limiter&apos;s counters expire within
-              the hour. we hold nothing on our end to delete on your behalf.
-            </p>
+          <Clause title="How long anything is kept">
+            <p className="mb-4">Three answers, depending on what you mean:</p>
+            <List>
+              <li>
+                <Term>On your device</Term> &mdash; until you delete it.
+              </li>
+              <li>
+                <Term>Readings and rate limits</Term> &mdash; readings aren&apos;t stored at
+                all, and the limiter&apos;s counters expire within the hour.
+              </li>
+              <li>
+                <Term>Supporter codes</Term> &mdash; 90 days, then deleted.
+              </li>
+            </List>
           </Clause>
 
-          <Clause title="data leaving singapore">
+          <Clause title="Data leaving Singapore">
             <p>
-              the services above operate internationally, so the small amount of data
+              The services above operate internationally, so the small amount of data
               described here is processed outside Singapore, including in the United States
-              and the European Union. we rely on those providers&apos; own contractual
+              and the European Union. We rely on those providers&apos; own contractual
               safeguards for those transfers, and send them no more than what&apos;s listed
               above.
             </p>
           </Clause>
 
-          <Clause title="your rights">
+          <Clause title="Your rights">
             <p className="mb-4">
-              under Singapore&apos;s PDPA you can ask for access to, or correction of,
-              personal data an organisation holds about you. if you&apos;re in the UK or the
-              EU, we&apos;ll honour the equivalent GDPR rights, and if you&apos;re in
-              California the CCPA ones.
+              Under Singapore&apos;s PDPA you can ask for access to, or correction of,
+              personal data an organisation holds about you. If you&apos;re in the UK or the
+              EU, we&apos;ll honour the equivalent GDPR rights; if you&apos;re in California,
+              the CCPA ones.
             </p>
             <p>
-              in practice all of those requests have the same short answer: we hold nothing
-              about you to hand over, correct, or erase. what exists is in your browser,
+              In practice all of those requests have the same short answer: we hold nothing
+              about you to hand over, correct, or erase. What exists is in your browser,
               where you can read it, change it, or clear it whenever you like, without asking
-              anyone.
+              anyone. The one exception is a supporter code, which you can ask us to delete
+              at any time.
             </p>
           </Clause>
 
-          <Clause title="children">
+          <Clause title="Children">
             <p>
               slow garden isn&apos;t intended for anyone under 13, and we don&apos;t knowingly
-              collect anything from them. since there are no accounts, there&apos;s nothing
+              collect anything from them. Since there are no accounts, there&apos;s nothing
               for us to look up or delete, and clearing the browser removes everything the
               app has kept.
             </p>
           </Clause>
 
-          <Clause title="changes to this policy">
+          <Clause title="Changes to this policy">
             <p>
-              if what the app does with data changes, this page changes with it, in the same
-              release. the date at the top tells you when it last did.
+              If what the app does with data changes, this page changes with it, in the same
+              release. The date at the top tells you when it last did.
             </p>
           </Clause>
         </Section>
@@ -397,7 +452,7 @@ export default function TermsAndPrivacy() {
             className="underline"
             style={{ fontFamily: MONO, fontSize: 'clamp(11px, 2.4vw, 13px)', letterSpacing: '0.18em', fontWeight: 500 }}
           >
-            ← back
+            ← BACK
           </a>
           {/* Read from package.json so it cannot quietly fall out of date. */}
           <span
