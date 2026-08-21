@@ -191,7 +191,25 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const base = baseViewportRef.current;
-      if (base && w === base.w && h < base.h) return; // keyboard, not a new viewport
+
+      /*
+       * "Shorter than last time, same width" is not enough to mean the
+       * keyboard.
+       *
+       * On iOS the keyboard does not touch innerHeight at all — it reduces the
+       * VISUAL viewport and leaves the layout viewport believing it is full
+       * height. What does change innerHeight there is Safari's URL bar
+       * collapsing and expanding as you scroll. So this test was reading a
+       * toolbar as a keyboard: once the bar had collapsed the taller height was
+       * latched, and when the bar came back the container stayed too tall for
+       * the screen and the page grew a scrollbar with no keyboard in sight.
+       *
+       * The visual viewport is the honest signal. A real keyboard opens a gap
+       * between innerHeight and visualViewport.height; a toolbar does not.
+       */
+      const vv = window.visualViewport;
+      const keyboardOpen = vv ? h - vv.height > 120 : false;
+      if (base && w === base.w && h < base.h && keyboardOpen) return;
       baseViewportRef.current = { w, h };
       setIsMobile(w < 768);
       setMobileScale(Math.min(w / 356, h / 748));
