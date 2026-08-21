@@ -462,6 +462,33 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   /** Steps drawn on the fixed 356x748 design canvas. */
   const isDesignStep = currentStep >= 1 && currentStep <= 4;
 
+  /*
+   * The steps close up while the keyboard is open.
+   *
+   * Steps 1–3 are drawn on a 356x748 canvas with everything absolutely placed:
+   * the heading at 106, the fields at 406, a CTA near the bottom. With the
+   * keyboard up the reader has roughly 500px of a 748px canvas, so the browser
+   * scrolls to keep the focused field visible and takes the heading off the
+   * top with it — you are typing into a field whose question you can no longer
+   * read, and the CTA is somewhere below the fold.
+   *
+   * Rather than scale the whole canvas down, which shrinks the type at exactly
+   * the moment it is being read, the empty middle is what gives: the heading
+   * rises and the fields come up to meet it, the way the permissions step
+   * already sits. Nothing changes size, and the step still fits.
+   *
+   * The CTA needs no help — ObCta already goes fixed above the keyboard when
+   * given a lift.
+   */
+  const keyboardUp = keyboardHeight > 0;
+  /** Design-px positions for the two states. */
+  const HEAD_TOP = keyboardUp ? 34 : 106;
+  /**
+   * Clears the heading block — eyebrow, up to two title lines, and a
+   * subheading — with the same 24px rhythm the rest of the canvas uses.
+   */
+  const FIELDS_TOP = keyboardUp ? 254 : 406;
+
   const canContinueFromName = name.trim().length > 0;
   const canContinueFromBirthdate = birthDate.length === 10 && !dateError;
 
@@ -1003,8 +1030,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               scale={mobileScale}
               title={<>WHAT&apos;S<br />YOUR NAME?</>}
               sub="FIRST NAME IS FINE"
+              top={HEAD_TOP}
             />
-            <ObFields scale={mobileScale}>
+            <ObFields scale={mobileScale} top={FIELDS_TOP}>
               <div style={fieldStyle('dark', mobileScale, true, true)}>
                 <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, mobileScale), color: LIME }}>&gt;</span>
                 <input
@@ -1032,8 +1060,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               scale={mobileScale}
               title={<>WHEN WERE<br />YOU BORN?</>}
               sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
+              top={HEAD_TOP}
             />
-            <ObFields scale={mobileScale} stack>
+            <ObFields scale={mobileScale} stack top={FIELDS_TOP}>
               <div>
                 <div style={fieldStyle('dark', mobileScale, birthDate.length > 0)}>
                   <input
@@ -1326,10 +1355,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
            * any phone wider than the scaled canvas; the fields inset themselves
            * by their own 24 design-px padding, which is the only gutter wanted.
            */
-          <div className="flex-1 flex items-center justify-center w-full">
+          <div className={`flex-1 flex justify-center w-full ${keyboardUp ? 'items-start' : 'items-center'}`}>
             <div
               className="relative w-full"
-              style={{ height: 748 * mobileScale }}
+              /* Top-anchored and clamped to what the keyboard leaves, so the
+                 browser has no overflow to scroll and the heading stays put. */
+              style={{ height: keyboardUp ? Math.max(0, baseHeight - keyboardHeight) : 748 * mobileScale }}
             >
               {renderStepContent()}
             </div>
