@@ -1302,11 +1302,24 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
            * any phone wider than the scaled canvas; the fields inset themselves
            * by their own 24 design-px padding, which is the only gutter wanted.
            */
-          <div className="flex-1 flex items-center justify-center w-full">
-            <div
-              className="relative w-full"
-              style={{ height: 748 * mobileScale }}
-            >
+          /*
+           * The canvas IS the screen, not 748 design-px of it.
+           *
+           * Its height used to be 748 * mobileScale, and mobileScale is derived
+           * from window.innerHeight — the LARGE viewport, which includes the
+           * strip a browser draws its toolbar over. The container around it is
+           * 100svh, the viewport with that toolbar showing. On Chrome those two
+           * differ by the height of the bar, so the canvas hung past the bottom
+           * of its container and overflow-hidden cut off the one thing pinned
+           * to the canvas bottom: the continue button. Safari's numbers happen
+           * to agree, which is why Safari alone looked right.
+           *
+           * Filling the container instead means the button's "bottom" is the
+           * bottom of what the reader can actually see, in every browser,
+           * without anything being measured or compared.
+           */
+          <div className="flex-1 min-h-0 flex w-full">
+            <div className="relative w-full h-full">
               {renderStepContent()}
             </div>
           </div>
