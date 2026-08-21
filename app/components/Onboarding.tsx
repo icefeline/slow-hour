@@ -273,10 +273,31 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     const isUp = keyboardHeight > 0;
     const wasUp = keyboardWasUp.current;
     keyboardWasUp.current = isUp;
-    if (wasUp && !isUp) {
-      const frame = requestAnimationFrame(() => window.scrollTo(0, 0));
-      return () => cancelAnimationFrame(frame);
-    }
+    if (!wasUp || isUp) return;
+
+    /*
+     * The keyboard dropping is not the same as the reader being finished.
+     *
+     * Moving from the date field to the time field collapses the keyboard for
+     * a moment before the next field raises it again — the falling edge fires
+     * in the middle of filling the form, and returning to the top there throws
+     * the page up and away from the field just tapped. That is worse than the
+     * thing being fixed, and it is what the birth details step was doing.
+     *
+     * So the edge is necessary but not sufficient: only go back to the top if
+     * nothing is focused once the dust settles. Checked on a timer rather than
+     * a frame, because focus moves between the two fields after the collapse,
+     * not before it — a check on the next frame still sees the old field and
+     * scrolls anyway.
+     */
+    const settle = setTimeout(() => {
+      const active = document.activeElement;
+      const stillTyping =
+        !!active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+      if (!stillTyping) window.scrollTo(0, 0);
+    }, 200);
+
+    return () => clearTimeout(settle);
   }, [keyboardHeight]);
 
 
