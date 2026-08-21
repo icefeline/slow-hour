@@ -108,6 +108,44 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     }
   }, []);
 
+  /*
+   * The background video stops and stays stopped.
+   *
+   * Chrome pauses a looping background video when the page is hidden, when the
+   * software keyboard takes focus, and under battery saver — and having paused
+   * it, does not always resume. The page is then sitting on a single frozen
+   * frame, which reads as the app having hung at exactly the moment a message
+   * appears and the reader is waiting on it.
+   *
+   * Nothing here forces playback against a browser that is refusing on
+   * purpose: play() is asked for and its rejection ignored, so an
+   * autoplay-blocked or data-saver browser simply keeps its still frame.
+   */
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const resume = () => {
+      const video = bgVideoRef.current;
+      if (!video || document.hidden || !video.paused) return;
+      void video.play().catch(() => {
+        // autoplay refused — a still background is an acceptable outcome
+      });
+    };
+
+    document.addEventListener('visibilitychange', resume);
+    window.addEventListener('focus', resume);
+    window.addEventListener('pageshow', resume);
+    // The keyboard opening and closing shows up as a resize, not as a focus
+    // event, on the browsers where this happens.
+    window.addEventListener('resize', resume);
+
+    return () => {
+      document.removeEventListener('visibilitychange', resume);
+      window.removeEventListener('focus', resume);
+      window.removeEventListener('pageshow', resume);
+      window.removeEventListener('resize', resume);
+    };
+  }, []);
+
   const handleLocationToggle = async (on: boolean) => {
     setUseLocation(on);
     if (!on) {
@@ -1238,13 +1276,37 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         transition: shouldCrumble ? 'opacity 1s ease-out, filter 1s ease-out' : 'none',
       }}
     >
-      {/* Background video */}
-      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+      {/*
+        Background video and its overlay are both `fixed`, and sized to the
+        LARGE viewport (100vw/100lvh) rather than to this container.
+        `min-h-screen` resolves to the small viewport on iOS, which stops the
+        video short of wherever Safari's toolbars are, leaving a band of flat
+        ground at the top and bottom. Fixed + large-viewport paints under the
+        chrome, so the background runs edge to edge and stays still while the
+        toolbars collapse rather than resizing with them.
+
+        `object-cover` keeps the framing; nothing is stretched.
+      */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        /* Some mobile browsers pause a looping background video when the tab
+           is backgrounded or the keyboard takes focus, and never resume it —
+           the page then sits on a frozen frame. Nudged back on visibility. */
+        ref={bgVideoRef}
+        className="fixed inset-0 object-cover -z-10"
+        style={{ width: '100vw', height: '100lvh', minHeight: '100vh' }}
+      >
         <source src="/onboarding-bg.mp4" type="video/mp4" />
       </video>
 
       {/* Dark overlay so text is readable over video */}
-      <div className="absolute inset-0 bg-[#172211]/60" />
+      <div
+        className="fixed inset-0 bg-[#172211]/60 -z-10 pointer-events-none"
+        style={{ width: '100vw', height: '100lvh', minHeight: '100vh' }}
+      />
 
       {/* ── MOBILE layout — full screen, no device frame ── */}
       <div
