@@ -248,7 +248,16 @@
   text-transform: lowercase;
 }
 
-.try { border-top: 1px dotted var(--lime-rule); margin-top: 14px; padding-top: 12px; }
+/* The rule runs the full width of the module, not the width of its copy.
+   The module insets its contents by 14px, which pulled both ends of the
+   dotted line in and made it read as an underline under the text rather than
+   as a divider across the box. Negative margins take it back out to the
+   edges; the matching padding keeps the copy where it was. */
+.try {
+  border-top: 1px dotted var(--lime-rule);
+  margin: 14px -14px 0;
+  padding: 12px 14px 0;
+}
 
 /* Same spacing as .try, no rule: the transit toggle is a footnote to the read
    above it rather than another section of it. */
@@ -414,7 +423,11 @@
 /* Sits under the coffee link on the quota wall. Typed into rather than
    clicked, so it borrows the reading page's terminal voice: a prompt and a
    rule, not a boxed form field the rest of the page has no vocabulary for. */
-.unlock { border-top: 1px dotted var(--lime-rule); margin-top: 14px; padding-top: 12px; }
+.unlock {
+  border-top: 1px dotted var(--lime-rule);
+  margin: 14px -14px 0;
+  padding: 12px 14px 0;
+}
 
 .unlockRow { display: flex; align-items: baseline; gap: 8px; }
 

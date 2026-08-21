@@ -306,11 +306,16 @@ export default function TermsAndPrivacy() {
               <li>Your first name</li>
               <li>Your birth date, and your birth time and location if you gave them</li>
               <li>Every card you&apos;ve drawn, and the date you drew it</li>
-              <li>Anything you&apos;ve written in the reflection box</li>
+              <li>
+                <Term>Your reflections</Term> &mdash; anything you write in the box at the
+                bottom of a reading. Yours alone; never sent anywhere, by anything.
+              </li>
               <li>The readings themselves, cached so re-opening a day costs nothing</li>
               <li>
-                A short private note the app keeps after each reading, so tomorrow&apos;s
-                doesn&apos;t feel like it&apos;s meeting you for the first time
+                <Term>The app&apos;s notes</Term> &mdash; a line the app writes to itself
+                after each reading, so tomorrow&apos;s doesn&apos;t feel like it&apos;s
+                meeting you for the first time. Written by the app, not by you, and the one
+                thing on this list that does get sent on when the next reading is written.
               </li>
               <li>Your settings, including whether personalisation and location are on</li>
             </List>
@@ -324,10 +329,13 @@ export default function TermsAndPrivacy() {
             <p className="mb-4">Five outside services are involved, and only these five:</p>
             <List spaced>
               <li>
-                <Term>Anthropic</Term> writes the personalised part of your reading. Your
-                birth details, the card you drew, and those short private notes are sent over
-                so it has something to write from. Your name and your reflections are not.
-                Their policy covers what happens next:{' '}
+                <Term>Anthropic</Term> writes the personalised part of your reading. It
+                receives your birth details, the card you drew, and the app&apos;s own notes
+                &mdash; a line the app writes to itself after each reading, so tomorrow&apos;s
+                can follow on from today&apos;s. It does not receive your name, and it does
+                not receive your reflections: the writing you do in the box at the bottom of
+                a reading never leaves your device at all, and is never sent anywhere. Their
+                policy covers what happens next:{' '}
                 <a
                   href="https://www.anthropic.com/privacy"
                   target="_blank"

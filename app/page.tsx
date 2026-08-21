@@ -674,13 +674,34 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-2 md:py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 md:gap-3">
-            <img
-              src="/spiral-logo.png"
-              alt=""
+            {/*
+              The spiral is painted, not filtered.
+
+              It used to be an <img> under a filter chain approximating the
+              soft blue — the kind of value you get from a converter and cannot
+              read, adjust, or check against a token. Now it is the wordmark's
+              own paper white, stated once, so the two cannot drift apart.
+
+              Masked rather than recoloured: the source is a black PNG, so its
+              alpha is the shape and the background supplies the colour. The
+              aspect ratio is the file's own 928x1232, which keeps `width:auto`
+              behaviour now that the element is a span rather than an image.
+            */}
+            <span
+              aria-hidden="true"
               style={{
+                display: 'block',
                 height: 'clamp(36px, 6vw, 56px)',
-                filter: 'brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(346%) hue-rotate(183deg) brightness(103%) contrast(97%)',
-                width: 'auto'
+                aspectRatio: '928 / 1232',
+                backgroundColor: '#F7F4E6',
+                WebkitMaskImage: 'url(/spiral-logo.png)',
+                maskImage: 'url(/spiral-logo.png)',
+                WebkitMaskSize: 'contain',
+                maskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                maskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskPosition: 'center',
               }}
             />
             <span
