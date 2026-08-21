@@ -293,7 +293,7 @@ export function ObCta({
    * one being typed into is visible with the keyboard up, and the button is
    * where it has always been when the keyboard closes.
    */
-  const button = (
+  return (
     <button
       onClick={onClick}
       disabled={disabled}
@@ -301,22 +301,6 @@ export function ObCta({
       // move the button out from under the finger mid-tap
       onPointerDown={(e) => { e.preventDefault(); }}
       style={{
-        /*
-         * Fixed to the window, at the bottom, and that is the whole of it.
-         *
-         * Every previous version tied the button to something that moves: the
-         * scaled canvas, a measured container height, an offset computed from
-         * the keyboard. Each of those moves differently in each browser —
-         * Safari's URL bar, Chrome's, Brave scaling the page to fit when a
-         * field is focused — which is why one button managed to look wrong in
-         * three different ways on the same phone.
-         *
-         * Anchored to the viewport it cannot drift, because there is nothing
-         * left for it to drift with. With the keyboard up it sits behind the
-         * keyboard, which is where the bottom of the window is; the field
-         * being typed into is visible without it, and it is back the moment
-         * the keyboard closes.
-         */
         position: 'absolute',
         left: px(24, scale), right: px(24, scale),
         bottom: px(34, scale),
@@ -335,8 +319,6 @@ export function ObCta({
       <span>→</span>
     </button>
   );
-
-  return button;
 }
 
 /** Shared value/input typography inside a field. */

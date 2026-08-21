@@ -191,24 +191,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const base = baseViewportRef.current;
-
-      /*
-       * The scale must not react to height, ever.
-       *
-       * It is derived from the viewport, and anything derived from height gets
-       * recomputed every time a browser toolbar slides in or out — which is
-       * constantly, while scrolling. The result is the whole page visibly
-       * resizing under the reader's hands. The keyboard does the same thing on
-       * Android, where it genuinely does shrink innerHeight.
-       *
-       * Width is the only honest trigger: it changes on rotation and on nothing
-       * else. The height still feeds the scale, so a landscape phone gets a
-       * scale that fits — it is just sampled at rotation rather than tracked.
-       *
-       * Nothing depends on a measured height any more; the layout is sized in
-       * svh, which the browser keeps correct on its own.
-       */
-      if (base && w === base.w) return;
+      if (base && w === base.w && h < base.h) return; // keyboard, not a new viewport
       baseViewportRef.current = { w, h };
       setIsMobile(w < 768);
       setMobileScale(Math.min(w / 356, h / 748));
@@ -968,10 +951,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 moment they are about to commit details to this browser. */}
             <InAppBrowserNotice scale={mobileScale} />
 
-            {/* Continue — the same CTA the rest of the onboarding uses, and
-                anchored the same way. Left on the canvas it sat under Chrome's
-                bottom toolbar, which overlays the layout viewport rather than
-                shortening it. */}
+            {/* Continue — the same CTA the rest of the onboarding uses */}
             <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
         );
@@ -1122,8 +1102,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 </ObHint>
               )}
             </ObFields>
-            {/* Same anchoring as the two steps before it, so the button does
-                not shift position as you move through onboarding. */}
             <ObCta scale={mobileScale} onClick={handleNext} />
           </div>
         );
@@ -1258,14 +1236,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   // ── Main render ───────────────────────────────────────────────────────────
   return (
     <div
-      /* 100svh, not min-h-screen. `100vh` is the LARGE viewport — the height
-         the page would have if the browser's toolbars were hidden — so on
-         Chrome and Safari for iOS it is taller than what you can actually see
-         and the page scrolls with nothing to scroll to. The small viewport unit
-         is the height with the toolbars showing, so the screen fits exactly. */
-      className="relative w-full overflow-hidden"
+      className="relative min-h-screen w-full overflow-hidden"
       style={{
-        minHeight: '100svh',
         opacity: shouldCrumble ? 0 : 1,
         filter: shouldCrumble ? 'blur(20px)' : 'none',
         transition: shouldCrumble ? 'opacity 1s ease-out, filter 1s ease-out' : 'none',
@@ -1286,12 +1258,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         ${currentStep === 4 ? 'overflow-hidden' : currentStep === 0 || isDesignStep ? '' : 'py-8'}`}
         /* held at the pre-keyboard height for the same reason the scale is —
            100dvh collapses under the keyboard and drags the layout up with it */
-        /* Same reasoning as the wrapper: a fixed unit that already excludes
-           browser chrome, rather than a measured innerHeight that includes the
-           space behind it. It does not change when the keyboard opens either,
-           so the layout stays still and the browser simply scrolls the focused
-           field into view. */
-        style={{ height: '100svh' }}
+        style={{ height: baseHeight ? `${baseHeight}px` : '100dvh' }}
       >
         {isDesignStep ? (
           /*
@@ -1302,24 +1269,11 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
            * any phone wider than the scaled canvas; the fields inset themselves
            * by their own 24 design-px padding, which is the only gutter wanted.
            */
-          /*
-           * The canvas IS the screen, not 748 design-px of it.
-           *
-           * Its height used to be 748 * mobileScale, and mobileScale is derived
-           * from window.innerHeight — the LARGE viewport, which includes the
-           * strip a browser draws its toolbar over. The container around it is
-           * 100svh, the viewport with that toolbar showing. On Chrome those two
-           * differ by the height of the bar, so the canvas hung past the bottom
-           * of its container and overflow-hidden cut off the one thing pinned
-           * to the canvas bottom: the continue button. Safari's numbers happen
-           * to agree, which is why Safari alone looked right.
-           *
-           * Filling the container instead means the button's "bottom" is the
-           * bottom of what the reader can actually see, in every browser,
-           * without anything being measured or compared.
-           */
-          <div className="flex-1 min-h-0 flex w-full">
-            <div className="relative w-full h-full">
+          <div className="flex-1 flex items-center justify-center w-full">
+            <div
+              className="relative w-full"
+              style={{ height: 748 * mobileScale }}
+            >
               {renderStepContent()}
             </div>
           </div>
