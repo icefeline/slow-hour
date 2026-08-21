@@ -966,7 +966,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               title={<>WHAT&apos;S<br />YOUR NAME?</>}
               sub="FIRST NAME IS FINE"
             />
-            <ObFields scale={mobileScale}>
+            {/* Sits under the heading, at the permissions step's height, so the
+                field is still in full view once the keyboard is up — rather
+                than at the canvas's midpoint where the keyboard covers it. */}
+            <ObFields scale={mobileScale} top={330}>
               <div style={fieldStyle('dark', mobileScale, true, true)}>
                 <span style={{ fontFamily: 'var(--font-vt323), monospace', fontSize: obPx(24, mobileScale), color: LIME }}>&gt;</span>
                 <input
@@ -995,7 +998,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               title={<>WHEN WERE<br />YOU BORN?</>}
               sub={<>SLOW GARDEN READS A VEDIC CHART.<br />HOW MUCH IS TOO MUCH?</>}
             />
-            <ObFields scale={mobileScale} stack>
+            {/* Same as the name step, a little lower: this heading's
+                subheading runs to two lines. */}
+            <ObFields scale={mobileScale} stack top={348}>
               <div>
                 <div style={fieldStyle('dark', mobileScale, birthDate.length > 0)}>
                   <input
